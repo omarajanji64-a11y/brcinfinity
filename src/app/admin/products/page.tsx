@@ -16,7 +16,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { useDoc, useFirestore, useMemoFirebase, setDocumentNonBlocking, useCollection, deleteDocumentNonBlocking } from '@/firebase/client-provider';
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase/client-provider';
+import { deleteDocumentNonBlocking, setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useTranslation, Language } from '@/lib/i18n';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -396,5 +397,3 @@ export default function ProductsAdminPage() {
     </Dialog>
   );
 }
-
-    
