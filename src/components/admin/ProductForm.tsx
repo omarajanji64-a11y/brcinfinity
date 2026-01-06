@@ -50,7 +50,7 @@ const productFormSchema = z.object({
 type ProductFormData = z.infer<typeof productFormSchema>;
 
 interface ProductFormProps {
-  product?: Product;
+  product?: Product | null;
   onSave: () => void;
 }
 
