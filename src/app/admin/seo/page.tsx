@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { collection, doc } from 'firebase/firestore';
+import { collection, doc, setDoc } from 'firebase/firestore';
 import { Bar, BarChart, Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import { Bot, Loader2, Wand2, CheckCircle, Search, ArrowRight } from 'lucide-react';
 
@@ -17,7 +17,6 @@ import { optimizeProductSeo, SeoOptimizationOutput } from '@/ai/flows/seo-optimi
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart"
-import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 // Simulated data for SEO performance
 const seoPerformanceData = [
@@ -77,13 +76,13 @@ export default function SeoAdminPage() {
 
       // Now, update the products in Firestore with the new SEO data
       if (firestore) {
-          results.forEach(result => {
+          for (const result of results) {
               const productRef = doc(firestore, 'products', result.productId);
-              setDocumentNonBlocking(productRef, {
+              await setDoc(productRef, {
                   keywords: result.optimizedKeywords,
                   metaDescription: result.optimizedMetaDescription,
               }, { merge: true });
-          });
+          }
       }
       
       setOptimizationResults(results);
@@ -199,3 +198,5 @@ export default function SeoAdminPage() {
     </div>
   );
 }
+
+    
