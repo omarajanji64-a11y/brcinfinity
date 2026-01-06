@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useForm, useFieldArray, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { doc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -18,7 +18,6 @@ import { useDoc, useFirestore, useMemoFirebase } from '@/firebase/client-provide
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/lib/i18n';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 const createHomepageSchema = (t: (key: string) => string) => {
     const heroImageSchema = z.object({
@@ -117,15 +116,23 @@ function HomepageForm({ initialData }: { initialData: HomepageFormData }) {
     }
     setIsSaving(true);
     
-    setDocumentNonBlocking(homepageConfigRef, data, { merge: true });
-
-    toast({
-      title: t('admin_homepage.toast_success_title'),
-      description: t('admin_homepage.toast_success_desc'),
-    });
-    
-    reset(data);
-    setIsSaving(false);
+    try {
+        await setDoc(homepageConfigRef, data, { merge: true });
+        toast({
+          title: t('admin_homepage.toast_success_title'),
+          description: t('admin_homepage.toast_success_desc'),
+        });
+        reset(data);
+    } catch(e) {
+        console.error(e);
+        toast({
+            variant: "destructive",
+            title: t('admin_homepage.toast_error_title'),
+            description: (e as Error).message,
+        });
+    } finally {
+        setIsSaving(false);
+    }
   };
   
   const addNewHeroImage = () => {
@@ -358,7 +365,4 @@ export default function HomePageAdminPage() {
   return (
     <div className="space-y-8">
       <h1 className="text-3xl font-headline font-bold">{t('admin_homepage.title')}</h1>
-      <HomepageForm key={JSON.stringify(initialData)} initialData={initialData} />
-    </div>
-  );
-}
+      <HomepageForm
