@@ -13,8 +13,8 @@ export default {
         'conic-gradient': 'conic-gradient(var(--tw-gradient-stops))',
       },
       fontFamily: {
-        body: ['"Raleway"', 'sans-serif'],
-        headline: ['"Playfair Display"', 'serif'],
+        body: ['var(--font-raleway)', 'sans-serif'],
+        headline: ['var(--font-playfair-display)', 'serif'],
         code: ['monospace'],
       },
       colors: {
