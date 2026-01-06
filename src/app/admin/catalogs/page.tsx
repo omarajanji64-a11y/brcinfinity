@@ -17,7 +17,7 @@ import { Loader2, Save, Trash2, PlusCircle } from 'lucide-react';
 import { useDoc, useFirestore, useMemoFirebase } from '@/firebase/client-provider';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/lib/i18n';
-import { setDocumentNonBlocking } from '@/firebase';
+import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 const catalogSchema = z.object({
   id: z.string(),
