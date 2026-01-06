@@ -1,11 +1,10 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useForm, useFieldArray, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { doc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Button } from '@/components/ui/button';
@@ -17,7 +16,6 @@ import { Loader2, Save, Trash2, PlusCircle } from 'lucide-react';
 import { useDoc, useFirestore, useMemoFirebase } from '@/firebase/client-provider';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/lib/i18n';
-import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 const catalogSchema = z.object({
   id: z.string(),
@@ -77,15 +75,23 @@ export default function CatalogsAdminPage() {
     }
     setIsSaving(true);
     
-    setDocumentNonBlocking(catalogConfigRef, data, { merge: true });
-
-    toast({
-      title: t('admin_catalogs.toast_success_title'),
-      description: t('admin_catalogs.toast_success_desc'),
-    });
-    
-    reset(data);
-    setIsSaving(false);
+    try {
+      await setDoc(catalogConfigRef, data, { merge: true });
+      toast({
+        title: t('admin_catalogs.toast_success_title'),
+        description: t('admin_catalogs.toast_success_desc'),
+      });
+      reset(data);
+    } catch(e) {
+        console.error(e);
+        toast({
+            variant: "destructive",
+            title: t('admin_catalogs.toast_error_title'),
+            description: (e as Error).message,
+        });
+    } finally {
+        setIsSaving(false);
+    }
   };
 
   const addNewCatalog = () => {
