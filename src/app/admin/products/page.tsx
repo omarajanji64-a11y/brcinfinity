@@ -132,25 +132,18 @@ export default function ProductsAdminPage() {
   const firestore = useFirestore();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
-  const [products, setProducts] = useState<Product[] | undefined>(undefined);
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [isImporting, setIsImporting] = useState(false);
   const [importStatus, setImportStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [importedProductsPreview, setImportedProductsPreview] = useState<Partial<Product>[]>([]);
   const { toast } = useToast();
 
-  useCollection<Product>({
-    path: 'products',
-    onSuccess: (data) => {
-        setProducts(data);
-        setIsLoadingProducts(false);
-    },
-    onError: (error) => {
-        console.error("Error fetching products:", error);
-        setIsLoadingProducts(false);
-    }
-  });
+  const productsCollectionRef = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return collection(firestore, 'products');
+  }, [firestore]);
+
+  const { data: products, isLoading: isLoadingProducts } = useCollection<Product>(productsCollectionRef);
 
   const handleAddNew = () => {
     setSelectedProduct(null);
