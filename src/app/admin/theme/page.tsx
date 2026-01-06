@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { doc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,7 +15,6 @@ import { useDoc, useFirestore, useMemoFirebase } from '@/firebase/client-provide
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
-import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 const colorSchema = z.object({
   h: z.number().min(0).max(360),
@@ -89,7 +88,6 @@ export default function ThemeAdminPage() {
     handleSubmit,
     reset,
     watch,
-    setValue,
   } = useForm<ThemeFormData>({
     resolver: zodResolver(themeFormSchema),
     defaultValues: predefinedThemes[0].config,
@@ -114,14 +112,22 @@ export default function ThemeAdminPage() {
     }
     setIsSaving(true);
     
-    setDocumentNonBlocking(themeConfigRef, data, { merge: true });
-
-    toast({
-      title: t('admin_theme.toast_success_title'),
-      description: t('admin_theme.toast_success_desc'),
-    });
-    
-    setIsSaving(false);
+    try {
+        await setDoc(themeConfigRef, data, { merge: true });
+        toast({
+            title: t('admin_theme.toast_success_title'),
+            description: t('admin_theme.toast_success_desc'),
+        });
+    } catch(e) {
+        console.error(e);
+        toast({
+            variant: "destructive",
+            title: t('admin_theme.toast_error_title'),
+            description: (e as Error).message,
+        });
+    } finally {
+        setIsSaving(false);
+    }
   };
   
   if (isLoading) {
@@ -209,3 +215,5 @@ export default function ThemeAdminPage() {
     </div>
   );
 }
+
+    
