@@ -17,7 +17,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/lib/i18n';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { setDocumentNonBlocking } from '@/firebase';
+import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 const createBrandingSchema = (t: (key: string) => string) => z.object({
   logoUrl: z.string().url(t('validation.invalid_url')).or(z.literal('')),
