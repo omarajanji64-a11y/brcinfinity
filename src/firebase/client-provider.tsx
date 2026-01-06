@@ -6,11 +6,9 @@ import { FirebaseApp } from 'firebase/app';
 import { Firestore } from 'firebase/firestore';
 import { Auth, User, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
 import { FirebaseStorage } from 'firebase/storage';
-import { FirebaseErrorListener } from '@/components/FirebaseErrorListener';
 import { initializeFirebase } from '@/firebase'; // Import the core initializer
 import { useCollection as useCollectionHook } from '@/firebase/firestore/use-collection';
 import { useDoc as useDocHook } from '@/firebase/firestore/use-doc';
-import { initiateEmailSignIn as initiateEmailSignInUtil } from './non-blocking-login';
 
 interface FirebaseProviderProps {
   children: ReactNode;
@@ -119,7 +117,6 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
 
   return (
     <FirebaseContext.Provider value={contextValue}>
-      <FirebaseErrorListener />
       {children}
     </FirebaseContext.Provider>
   );
@@ -199,4 +196,5 @@ export const useUser = (): UserHookResult => {
 
 export const useCollection = useCollectionHook;
 export const useDoc = useDocHook;
-export const initiateEmailSignIn = initiateEmailSignInUtil;
+
+    
