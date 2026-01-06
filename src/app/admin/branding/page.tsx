@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { doc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 import { Button } from '@/components/ui/button';
@@ -17,7 +17,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/lib/i18n';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 const createBrandingSchema = (t: (key: string) => string) => z.object({
   logoUrl: z.string().url(t('validation.invalid_url')).or(z.literal('')),
@@ -108,15 +107,23 @@ export default function BrandingAdminPage() {
     }
     setIsSaving(true);
     
-    setDocumentNonBlocking(brandingConfigRef, data, { merge: true });
-
-    toast({
-      title: t('admin_branding.toast_success_title'),
-      description: t('admin_branding.toast_success_desc'),
-    });
-    
-    reset(data); // Mark form as not dirty after successful save
-    setIsSaving(false);
+    try {
+      await setDoc(brandingConfigRef, data, { merge: true });
+      toast({
+        title: t('admin_branding.toast_success_title'),
+        description: t('admin_branding.toast_success_desc'),
+      });
+      reset(data); // Mark form as not dirty after successful save
+    } catch(e) {
+        console.error(e);
+        toast({
+            variant: "destructive",
+            title: t('admin_branding.toast_error_title'),
+            description: (e as Error).message,
+        });
+    } finally {
+        setIsSaving(false);
+    }
   };
   
   const isValidUrl = (url: string | undefined | null): url is string => {
@@ -218,7 +225,3 @@ export default function BrandingAdminPage() {
             </Button>
           </CardFooter>
         </Card>
-      </form>
-    </div>
-  );
-}
