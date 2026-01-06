@@ -5,7 +5,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { v4 as uuidv4 } from 'uuid';
-import { doc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,7 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 const localizedStringSchema = z.object({
   en: z.string(),
@@ -92,13 +91,21 @@ export default function ProductForm({ product, onSave }: ProductFormProps) {
         stock: Number(data.stock),
     };
 
-    setDocumentNonBlocking(productRef, productToSave, { merge: true });
-
-    toast({
-      title: t('admin_products.toast_product_saved_title'),
-      description: t('admin_products.toast_product_saved_desc'),
-    });
-    onSave();
+    try {
+      await setDoc(productRef, productToSave, { merge: true });
+      toast({
+        title: t('admin_products.toast_product_saved_title'),
+        description: t('admin_products.toast_product_saved_desc'),
+      });
+      onSave();
+    } catch (e) {
+        console.error(e);
+        toast({
+            variant: "destructive",
+            title: t('admin_products.toast_delete_error_title'),
+            description: (e as Error).message,
+        });
+    }
   };
 
   return (
@@ -173,3 +180,5 @@ function FormField({ name, label, type = 'text', placeholder, errors, register, 
     </div>
   );
 }
+
+    
