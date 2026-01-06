@@ -18,7 +18,7 @@ import { useDoc, useFirestore, useMemoFirebase } from '@/firebase/client-provide
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/lib/i18n';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { setDocumentNonBlocking } from '@/firebase';
+import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 const createHomepageSchema = (t: (key: string) => string) => {
     const heroImageSchema = z.object({
