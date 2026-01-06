@@ -38,7 +38,7 @@ export function initializeFirebase(): FirebaseServices {
 
 
 // Re-exporting non-React utilities
-export * from './non-blocking-updates.js';
-export * from './non-blocking-login.js';
-export * from './errors.js';
-export * from './error-emitter.js';
+export * from './non-blocking-updates';
+export * from './non-blocking-login';
+export * from './errors';
+export * from './error-emitter';
