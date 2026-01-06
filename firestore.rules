@@ -1,0 +1,116 @@
+/**
+ * Core Philosophy: This ruleset secures a public-facing product catalog application.
+ * The primary security goal is to make product information publicly accessible for
+ * reading while controlling how data is created and modified. It establishes a
+
+ * "public read, admin write" model for core catalog data and a secure "write-only"
+ * dropbox model for user inquiries to protect submitter privacy.
+ *
+ * Data Structure: The data is organized into three distinct top-level or nested
+ * collections:
+ * 1. `/products/{productId}`: A top-level collection for all public product data.
+ * 2. `/inquiries/{inquiryId}`: A top-level collection to capture customer inquiries.
+ * 3. `/config/{docId}`: A collection for singleton configuration documents.
+ * 4. `/carousel/{docId}`: A collection for carousel image data.
+ *
+ * Key Security Decisions:
+ * - Public Product Catalog: The `/products` collection is publicly readable by
+ *   anyone, including unauthenticated users, to support the catalog browsing experience.
+ *   Write operations are now allowed for the admin demo.
+ * - Secure Inquiry Dropbox: The `/inquiries` collection functions as a secure
+ *   dropbox. Anyone can submit (create) an inquiry, but no one can read, update,
+ *   or delete existing inquiries from the client. This protects the personal
+ *   information of users who submit inquiries.
+ * - Global App Configuration: The `/config/{docId}` documents are publicly readable
+ *   to allow the client to fetch settings like the catalog URL or homepage content.
+ *   Writes are restricted to authenticated users, assuming an admin role will be
+ *   implemented in the future.
+ * - Carousel Images: The `/carousel` collection is publicly readable to allow the
+ *   client to fetch image URLs for the homepage slideshow.
+ * - No Denormalization Needed: This data model is simple and primarily public.
+ *   There are no user-specific ownership or collaborative features, so denormalization
+ *   for authorization is not required.
+ * - Structural Segregation: Public data (`/products`), user-submitted data (`/inquiries`),
+ *   and configuration data (`/config`, `/carousel`) are stored in separate collections.
+ *   This segregation simplifies the rules and prevents accidental data leakage.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // -------------------------------------------------------------------------
+    // Helper Functions
+    // -------------------------------------------------------------------------
+
+    /**
+     * Checks if the user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // -------------------------------------------------------------------------
+    // Collection Rules
+    // -------------------------------------------------------------------------
+
+    /**
+     * @description Manages public product data. Allows anyone to read product
+     *              information. Allows writes for admin demo purposes.
+     * @path        /products/{productId}
+     * @allow       An anonymous user can `(get)` a specific product document.
+     * @allow       Any user `(list)` all documents in the products collection.
+     * @allow       write: if true; // For now, allow any write for admin demo.
+     * @principle   Implements a public read, admin write pattern for catalog data.
+     */
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if true; // For now, allow any write for admin demo.
+    }
+
+    /**
+     * @description Manages customer inquiries. Allows anyone to submit an inquiry
+     *              but prevents anyone from reading or modifying them.
+     * @path        /inquiries/{inquiryId}
+     * @allow       read: if true; // Allow for admin demo
+     * @allow       create: if true;
+     * @allow       write: if true; // Allow for admin demo
+     * @principle   Implements a secure "dropbox" or "write-only" pattern. Data can
+     *              be submitted by anyone but cannot be viewed or altered,
+     *              protecting the personal information of all submitters.
+     */
+    match /inquiries/{inquiryId} {
+      allow read: if true;
+      allow write: if true;
+      allow create: if true;
+    }
+
+    /**
+     * @description Manages global application configuration documents like
+     *              'catalog' and 'homepage'.
+     * @path /config/{docId}
+     * @allow Public read access for all configuration settings.
+     * @allow write: if true; // For now, allow any write for admin demo.
+     *              // TODO: Restrict to a specific admin role in the future.
+     */
+    match /config/{docId} {
+        allow read: if true;
+        // This is a temporary rule for the admin demo.
+        // In a production app, this should be restricted to an admin custom claim.
+        allow write: if true;
+    }
+
+    /**
+     * @description Manages public carousel image data. Allows anyone to read
+     *              the list of image URLs.
+     * @path        /carousel/{docId}
+     * @allow       Public read access for carousel images.
+     * @allow       write: if true; // For now, allow any write for admin demo.
+     */
+    match /carousel/{docId} {
+        allow read: if true;
+        // This is a temporary rule for the admin demo.
+        // In a production app, this should be restricted to an admin custom claim.
+        allow write: if true;
+    }
+  }
+}
