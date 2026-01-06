@@ -1,0 +1,124 @@
+{
+  "placeholderImages": [
+    {
+      "id": "prod-1",
+      "description": "An ornate, hand-carved mahogany armchair with velvet upholstery",
+      "imageUrl": "https://images.unsplash.com/photo-1762803841723-3ea1ef32ec52?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8Y2xhc3NpYyUyMGFybWNoYWlyfGVufDB8fHx8MTc2NzY4OTMxOHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "classic armchair"
+    },
+    {
+      "id": "prod-2",
+      "description": "A majestic four-poster bed with silk curtains",
+      "imageUrl": "https://images.unsplash.com/photo-1767050371633-675072d4bed7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyb3lhbCUyMGJlZHxlbnwwfHx8fDE3Njc2ODkzMTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "royal bed"
+    },
+    {
+      "id": "prod-3",
+      "description": "A long, elegant dining table made of polished oak",
+      "imageUrl": "https://images.unsplash.com/photo-1636138389529-d35a2a348dc1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZGluaW5nJTIwdGFibGV8ZW58MHx8fHwxNzY3NTg2ODYyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "dining table"
+    },
+    {
+      "id": "prod-4",
+      "description": "A classic Chesterfield sofa in deep burgundy leather",
+      "imageUrl": "https://images.unsplash.com/photo-1565374395542-0ce18882c857?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxsZWF0aGVyJTIwc29mYXxlbnwwfHx8fDE3Njc2ODkzMTl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "leather sofa"
+    },
+    {
+      "id": "prod-5",
+      "description": "A vintage-style writing desk with brass details",
+      "imageUrl": "https://images.unsplash.com/photo-1654356709115-3f68998bead4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx3cml0aW5nJTIwZGVza3xlbnwwfHx8fDE3Njc2MzAyNDF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "writing desk"
+    },
+    {
+      "id": "prod-6",
+      "description": "A gilded mirror with intricate floral carvings",
+      "imageUrl": "https://images.unsplash.com/photo-1738865657852-cfe3d68aef3d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxvcm5hdGUlMjBtaXJyb3J8ZW58MHx8fHwxNzY3Njg5MzE5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "ornate mirror"
+    },
+    {
+      "id": "prod-7",
+      "description": "A luxurious chaise lounge with damask fabric",
+      "imageUrl": "https://images.unsplash.com/photo-1701208546642-bde03bc104ea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjaGFpc2UlMjBsb3VuZ2V8ZW58MHx8fHwxNzY3Njg5MzE5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "chaise lounge"
+    },
+    {
+      "id": "prod-8",
+      "description": "An elegant display cabinet with glass doors",
+      "imageUrl": "https://images.unsplash.com/photo-1763506240757-a8a33ca2c26f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxkaXNwbGF5JTIwY2FiaW5ldHxlbnwwfHx8fDE3Njc2ODkzMTl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "display cabinet"
+    },
+    {
+      "id": "prod-9",
+      "description": "A set of plush dining chairs with tufted backs",
+      "imageUrl": "https://images.unsplash.com/photo-1688572809159-6dcee36674b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxkaW5pbmclMjBjaGFpcnN8ZW58MHx8fHwxNzY3Njg5MzE5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "dining chairs"
+    },
+    {
+      "id": "prod-10",
+      "description": "A sleek, modern bed that appears to be floating.",
+      "imageUrl": "https://images.unsplash.com/photo-1678978866819-306ed8608e7f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBiZWR8ZW58MHx8fHwxNzY3Njg3MDIwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "modern bed"
+    },
+    {
+      "id": "prod-11",
+      "description": "A contemporary dining table with a glass top and steel base.",
+      "imageUrl": "https://images.unsplash.com/photo-1583329550487-0fa300a4cd1a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjB0YWJsZXxlbnwwfHx8fDE3Njc2ODkzMTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "modern table"
+    },
+    {
+      "id": "prod-12",
+      "description": "A versatile modular sectional sofa in light grey.",
+      "imageUrl": "https://images.unsplash.com/photo-1762803841325-a46175e1fc50?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxtb2Rlcm4lMjBzb2ZhfGVufDB8fHx8MTc2NzY3OTQ2M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "modern sofa"
+    },
+    {
+      "id": "prod-13",
+      "description": "Iconic mid-century modern lounge chair and ottoman.",
+      "imageUrl": "https://images.unsplash.com/photo-1684165610413-2401399e0e59?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxsb3VuZ2UlMjBjaGFpcnxlbnwwfHx8fDE3Njc2ODkzMTl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "lounge chair"
+    },
+    {
+      "id": "hero-1",
+      "description": "A luxurious living room with a classic design",
+      "imageUrl": "https://images.unsplash.com/photo-1613545325278-f24b0cae1224?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxsdXh1cnklMjBsaXZpbmclMjByb29tfGVufDB8fHx8MTc2NzYxMTQ4Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "luxury living room"
+    },
+    {
+      "id": "hero-2",
+      "description": "An elegant bedroom with a royal-style bed",
+      "imageUrl": "https://images.unsplash.com/photo-1760072513393-b9d81f65dd7e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxlbGVnYW50JTIwYmVkcm9vbXxlbnwwfHx8fDE3Njc2ODIwNDl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "elegant bedroom"
+    },
+    {
+      "id": "hero-3",
+      "description": "A sophisticated dining room with a large wooden table",
+      "imageUrl": "https://images.unsplash.com/photo-1616486886892-ff366aa67ba4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkaW5pbmclMjByb29tfGVufDB8fHx8MTc2NzY4OTMxOXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "dining room"
+    },
+    {
+      "id": "admin-bg",
+      "description": "A subtle geometric pattern for the admin login background",
+      "imageUrl": "https://images.unsplash.com/photo-1679592098614-ae83589aa91a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxhYnN0cmFjdCUyMHBhdHRlcm58ZW58MHx8fHwxNzY3NjIzMTQ2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract pattern"
+    },
+    {
+      "id": "cat-living-room",
+      "description": "A modern and luxurious living room setup.",
+      "imageUrl": "https://images.unsplash.com/photo-1564078516393-cf04bd966897?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxsaXZpbmclMjByb29tfGVufDB8fHx8MTc2NzYzODg2Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "living room"
+    },
+    {
+      "id": "cat-dining-room",
+      "description": "An elegant dining room with a large table and chairs.",
+      "imageUrl": "https://images.unsplash.com/photo-1604578762246-41134e37f9cc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxkaW5pbmclMjByb29tfGVufDB8fHx8MTc2NzY4OTMxOXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "dining room"
+    },
+    {
+      "id": "cat-bedroom",
+      "description": "A comfortable and stylish bedroom with a large bed.",
+      "imageUrl": "https://images.unsplash.com/photo-1737233019359-625e96ec8694?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxiZWRyb29tJTIwZnVybml0dXJlfGVufDB8fHx8MTc2NzY4OTEyNHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "bedroom furniture"
+    }
+  ]
+}

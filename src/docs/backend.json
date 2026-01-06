@@ -1,0 +1,397 @@
+
+{
+  "entities": {
+    "BrandingConfig": {
+      "title": "Branding Config",
+      "type": "object",
+      "description": "Stores branding assets like the logo URL.",
+      "properties": {
+        "logoUrl": {
+          "type": "string",
+          "description": "URL of the site logo.",
+          "format": "uri"
+        }
+      }
+    },
+    "HeroImage": {
+      "title": "Hero Image",
+      "type": "object",
+      "description": "Represents an image in the homepage hero slideshow.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique client-side identifier for the image."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL of the image.",
+          "format": "uri"
+        },
+        "description": {
+          "type": "string",
+          "description": "Alt text for the image."
+        }
+      },
+      "required": ["id", "imageUrl", "description"]
+    },
+    "CategoryImage": {
+      "title": "Category Image",
+      "type": "object",
+      "description": "Represents an image for a homepage category link.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the category (e.g., 'cat-living-room')."
+        },
+        "name": {
+          "$ref": "#/backend/entities/LocalizedString"
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL of the image.",
+          "format": "uri"
+        },
+        "imageHint": {
+          "type": "string",
+          "description": "A hint for AI image generation tools."
+        }
+      },
+      "required": ["id", "name", "imageUrl", "imageHint"]
+    },
+    "LocalizedString": {
+      "title": "Localized String",
+      "type": "object",
+      "description": "An object containing translations for a string.",
+      "properties": {
+        "en": {
+          "type": "string"
+        },
+        "fr": {
+          "type": "string"
+        },
+        "tr": {
+          "type": "string"
+        }
+      },
+      "required": ["en", "fr", "tr"]
+    },
+    "HomepageConfig": {
+      "title": "HomepageConfig",
+      "type": "object",
+      "description": "Stores configuration for the homepage, including the hero section.",
+      "properties": {
+        "title": {
+          "$ref": "#/backend/entities/LocalizedString"
+        },
+        "subtitle": {
+          "$ref": "#/backend/entities/LocalizedString"
+        },
+        "heroImages": {
+          "type": "array",
+          "description": "An array of images for the hero slideshow.",
+          "items": {
+            "$ref": "#/backend/entities/HeroImage"
+          }
+        },
+        "categoryImages": {
+          "type": "array",
+          "description": "An array of images for the category links.",
+          "items": {
+            "$ref": "#/backend/entities/CategoryImage"
+          }
+        }
+      }
+    },
+    "Product": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Product",
+      "type": "object",
+      "description": "Represents a furniture product in the catalog.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the product."
+        },
+        "name": {
+          "type": "object",
+          "description": "Localized name of the product.",
+          "properties": {
+              "en": { "type": "string" },
+              "fr": { "type": "string" },
+              "tr": { "type": "string" }
+          }
+        },
+        "description": {
+          "type": "object",
+          "description": "Localized detailed description of the product.",
+           "properties": {
+              "en": { "type": "string" },
+              "fr": { "type": "string" },
+              "tr": { "type": "string" }
+          }
+        },
+        "shortDescription": {
+          "type": "object",
+          "description": "Localized short description of the product.",
+           "properties": {
+              "en": { "type": "string" },
+              "fr": { "type": "string" },
+              "tr": { "type": "string" }
+          }
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL of the product image.",
+          "format": "uri"
+        },
+        "price": {
+          "type": "number",
+          "description": "Price of the product."
+        },
+        "category": {
+          "type": "object",
+          "description": "Localized category of the product.",
+           "properties": {
+              "en": { "type": "string" },
+              "fr": { "type": "string" },
+              "tr": { "type": "string" }
+          }
+        },
+        "style": {
+            "type": "string",
+            "enum": ["Modern", "Classic"]
+        },
+        "stock": {
+          "type": "number",
+          "description": "Number of product left in the inventory."
+        },
+        "keywords": {
+          "type": "array",
+          "description": "Keywords associated with the product to improve SEO.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "metaDescription": {
+            "type": "string",
+            "description": "The meta description for the product page, optimized for SEO."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "shortDescription",
+        "imageUrl",
+        "price",
+        "category",
+        "stock",
+        "style"
+      ]
+    },
+    "Inquiry": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Inquiry",
+      "type": "object",
+      "description": "Represents a customer inquiry for custom furniture or bulk orders.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the inquiry."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the customer submitting the inquiry."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the customer.",
+          "format": "email"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "Phone number of the customer."
+        },
+        "message": {
+          "type": "string",
+          "description": "Inquiry message from the customer."
+        },
+        "productId": {
+          "type": "string",
+          "description": "Reference to Product. (Relationship: Product 1:N Inquiry)"
+        },
+        "dateSubmitted": {
+          "type": "string",
+          "description": "Date and time when the inquiry was submitted.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "email",
+        "message",
+        "productId",
+        "dateSubmitted"
+      ]
+    },
+     "Catalog": {
+      "title": "Catalog",
+      "type": "object",
+      "description": "Represents a single PDF catalog with a name and a URL.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "A unique client-side identifier for this catalog entry."
+        },
+        "name": {
+          "type": "string",
+          "description": "The display name for the catalog (e.g., '2024 Collection')."
+        },
+        "url": {
+          "type": "string",
+          "description": "The full public URL of the catalog PDF.",
+          "format": "uri"
+        }
+      },
+      "required": ["id", "name", "url"]
+    },
+    "AppConfig": {
+      "title": "AppConfig",
+      "type": "object",
+      "description": "Stores global application settings and configuration.",
+      "properties": {
+        "catalogs": {
+          "type": "array",
+          "description": "A list of all available public product catalogs.",
+          "items": {
+            "$ref": "#/backend/entities/Catalog"
+          }
+        }
+      }
+    },
+    "ThemeConfig": {
+      "title": "ThemeConfig",
+      "type": "object",
+      "description": "Stores the HSL values for the website's dynamic theme.",
+      "properties": {
+        "background": {
+          "$ref": "#/backend/entities/HSLColor"
+        },
+        "primary": {
+          "$ref": "#/backend/entities/HSLColor"
+        },
+        "accent": {
+          "$ref": "#/backend/entities/HSLColor"
+        }
+      }
+    },
+    "HSLColor": {
+      "title": "HSLColor",
+      "type": "object",
+      "description": "Represents a color in HSL format.",
+      "properties": {
+        "h": {
+          "type": "number",
+          "description": "Hue value (0-360)"
+        },
+        "s": {
+          "type": "number",
+          "description": "Saturation value (0-100)"
+        },
+        "l": {
+          "type": "number",
+          "description": "Lightness value (0-100)"
+        }
+      },
+      "required": ["h", "s", "l"]
+    }
+  },
+  "auth": {
+    "providers": [
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/products/{productId}",
+        "definition": {
+          "entityName": "Product",
+          "schema": {
+            "$ref": "#/backend/entities/Product"
+          },
+          "description": "Stores product information. The {productId} is a unique identifier for each product.",
+          "params": [
+            {
+              "name": "productId",
+              "description": "Unique identifier for the product."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/inquiries/{inquiryId}",
+        "definition": {
+          "entityName": "Inquiry",
+          "schema": {
+            "$ref": "#/backend/entities/Inquiry"
+          },
+          "description": "Stores customer inquiries. The {inquiryId} is a unique identifier for each inquiry.",
+          "params": [
+            {
+              "name": "inquiryId",
+              "description": "Unique identifier for the inquiry."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/config/catalog",
+        "definition": {
+          "entityName": "AppConfig",
+          "schema": {
+            "$ref": "#/backend/entities/AppConfig"
+          },
+          "description": "A single document containing global app settings. This path specifically holds the catalog configuration.",
+          "params": []
+        }
+      },
+      {
+        "path": "/config/homepage",
+        "definition": {
+          "entityName": "HomepageConfig",
+          "schema": {
+            "$ref": "#/backend/entities/HomepageConfig"
+          },
+          "description": "A single document containing settings for the homepage hero section.",
+          "params": []
+        }
+      },
+      {
+        "path": "/config/theme",
+        "definition": {
+          "entityName": "ThemeConfig",
+          "schema": {
+            "$ref": "#/backend/entities/ThemeConfig"
+          },
+          "description": "A single document containing the dynamic theme settings for the website.",
+          "params": []
+        }
+      },
+      {
+        "path": "/config/branding",
+        "definition": {
+          "entityName": "BrandingConfig",
+          "schema": {
+            "$ref": "#/backend/entities/BrandingConfig"
+          },
+          "description": "A single document containing branding settings like the logo URL.",
+          "params": []
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to be secure, scalable, and easily debuggable. It separates public product data, private user inquiries, and global app configuration into distinct collections. A 'config' collection is added to store singleton documents for global settings, such as the main catalog URL, homepage content, and dynamic theme colors. This keeps configuration data separate from content data, simplifying access control and data management."
+  }
+}
+    

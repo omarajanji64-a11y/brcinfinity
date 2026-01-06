@@ -1,0 +1,31 @@
+
+rules_version = '2';
+
+// Insecure: For demo purposes ONLY. This allows any read or write.
+// In a production app, you MUST restrict write access to authenticated admin users.
+// Example for production:
+// service firebase.storage {
+//   match /b/{bucket}/o {
+//     // Allow public read access to all files
+//     match /{allPaths=**} {
+//       allow read: if true;
+//     }
+//     // Allow write access only to authenticated admin users
+//     // This requires you have an 'admin' custom claim on your users.
+//     match /branding/{allPaths=**} {
+//       allow write: if request.auth != null && request.auth.token.admin == true;
+//     }
+//      match /hero-images/{allPaths=**} {
+//       allow write: if request.auth != null && request.auth.token.admin == true;
+//     }
+//   }
+// }
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      // WARNING: Publicly writable. Restrict in production.
+      allow read, write: if true;
+    }
+  }
+}
