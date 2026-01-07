@@ -1,13 +1,16 @@
-
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 import { Playfair_Display, Raleway } from 'next/font/google';
 import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
 import { cn } from '@/lib/utils';
-import Providers from './providers';
 import { LanguageProvider } from '@/lib/i18n';
 import ThemeLoader from '@/components/ThemeLoader';
 import WhatsAppButton from '@/components/shared/WhatsAppButton';
+
+const Providers = dynamic(() => import('./providers'), {
+  ssr: false,
+});
 
 const playfairDisplay = Playfair_Display({
   subsets: ['latin'],
@@ -33,7 +36,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr" suppressHydrationWarning>
-      <body className={cn("font-body antialiased min-h-screen bg-background", playfairDisplay.variable, raleway.variable)}>
+      <body
+        className={cn(
+          'font-body antialiased min-h-screen bg-background',
+          playfairDisplay.variable,
+          raleway.variable
+        )}
+      >
         <LanguageProvider>
           <Providers>
             <ThemeLoader />
