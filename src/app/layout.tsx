@@ -4,7 +4,7 @@ import { Playfair_Display, Raleway } from 'next/font/google';
 import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
 import { cn } from '@/lib/utils';
-import { Providers } from './providers';
+import Providers from './providers';
 import { LanguageProvider } from '@/lib/i18n';
 import ThemeLoader from '@/components/ThemeLoader';
 import WhatsAppButton from '@/components/shared/WhatsAppButton';
