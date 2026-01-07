@@ -77,10 +77,14 @@ export default function SeoAdminPage() {
       if (firestore) {
           for (const result of results) {
               const productRef = doc(firestore, 'products', result.productId);
-              await setDoc(productRef, {
-                  keywords: result.optimizedKeywords,
-                  metaDescription: result.optimizedMetaDescription,
-              }, { merge: true });
+              try {
+                await setDoc(productRef, {
+                    keywords: result.optimizedKeywords,
+                    metaDescription: result.optimizedMetaDescription,
+                }, { merge: true });
+              } catch(e) {
+                console.error("Failed to update product SEO:", e);
+              }
           }
       }
       
