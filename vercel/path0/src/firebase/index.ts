@@ -44,9 +44,3 @@ export function getSdks(firebaseApp: FirebaseApp): FirebaseServices {
     storage: getStorage(firebaseApp)
   };
 }
-
-// Re-exporting non-React utilities
-export * from './non-blocking-updates';
-export * from './non-blocking-login';
-export * from './errors';
-export * from './error-emitter';
