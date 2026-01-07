@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import dynamic from 'next/dynamic';
 import { Playfair_Display, Raleway } from 'next/font/google';
 import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
@@ -7,10 +6,7 @@ import { cn } from '@/lib/utils';
 import { LanguageProvider } from '@/lib/i18n';
 import ThemeLoader from '@/components/ThemeLoader';
 import WhatsAppButton from '@/components/shared/WhatsAppButton';
-
-const Providers = dynamic(() => import('./providers'), {
-  ssr: false,
-});
+import ClientProviders from './client-providers';
 
 const playfairDisplay = Playfair_Display({
   subsets: ['latin'],
@@ -31,9 +27,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="tr" suppressHydrationWarning>
       <body
@@ -44,12 +40,12 @@ export default function RootLayout({
         )}
       >
         <LanguageProvider>
-          <Providers>
+          <ClientProviders>
             <ThemeLoader />
             {children}
             <WhatsAppButton phoneNumber="905467898968" />
             <Toaster />
-          </Providers>
+          </ClientProviders>
         </LanguageProvider>
       </body>
     </html>
