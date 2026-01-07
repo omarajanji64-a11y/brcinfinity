@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -365,4 +364,7 @@ export default function HomePageAdminPage() {
   return (
     <div className="space-y-8">
       <h1 className="text-3xl font-headline font-bold">{t('admin_homepage.title')}</h1>
-      <HomepageForm
+      <HomepageForm key={JSON.stringify(initialData)} initialData={initialData} />
+    </div>
+  );
+}

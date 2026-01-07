@@ -1,8 +1,7 @@
-
 'use client';
 
 import { useState } from 'react';
-import { doc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { doc, setDoc, arrayUnion } from 'firebase/firestore';
 import { Loader2, Trash2, PlusCircle } from 'lucide-react';
 import { useDoc, useFirestore, useMemoFirebase } from '@/firebase/client-provider';
 import { Button } from '@/components/ui/button';
@@ -56,7 +55,7 @@ export default function CloudinaryAdminPage() {
         toast({
             variant: 'destructive',
             title: 'Failed to Add Image',
-            description: 'Could not save the new image URL to Firestore.',
+            description: (error as Error).message || 'Could not save the new image URL to Firestore.',
         });
     } finally {
         setIsAdding(false);
@@ -82,7 +81,7 @@ export default function CloudinaryAdminPage() {
       toast({
         variant: 'destructive',
         title: 'Deletion Failed',
-        description: 'Could not remove the image from Firestore.',
+        description: (error as Error).message || 'Could not remove the image from Firestore.',
       });
     }
   };

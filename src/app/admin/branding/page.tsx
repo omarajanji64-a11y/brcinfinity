@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -225,3 +224,7 @@ export default function BrandingAdminPage() {
             </Button>
           </CardFooter>
         </Card>
+      </form>
+    </div>
+  );
+}

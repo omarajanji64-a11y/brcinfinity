@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -96,7 +95,7 @@ export default function SeoAdminPage() {
       toast({
         variant: 'destructive',
         title: t('admin_seo.toast_error_title'),
-        description: t('admin_seo.toast_error_desc'),
+        description: (error as Error).message || t('admin_seo.toast_error_desc'),
       });
     } finally {
       setIsLoading(false);
@@ -198,5 +197,3 @@ export default function SeoAdminPage() {
     </div>
   );
 }
-
-    

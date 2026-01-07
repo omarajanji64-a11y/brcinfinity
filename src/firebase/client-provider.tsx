@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { DependencyList, createContext, useContext, ReactNode, useMemo, useState, useEffect } from 'react';
@@ -7,8 +6,8 @@ import { Firestore } from 'firebase/firestore';
 import { Auth, User, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
 import { FirebaseStorage } from 'firebase/storage';
 import { initializeFirebase } from '@/firebase'; // Import the core initializer
-import { useCollection as useCollectionHook } from '@/firebase/firestore/use-collection';
-import { useDoc as useDocHook } from '@/firebase/firestore/use-doc';
+import { useCollection } from '@/firebase/firestore/use-collection';
+import { useDoc } from '@/firebase/firestore/use-doc';
 
 interface FirebaseProviderProps {
   children: ReactNode;
@@ -194,7 +193,4 @@ export const useUser = (): UserHookResult => {
   return { user, isUserLoading, userError };
 };
 
-export const useCollection = useCollectionHook;
-export const useDoc = useDocHook;
-
-    
+export { useCollection, useDoc };

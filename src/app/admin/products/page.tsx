@@ -1,9 +1,8 @@
-
 'use client';
 
 import { useState } from 'react';
 import Papa from 'papaparse';
-import { collection, doc } from 'firebase/firestore';
+import { collection, doc, deleteDoc, setDoc } from 'firebase/firestore';
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -17,7 +16,6 @@ import { Label } from "@/components/ui/label";
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase/client-provider';
-import { deleteDocumentNonBlocking, setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useTranslation, Language } from '@/lib/i18n';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -68,7 +66,7 @@ function AiProductImporterCard() {
                 // The AI generates an imageId, we construct a placeholder URL from it.
                 const imageUrl = `https://picsum.photos/seed/${product.imageId}/600/600`;
 
-                setDocumentNonBlocking(productRef, { ...product, imageUrl }, { merge: true });
+                await setDoc(productRef, { ...product, imageUrl }, { merge: true });
                 completed++;
                 setImportProgress((completed / total) * 100);
             }
@@ -158,7 +156,7 @@ export default function ProductsAdminPage() {
   const handleDelete = async (productId: string) => {
     if (!firestore) return;
     try {
-      await deleteDocumentNonBlocking(doc(firestore, "products", productId));
+      await deleteDoc(doc(firestore, "products", productId));
       toast({
         title: t('admin_products.toast_delete_success_title'),
         description: t('admin_products.toast_delete_success_desc'),
@@ -202,7 +200,7 @@ export default function ProductsAdminPage() {
           // Upload to Firebase
           await Promise.all(parsedData.map(async (product) => {
             const newDocRef = doc(collection(firestore, 'products'));
-            await setDocumentNonBlocking(newDocRef, {
+            await setDoc(newDocRef, {
               ...product,
               id: newDocRef.id,
             });
