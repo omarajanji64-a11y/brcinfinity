@@ -111,6 +111,26 @@ export default {
             boxShadow: '0 0 20px 5px hsl(var(--accent) / 0.6)',
           },
         },
+        'text-glow': {
+          '0%, 100%': {
+            textShadow: 
+              '0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.3), 0 0 30px rgba(255, 255, 255, 0.2), 0 0 40px rgba(255, 255, 255, 0.1)',
+          },
+          '50%': {
+            textShadow: 
+              '0 0 20px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6), 0 0 40px rgba(255, 255, 255, 0.4), 0 0 50px rgba(255, 255, 255, 0.2), 0 0 60px rgba(255, 255, 255, 0.1)',
+          },
+        },
+        'button-glow': {
+          '0%, 100%': {
+            boxShadow: 
+              '0 0 10px hsl(var(--accent) / 0.4), 0 0 20px hsl(var(--accent) / 0.3), 0 0 30px hsl(var(--accent) / 0.2)',
+          },
+          '50%': {
+            boxShadow: 
+              '0 0 20px hsl(var(--accent) / 0.6), 0 0 30px hsl(var(--accent) / 0.5), 0 0 40px hsl(var(--accent) / 0.4), 0 0 50px hsl(var(--accent) / 0.3)',
+          },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -120,6 +140,8 @@ export default {
         'fade-in-up': 'fade-in-up 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards',
         'scale-in': 'scale-in 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards',
         'gold-glow': 'gold-glow 2.5s ease-in-out infinite',
+        'text-glow': 'text-glow 3s ease-in-out infinite',
+        'button-glow': 'button-glow 3s ease-in-out infinite',
       },
     },
   },

@@ -14,7 +14,8 @@ export type Product = {
   description: LocalizedString;
   price: number;
   stock: number;
-  imageUrl: string;
+  imageUrl: string; // Keep for backward compatibility
+  imageUrls?: string[]; // New field for multiple images
 };
 
 // This data is now used as a fallback or for initial seeding, 

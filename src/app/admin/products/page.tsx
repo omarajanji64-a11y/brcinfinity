@@ -328,7 +328,11 @@ export default function ProductsAdminPage() {
                 ) : (
                     products?.map((product) => {
                     const productName = product.name[language] ?? product.name['en'];
-                    const isValidUrl = typeof product.imageUrl === 'string' && product.imageUrl.startsWith('https://');
+                    // Get first image from imageUrls array, or fallback to imageUrl for backward compatibility
+                    const displayImageUrl = (product.imageUrls && product.imageUrls.length > 0) 
+                      ? product.imageUrls[0] 
+                      : product.imageUrl;
+                    const isValidUrl = typeof displayImageUrl === 'string' && displayImageUrl.startsWith('https://');
                     return (
                         <TableRow key={product.id}>
                         <TableCell className="hidden sm:table-cell">
@@ -337,7 +341,7 @@ export default function ProductsAdminPage() {
                                 alt={productName}
                                 className="aspect-square rounded-md object-cover"
                                 height="64"
-                                src={product.imageUrl}
+                                src={displayImageUrl}
                                 width="64"
                             />
                             ) : (

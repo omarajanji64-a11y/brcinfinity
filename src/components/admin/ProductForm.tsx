@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Save } from 'lucide-react';
+import { Loader2, Save, Plus, X } from 'lucide-react';
 import { useFirestore } from '@/firebase/client-provider';
 import { Product } from '@/lib/data';
 import { useTranslation } from '@/lib/i18n';
@@ -43,7 +43,8 @@ const productFormSchema = z.object({
   description: localizedStringSchema,
   price: z.preprocess((a) => parseFloat(z.string().parse(a)), z.number().positive()),
   stock: z.preprocess((a) => parseInt(z.string().parse(a), 10), z.number().int().min(0)),
-  imageUrl: z.string().url('Please enter a valid URL.'),
+  imageUrl: z.string().url('Please enter a valid URL.').optional().or(z.literal('')),
+  imageUrls: z.array(z.string().url('Please enter a valid URL.')).optional(),
 });
 
 type ProductFormData = z.infer<typeof productFormSchema>;
@@ -58,6 +59,12 @@ export default function ProductForm({ product, onSave }: ProductFormProps) {
   const { toast } = useToast();
   const firestore = useFirestore();
 
+  // Initialize imageUrls from product, or from imageUrl for backward compatibility
+  // Always ensure at least one empty field is available
+  const initialImageUrls = product?.imageUrls && product.imageUrls.length > 0
+    ? product.imageUrls 
+    : (product?.imageUrl ? [product.imageUrl] : ['']);
+
   const defaultValues: ProductFormData = {
     id: product?.id || uuidv4(),
     name: product?.name || { en: '', fr: '', tr: '' },
@@ -68,6 +75,7 @@ export default function ProductForm({ product, onSave }: ProductFormProps) {
     price: product?.price || 0,
     stock: product?.stock || 0,
     imageUrl: product?.imageUrl || '',
+    imageUrls: initialImageUrls,
   };
 
   const {
@@ -76,19 +84,48 @@ export default function ProductForm({ product, onSave }: ProductFormProps) {
     control,
     formState: { errors, isSubmitting },
     setValue,
+    watch,
   } = useForm<ProductFormData>({
     resolver: zodResolver(productFormSchema),
     defaultValues,
   });
 
+  const imageUrls = watch('imageUrls') || [];
+
+  const addImageUrl = () => {
+    const currentUrls = imageUrls || [];
+    setValue('imageUrls', [...currentUrls, ''], { shouldValidate: true });
+  };
+
+  const removeImageUrl = (index: number) => {
+    const currentUrls = imageUrls || [];
+    const newUrls = currentUrls.filter((_, i) => i !== index);
+    setValue('imageUrls', newUrls, { shouldValidate: true });
+  };
+
+  const updateImageUrl = (index: number, url: string) => {
+    const currentUrls = imageUrls || [];
+    const newUrls = [...currentUrls];
+    newUrls[index] = url;
+    setValue('imageUrls', newUrls, { shouldValidate: true });
+  };
+
   const onSubmit: SubmitHandler<ProductFormData> = async (data) => {
     if (!firestore) return;
     const productRef = doc(firestore, 'products', data.id);
+    
+    // Filter out empty URLs and ensure we have at least one image
+    const validImageUrls = (data.imageUrls || []).filter(url => url && url.trim() !== '');
+    
+    // For backward compatibility, set imageUrl to the first image if available
+    const primaryImageUrl = validImageUrls.length > 0 ? validImageUrls[0] : (data.imageUrl || '');
     
     const productToSave = {
         ...data,
         price: Number(data.price),
         stock: Number(data.stock),
+        imageUrl: primaryImageUrl, // Keep for backward compatibility
+        imageUrls: validImageUrls, // New field for multiple images
     };
 
     try {
@@ -149,7 +186,62 @@ export default function ProductForm({ product, onSave }: ProductFormProps) {
                 </SelectContent>
             </Select>
          </div>
-         <FormField name="imageUrl" label={t('product_form.image_url_label')} placeholder="https://example.com/image.png" errors={errors.imageUrl} register={register} />
+      </div>
+
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label>Product Images (Cloudinary URLs)</Label>
+          <p className="text-sm text-muted-foreground">Add multiple Cloudinary image URLs for this product</p>
+        </div>
+        <div className="space-y-4">
+          {imageUrls.map((url, index) => (
+            <div key={index} className="p-4 border rounded-lg space-y-2 relative bg-card">
+              <div className="flex gap-2 items-center">
+                <Input
+                  type="url"
+                  placeholder="https://res.cloudinary.com/your-cloud/image/upload/v1234567/product.jpg"
+                  value={url}
+                  onChange={(e) => updateImageUrl(index, e.target.value)}
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="icon"
+                  onClick={() => removeImageUrl(index)}
+                  disabled={imageUrls.length === 1}
+                  className="shrink-0"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              {url && url.startsWith('https://') && (
+                <div className="mt-2 rounded-md overflow-hidden border">
+                  <img
+                    src={url}
+                    alt={`Preview ${index + 1}`}
+                    className="w-full h-32 object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+          ))}
+          <Button
+            type="button"
+            variant="outline"
+            onClick={addImageUrl}
+            className="w-full"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Add Another Image
+          </Button>
+        </div>
+        {errors.imageUrls && (
+          <p className="text-sm text-destructive">{errors.imageUrls.message}</p>
+        )}
       </div>
 
 
