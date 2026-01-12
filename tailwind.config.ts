@@ -124,13 +124,13 @@ export default {
         'text-gold-glow': {
           '0%, 100%': {
             textShadow: 
-              '0 0 10px hsl(var(--accent) / 0.6), 0 0 20px hsl(var(--accent) / 0.4), 0 0 30px hsl(var(--accent) / 0.2)',
-            color: '#faf9f6',
+              '0 0 10px rgba(255, 215, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.4), 0 0 30px rgba(255, 215, 0, 0.2)',
+            color: '#ffffff',
           },
           '50%': {
             textShadow: 
-              '0 0 20px hsl(var(--accent) / 0.8), 0 0 30px hsl(var(--accent) / 0.6), 0 0 40px hsl(var(--accent) / 0.4), 0 0 50px hsl(var(--accent) / 0.3)',
-            color: '#fef3c7',
+              '0 0 20px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.6), 0 0 40px rgba(255, 215, 0, 0.4), 0 0 50px rgba(255, 215, 0, 0.3)',
+            color: '#ffed4e',
           },
         },
         'button-glow': {
