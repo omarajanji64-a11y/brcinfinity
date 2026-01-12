@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
+import Link from 'next/link';
 import { doc } from 'firebase/firestore';
 import Autoplay from 'embla-carousel-autoplay';
 import { AlertTriangle } from 'lucide-react';
@@ -13,6 +14,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
+import { Button } from '@/components/ui/button';
 import { useDoc, useFirestore, useMemoFirebase } from '@/firebase/client-provider';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
@@ -104,6 +106,9 @@ export default function CloudinaryCarousel() {
         <p className="mt-6 max-w-3xl text-lg md:text-xl drop-shadow-xl animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
           {t('hero.subtitle')}
         </p>
+        <Button asChild size="lg" className="mt-8 animate-fade-in-up transition-transform duration-300 hover:scale-105" style={{ animationDelay: '0.6s' }}>
+          <Link href="/products">{t('hero.explore_collections')}</Link>
+        </Button>
       </div>
     </div>
   );
