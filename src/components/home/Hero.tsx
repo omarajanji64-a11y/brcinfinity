@@ -46,7 +46,7 @@ const defaultHomepageData: HomepageConfig = {
     },
     subtitle: {
       en: 'Discover our collection of royal and classic furniture, where timeless elegance meets unparalleled craftsmanship.',
-      fr: 'Découvrez notre collection de meubles royaux et classiques, où l\'élégance intemporelle rencontre un savoir-faire inégalé.',
+      fr: 'Découvrez notre collection de meubles royaux et classiques, où l\\\'élégance intemporelle rencontre un savoir-faire inégalé.',
       tr: 'Zamansız zarafetin benzersiz işçilikle buluştuğu royal ve klasik mobilya koleksiyonumuzu keşfedin.',
     },
     heroImages: placeholderImagesData.placeholderImages.filter(p => p.id.startsWith("hero-"))
@@ -112,14 +112,14 @@ export default function Hero() {
         <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 z-10 hidden md:flex" />
       </Carousel>
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
-        <h1 className="font-headline text-5xl md:text-7xl font-bold drop-shadow-2xl animate-fade-in-up">
+        <h1 className="font-headline text-5xl md:text-7xl font-bold drop-shadow-2xl animate-fade-in-up text-shadow-[0_0_10px_rgba(255,255,255,0.7)]">
           {title}
         </h1>
-        <p className="mt-6 max-w-3xl text-lg md:text-xl drop-shadow-xl animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+        <p className="mt-6 max-w-3xl text-lg md:text-xl drop-shadow-xl animate-fade-in-up text-shadow-[0_0_10px_rgba(255,255,255,0.7)]" style={{ animationDelay: '0.3s' }}>
           {subtitle}
         </p>
         <Button asChild size="lg" className="mt-8 animate-fade-in-up transition-transform duration-300 hover:scale-105" style={{ animationDelay: '0.6s' }}>
-          <Link href="/products">{t('hero.explore_collection')}</Link>
+          <Link href="/products">{t('hero.explore_collections')}</Link>
         </Button>
       </div>
     </div>

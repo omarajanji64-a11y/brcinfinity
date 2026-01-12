@@ -22,7 +22,7 @@
   "hero": {
     "title": "Vivez le vrai luxe",
     "subtitle": "Découvrez notre collection de meubles royaux et classiques, où l'élégance intemporelle rencontre un savoir-faire inégalé.",
-    "explore_collection": "Découvrir la collection"
+    "explore_collections": "Découvrir les collections"
   },
   "home": {
     "featured_products": "Produits en vedette",
