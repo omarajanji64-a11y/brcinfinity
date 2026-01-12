@@ -99,7 +99,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-background/50 backdrop-blur-sm border-b border-white/10">
       <div className="container mx-auto grid h-40 grid-cols-2 items-center px-4 md:grid-cols-3">
         <nav className="hidden md:flex items-center gap-6">
-          {navLinks.slice(0, 2).map(link => (
+          {navLinks.slice(0, 3).map(link => (
             <Link key={link.href} href={link.href} className="text-white hover:text-white/80 transition-colors font-medium">
               {link.label}
             </Link>
