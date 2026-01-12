@@ -15,7 +15,9 @@ export default function Providers({
       enableSystem
       disableTransitionOnChange
     >
-      <FirebaseProvider>{children}</FirebaseProvider>
+      <FirebaseProvider>
+        {children}
+      </FirebaseProvider>
     </ThemeProvider>
   );
 }
