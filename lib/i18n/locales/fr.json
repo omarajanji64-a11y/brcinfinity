@@ -3,6 +3,7 @@
   "header": {
     "home": "Accueil",
     "products": "Produits",
+    "mission_vision": "Mission et Vision",
     "contact": "Contact",
     "download_catalog": "Télécharger le catalogue"
   },
@@ -285,5 +286,35 @@
     "required": "Ce champ est obligatoire.",
     "positive_number": "Veuillez saisir un nombre positif.",
     "integer": "Veuillez saisir un nombre entier."
+  },
+  "mission_vision": {
+    "title": "Mission et Vision",
+    "subtitle": "Découvrez le cœur et l'âme de BRC INFINITY - notre engagement envers l'excellence et le luxe intemporel.",
+    "our_mission": "Notre Mission",
+    "mission_intro": "Chez BRC INFINITY, notre mission est d'apporter l'élégance intemporelle et la qualité sans compromis à chaque maison. Nous nous engageons à créer des meubles qui transcendent les tendances et témoignent d'un véritable savoir-faire.",
+    "mission_excellence": "L'Excellence dans Chaque Détail",
+    "mission_excellence_desc": "Nous fabriquons méticuleusement chaque pièce pour assurer qu'elle répond aux normes les plus élevées de qualité et de beauté, créant des meubles qui durent des générations.",
+    "mission_craftsmanship": "Savoir-faire Maître",
+    "mission_craftsmanship_desc": "Nos artisans allient les techniques traditionnelles à la conception moderne, créant des meubles sur mesure qui reflètent votre style et votre personnalité uniques.",
+    "mission_innovation": "Innovation Continue",
+    "mission_innovation_desc": "Nous embrassons l'innovation tout en honorant les traditions classiques, garantissant que nos collections restent fraîches, pertinentes et intemporellement belles.",
+    "our_vision": "Notre Vision",
+    "vision_intro": "Nous envisageons un monde où le luxe et la beauté sont accessibles à ceux qui apprécient le véritable savoir-faire. BRC INFINITY s'efforce d'être la destination privilégiée des clients exigeants en quête de meubles d'exception.",
+    "vision_leadership": "Leadership Industrie",
+    "vision_leadership_desc": "Devenir le leader mondialement reconnu du mobilier de luxe et classique, en fixant la norme pour la qualité, la conception et l'excellence du service.",
+    "vision_heritage": "Préserver l'Héritage",
+    "vision_heritage_desc": "Préserver et célébrer le riche héritage de la fabrication traditionnelle de meubles tout en repoussant les limites du design contemporain.",
+    "vision_community": "Communauté et Culture",
+    "vision_community_desc": "Construire une communauté dynamique d'amateurs de design et de collectionneurs qui partagent notre passion pour la beauté intemporelle et le savoir-faire d'exception.",
+    "our_values": "Nos Valeurs Fondamentales",
+    "values_desc": "Nos valeurs sont le fondement de tout ce que nous faisons. Elles guident nos décisions, inspirent nos équipes et définissent notre relation avec nos clients et nos communautés.",
+    "value_quality": "Qualité sans Compromis",
+    "value_quality_desc": "Chaque pièce subit un contrôle de qualité rigoureux pour assurer qu'elle répond à nos normes rigoureuses et offre une valeur durable.",
+    "value_integrity": "Intégrité et Transparence",
+    "value_integrity_desc": "Nous menons nos activités avec une honnêteté et une transparence absolues, construisant la confiance avec nos clients et nos partenaires.",
+    "value_passion": "Passion pour le Design",
+    "value_passion_desc": "Nos designers et artisans sont profondément passionnés par la création de meubles qui apportent de la joie et de la beauté à chaque espace.",
+    "value_sustainability": "Pratiques Durables",
+    "value_sustainability_desc": "Nous nous engageons à des pratiques respectueuses de l'environnement et à l'approvisionnement responsable, garantissant que notre héritage bénéficie aux générations futures."
   }
 }

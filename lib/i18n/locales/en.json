@@ -3,6 +3,7 @@
   "header": {
     "home": "Home",
     "products": "Products",
+    "mission_vision": "Mission & Vision",
     "contact": "Contact",
     "download_catalog": "Download Catalog"
   },
@@ -294,5 +295,35 @@
     "required": "This field is required.",
     "positive_number": "Please enter a positive number.",
     "integer": "Please enter a whole number."
+  },
+  "mission_vision": {
+    "title": "Mission & Vision",
+    "subtitle": "Discover the heart and soul of BRC INFINITY - our commitment to excellence and timeless luxury.",
+    "our_mission": "Our Mission",
+    "mission_intro": "At BRC INFINITY, our mission is to bring timeless elegance and uncompromising quality to every home. We are dedicated to crafting furniture that transcends trends and stands as a testament to fine artisanship.",
+    "mission_excellence": "Excellence in Every Detail",
+    "mission_excellence_desc": "We meticulously craft every piece to ensure it meets the highest standards of quality and beauty, creating furniture that lasts generations.",
+    "mission_craftsmanship": "Master Craftsmanship",
+    "mission_craftsmanship_desc": "Our artisans blend traditional techniques with modern design, creating bespoke furniture that reflects your unique style and personality.",
+    "mission_innovation": "Continuous Innovation",
+    "mission_innovation_desc": "We embrace innovation while honoring classic traditions, ensuring our collections remain fresh, relevant, and timelessly beautiful.",
+    "our_vision": "Our Vision",
+    "vision_intro": "We envision a world where luxury and beauty are accessible to those who appreciate fine craftsmanship. BRC INFINITY strives to be the premier destination for discerning customers seeking exceptional furniture.",
+    "vision_leadership": "Industry Leadership",
+    "vision_leadership_desc": "To become the globally recognized leader in luxury and classic furniture, setting the standard for quality, design, and customer excellence.",
+    "vision_heritage": "Preserving Heritage",
+    "vision_heritage_desc": "To preserve and celebrate the rich heritage of traditional furniture making while pushing the boundaries of contemporary design.",
+    "vision_community": "Community & Culture",
+    "vision_community_desc": "To build a vibrant community of design enthusiasts and collectors who share our passion for timeless beauty and exceptional craftsmanship.",
+    "our_values": "Our Core Values",
+    "values_desc": "Our values are the foundation of everything we do. They guide our decisions, inspire our teams, and define our relationship with our customers and communities.",
+    "value_quality": "Uncompromising Quality",
+    "value_quality_desc": "Every piece undergoes rigorous quality control to ensure it meets our exacting standards and delivers lasting value.",
+    "value_integrity": "Integrity & Transparency",
+    "value_integrity_desc": "We conduct our business with complete honesty and transparency, building trust with our customers and partners.",
+    "value_passion": "Passion for Design",
+    "value_passion_desc": "Our designers and artisans are deeply passionate about creating furniture that brings joy and beauty to every space.",
+    "value_sustainability": "Sustainable Practices",
+    "value_sustainability_desc": "We are committed to environmentally responsible practices and sourcing, ensuring our legacy benefits future generations."
   }
 }

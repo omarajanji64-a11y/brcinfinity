@@ -2,8 +2,7 @@
 {
   "header": {
     "home": "Ana Sayfa",
-    "products": "Ürünler",
-    "contact": "İletişim",
+    "products": "Ürünler",    "mission_vision": "Misyon & Vizyon",    "contact": "İletişim",
     "download_catalog": "Katalog İndir"
   },
   "footer": {
@@ -285,5 +284,35 @@
     "required": "Bu alan zorunludur.",
     "positive_number": "Lütfen pozitif bir sayı girin.",
     "integer": "Lütfen bir tam sayı girin."
+  },
+  "mission_vision": {
+    "title": "Misyon & Vizyon",
+    "subtitle": "BRC INFINITY'nin kalbi ve ruhunu keşfedin - mükemmelliğe ve zamansız lüksümüze olan taahhüdümüz.",
+    "our_mission": "Misyonumuz",
+    "mission_intro": "BRC INFINITY'de misyonumuz, her eve zamansız zarafet ve ödün vermeyen kaliteyi getirmektir. İzim aşan ve usta işçiliğinin bir kanıtı olan mobilyalar yaratmaya kararlıyız.",
+    "mission_excellence": "Her Detayda Mükemmellik",
+    "mission_excellence_desc": "Her parçayı titizlikle üretiyoruz ve en yüksek kalite ve güzellik standartlarını sağlıyoruz, nesiller boyunca süren mobilyalar yaratıyoruz.",
+    "mission_craftsmanship": "Usta İşçiliği",
+    "mission_craftsmanship_desc": "Sanatçılarımız geleneksel teknikleri modern tasarımla harmanlayarak, benzersiz stilinizi ve kişiliğinizi yansıtan özel tasarım mobilyalar yaratıyor.",
+    "mission_innovation": "Sürekli İnovasyon",
+    "mission_innovation_desc": "Klasik gelenekleri onurlandırırken yeniliği kucaklıyoruz ve koleksiyonlarımızın taze, alakalı ve zamansız güzel kalmasını sağlıyoruz.",
+    "our_vision": "Vizyonumuz",
+    "vision_intro": "Lüksün ve güzelliğin ince işçiliği takdir edenlere erişilebilir olduğu bir dünya hayal ediyoruz. BRC INFINITY, istisnai mobilya arayan ayırt edici müşterilerin tercih edilen hedefi olmaya çalışıyor.",
+    "vision_leadership": "Endüstri Lideri",
+    "vision_leadership_desc": "Lüks ve klasik mobilya alanında küresel olarak tanınan lider olmak, kalite, tasarım ve müşteri mükemmelliği için standardı belirlemek.",
+    "vision_heritage": "Mirası Korumak",
+    "vision_heritage_desc": "Geleneksel mobilya üretiminin zengin mirasını korumak ve kutlamak, aynı zamanda çağdaş tasarımın sınırlarını zorlamak.",
+    "vision_community": "Topluluk ve Kültür",
+    "vision_community_desc": "Zamansız güzellik ve istisna işçiliğe tutkumuz paylaşan tasarım meraklıları ve koleksiyoncilerden oluşan canlı bir topluluk inşa etmek.",
+    "our_values": "Temel Değerlerimiz",
+    "values_desc": "Değerlerimiz yaptığımız her şeyin temelini oluşturan. Kararlarımıza rehberlik eder, ekiplerimizi ilhamlandırır ve müşterilerimiz ile topluluklar ile ilişkilerimizi tanımlar.",
+    "value_quality": "Ödünsüz Kalite",
+    "value_quality_desc": "Her parça katı kalite kontrol süreçlerinden geçer ve en yüksek standartlarımızı karşıladığını ve uzun ömürlü değer sağladığını sağlar.",
+    "value_integrity": "Dürüstlük ve Şeffaflık",
+    "value_integrity_desc": "İşimizi tam dürüstlük ve şeffaflıkla yönetiyoruz, müşterilerimiz ve ortaklarımızla güven inşa ediyoruz.",
+    "value_passion": "Tasarıma Tutkusu",
+    "value_passion_desc": "Tasarımcılarımız ve sanatçılarımız her alana neşe ve güzellik getiren mobilyalar yaratmaya derinden tutkulu.",
+    "value_sustainability": "Sürdürülebilir Uygulamalar",
+    "value_sustainability_desc": "Çevresel olarak sorumlu uygulamalara ve kaynağa bağlı kalmaya kararlıyız ve mirasımızın gelecek nesillere fayda sağlamasını sağlıyoruz."
   }
 }
