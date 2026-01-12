@@ -121,6 +121,18 @@ export default {
               '0 0 20px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6), 0 0 40px rgba(255, 255, 255, 0.4), 0 0 50px rgba(255, 255, 255, 0.2), 0 0 60px rgba(255, 255, 255, 0.1)',
           },
         },
+        'text-gold-glow': {
+          '0%, 100%': {
+            textShadow: 
+              '0 0 10px hsl(var(--accent) / 0.6), 0 0 20px hsl(var(--accent) / 0.4), 0 0 30px hsl(var(--accent) / 0.2)',
+            color: '#faf9f6',
+          },
+          '50%': {
+            textShadow: 
+              '0 0 20px hsl(var(--accent) / 0.8), 0 0 30px hsl(var(--accent) / 0.6), 0 0 40px hsl(var(--accent) / 0.4), 0 0 50px hsl(var(--accent) / 0.3)',
+            color: '#fef3c7',
+          },
+        },
         'button-glow': {
           '0%, 100%': {
             boxShadow: 
@@ -141,6 +153,7 @@ export default {
         'scale-in': 'scale-in 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards',
         'gold-glow': 'gold-glow 2.5s ease-in-out infinite',
         'text-glow': 'text-glow 3s ease-in-out infinite',
+        'text-gold-glow': 'text-gold-glow 3s ease-in-out infinite',
         'button-glow': 'button-glow 3s ease-in-out infinite',
       },
     },
