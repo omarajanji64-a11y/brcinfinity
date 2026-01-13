@@ -85,10 +85,12 @@ function DownloadCatalogButton() {
 
 export default function Header() {
   const { t } = useTranslation();
-  const navLinks = [
+  const navLinksLeft = [
     { href: '/', label: t('header.home') },
     { href: '/products', label: t('header.products') },
-    { href: '/mission-vision', label: t('header.mission_vision') },
+    { href: '/about-us', label: 'Hakkımızda' },
+  ];
+  const navLinksRight = [
     { href: '/contact', label: t('header.contact') },
   ];
 
@@ -98,7 +100,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-background/50 backdrop-blur-sm border-b border-white/10">
       <div className="container mx-auto grid h-40 grid-cols-2 items-center px-4 md:grid-cols-3">
         <nav className="hidden md:flex items-center gap-6">
-          {navLinks.slice(0, 2).map(link => (
+          {navLinksLeft.map(link => (
             <Link key={link.href} href={link.href} className="text-white hover:text-white/80 transition-colors font-medium">
               {link.label}
             </Link>
@@ -110,9 +112,11 @@ export default function Header() {
         </div>
         
         <div className="hidden md:flex items-center justify-end gap-2">
-           <Link href="/contact" className="text-white hover:text-white/80 transition-colors font-medium">
-              {t('header.contact')}
+          {navLinksRight.map(link => (
+            <Link key={link.href} href={link.href} className="text-white hover:text-white/80 transition-colors font-medium">
+              {link.label}
             </Link>
+          ))}
           <DownloadCatalogButton />
           <LanguageSwitcher />
         </div>
@@ -137,7 +141,7 @@ export default function Header() {
                   </SheetClose>
                 </div>
                 <nav className="flex flex-col gap-6 text-lg">
-                  {navLinks.map(link => (
+                  {[...navLinksLeft, ...navLinksRight].map(link => (
                     <SheetClose asChild key={link.href}>
                       <Link href={link.href} className="text-foreground/80 hover:text-foreground transition-colors font-medium">
                         {link.label}

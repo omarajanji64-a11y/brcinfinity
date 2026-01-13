@@ -100,13 +100,19 @@ export default function CloudinaryCarousel() {
         <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 z-10 hidden md:flex" />
       </Carousel>
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
-        <h1 className="font-headline text-5xl md:text-7xl font-bold drop-shadow-2xl animate-fade-in-up animate-text-glow">
+        <h1 className="font-headline text-5xl md:text-7xl font-bold drop-shadow-2xl animate-fade-in-up animate-text-gold-glow text-accent">
           {t('hero.title')}
         </h1>
         <p className="mt-6 max-w-3xl text-lg md:text-xl drop-shadow-xl animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
           {t('hero.subtitle')}
         </p>
-        <Button asChild size="lg" className="mt-8 animate-fade-in-up animate-button-glow transition-transform duration-300 hover:scale-105" style={{ animationDelay: '0.6s' }}>
+        <Button
+          asChild
+          size="lg"
+          variant="outline"
+          className="mt-8 animate-fade-in-up animate-button-glow border-accent text-accent bg-transparent hover:bg-accent/10 transition-transform duration-300 hover:scale-105"
+          style={{ animationDelay: '0.6s' }}
+        >
           <Link href="/products">{t('hero.explore_collections')}</Link>
         </Button>
       </div>

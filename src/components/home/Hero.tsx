@@ -112,15 +112,34 @@ export default function Hero() {
         <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 z-10 hidden md:flex" />
       </Carousel>
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
-        <h1 className="font-headline text-5xl md:text-7xl font-bold drop-shadow-2xl animate-fade-in-up animate-text-gold-glow" style={{
-          textShadow: '0 0 20px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.6), 0 0 40px rgba(255, 215, 0, 0.4)'
-        }}>
+        <h1
+          className="font-headline text-5xl md:text-7xl font-bold drop-shadow-2xl animate-fade-in-up gold-glow"
+          style={{
+            textShadow:
+              '0 0 20px #FFD700, 0 0 30px #FFD700, 0 0 40px #FFD700, 0 0 60px #FFD700',
+            color: '#FFD700',
+          }}
+        >
           {title}
         </h1>
-        <p className="mt-6 max-w-3xl text-lg md:text-xl text-white drop-shadow-xl animate-fade-in-up text-shadow-[0_0_10px_rgba(255,255,255,0.7)]" style={{ animationDelay: '0.3s' }}>
+        <p
+          className="mt-6 max-w-3xl text-lg md:text-xl text-white drop-shadow-xl animate-fade-in-up text-shadow-[0_0_10px_rgba(255,255,255,0.7)]"
+          style={{ animationDelay: '0.3s' }}
+        >
           {subtitle}
         </p>
-        <Button asChild size="lg" className="mt-8 animate-fade-in-up animate-gold-glow transition-transform duration-300 hover:scale-105" style={{ animationDelay: '0.6s' }}>
+        <Button
+          asChild
+          size="lg"
+          className="mt-8 animate-fade-in-up gold-glow transition-transform duration-300 hover:scale-105"
+          style={{
+            animationDelay: '0.6s',
+            boxShadow:
+              '0 0 10px #FFD700, 0 0 20px #FFD700, 0 0 30px #FFD700',
+            color: '#FFD700',
+            borderColor: '#FFD700',
+          }}
+        >
           <Link href="/products">{t('hero.explore_collections')}</Link>
         </Button>
       </div>
