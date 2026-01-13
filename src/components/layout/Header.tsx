@@ -88,8 +88,7 @@ export default function Header() {
   const navLinksLeft = [
     { href: '/', label: t('header.home') },
     { href: '/products', label: t('header.products') },
-    { href: '/mission-vision', label: t('header.mission_vision') },
-    { href: '/about-us', label: 'About Us' },
+    { href: '/about-us', label: 'Hakkımızda' },
   ];
   const navLinksRight = [
     { href: '/contact', label: t('header.contact') },
