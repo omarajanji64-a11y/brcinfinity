@@ -88,7 +88,7 @@ export default function Header() {
   const navLinks = [
     { href: '/', label: t('header.home') },
     { href: '/products', label: t('header.products') },
-    { href: '/mission-vision', label: t('header.mission_vision') },
+    { href: '/mission-vision', label: 'Mission & Vision' },
     { href: '/contact', label: t('header.contact') },
   ];
 
