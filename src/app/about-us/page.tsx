@@ -1,5 +1,4 @@
-export { default } from '../mission-vision/page';
-//
+
 'use client';
 
 import Header from '@/components/layout/Header';
@@ -8,7 +7,7 @@ import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent } from '@/components/ui/card';
 import { Sparkles, Target, Heart, Zap } from 'lucide-react';
 
-export default function MissionVisionPage() {
+export default function AboutUsPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -21,7 +20,7 @@ export default function MissionVisionPage() {
           </div>
           <div className="container mx-auto max-w-4xl relative z-10">
             <div className="text-center mb-16 animate-fade-in-up">
-              <h1 className="font-headline text-5xl md:text-6xl font-bold mb-6 text-accent drop-shadow-lg">Our Mission & Vision</h1>
+              <h1 className="font-headline text-5xl md:text-6xl font-bold mb-6 text-accent drop-shadow-lg">About Us</h1>
               <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
                 At BRC Infinity, we are dedicated to redefining luxury living through timeless, classic, and sustainable furniture. Our mission is to craft pieces that not only elevate your space but also stand the test of time—ensuring safety, comfort, and elegance for generations.
               </p>
