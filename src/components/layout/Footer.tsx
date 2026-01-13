@@ -22,6 +22,8 @@ export default function Footer() {
             <ul className="mt-4 space-y-2">
               <li><Link href="/" className="text-sm text-muted-foreground hover:text-white transition-colors">{t('header.home')}</Link></li>
               <li><Link href="/products" className="text-sm text-muted-foreground hover:text-white transition-colors">{t('header.products')}</Link></li>
+              <li><Link href="/mission-vision" className="text-sm text-muted-foreground hover:text-white transition-colors">{t('header.mission_vision')}</Link></li>
+              <li><Link href="/about-us" className="text-sm text-muted-foreground hover:text-white transition-colors">About Us</Link></li>
               <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-white transition-colors">{t('header.contact')}</Link></li>
             </ul>
           </div>
