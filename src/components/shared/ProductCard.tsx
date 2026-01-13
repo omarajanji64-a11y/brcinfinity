@@ -61,76 +61,78 @@ export default function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <Card className="overflow-hidden transition-all duration-500 group h-full flex flex-col border-0 shadow-lg hover:shadow-xl hover:shadow-accent/10 hover:-translate-y-2 bg-secondary/30">
-      <CardHeader className="p-0">
-        <div className="aspect-square relative overflow-hidden group/image">
-          {isValidUrl ? (
-            <>
-              <img
-                src={transformedUrl}
-                alt={productName}
-                className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
-              />
-              {images.length > 1 && (
-                <>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 group-hover/image:opacity-100 transition-opacity bg-black/50 hover:bg-black/70 text-white"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      prevImage();
-                    }}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover/image:opacity-100 transition-opacity bg-black/50 hover:bg-black/70 text-white"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      nextImage();
-                    }}
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 opacity-0 group-hover/image:opacity-100 transition-opacity">
-                    {images.map((_, index) => (
-                      <div
-                        key={index}
-                        className={`h-1.5 w-1.5 rounded-full ${
-                          index === currentImageIndex ? 'bg-white' : 'bg-white/50'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </>
-              )}
-            </>
-          ) : (
-            <div className="w-full h-full bg-secondary flex items-center justify-center">
-              <Skeleton className="w-full h-full" />
-            </div>
-          )}
-        </div>
-      </CardHeader>
-      <CardContent className="p-4 flex-grow flex flex-col text-center">
-        <CardTitle className="font-headline text-lg mt-2">{productName}</CardTitle>
-        <div className='flex-grow' />
-        <CardDescription className="mt-2 text-base text-accent font-bold">{formattedPrice.replace('$', '$ ')}</CardDescription>
-      </CardContent>
-      <CardFooter className="p-4 pt-0">
-        <Button asChild className="w-full transition-transform duration-300 hover:scale-105">
-            <Link href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-                <MessageCircle className="mr-2 h-4 w-4" />
-                {t('common.order_whatsapp')}
+    <Link href={`/products/${product.id}`} className="block h-full group/product-card">
+      <Card className="overflow-hidden transition-all duration-500 group h-full flex flex-col border-0 shadow-lg hover:shadow-xl hover:shadow-accent/10 hover:-translate-y-2 bg-secondary/30">
+        <CardHeader className="p-0">
+          <div className="aspect-square relative overflow-hidden group/image">
+            {isValidUrl ? (
+              <>
+                <img
+                  src={transformedUrl}
+                  alt={productName}
+                  className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+                />
+                {images.length > 1 && (
+                  <>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 group-hover/image:opacity-100 transition-opacity bg-black/50 hover:bg-black/70 text-white"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        prevImage();
+                      }}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover/image:opacity-100 transition-opacity bg-black/50 hover:bg-black/70 text-white"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        nextImage();
+                      }}
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 opacity-0 group-hover/image:opacity-100 transition-opacity">
+                      {images.map((_, index) => (
+                        <div
+                          key={index}
+                          className={`h-1.5 w-1.5 rounded-full ${
+                            index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
+              </>
+            ) : (
+              <div className="w-full h-full bg-secondary flex items-center justify-center">
+                <Skeleton className="w-full h-full" />
+              </div>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent className="p-4 flex-grow flex flex-col text-center">
+          <CardTitle className="font-headline text-lg mt-2">{productName}</CardTitle>
+          <div className='flex-grow' />
+          <CardDescription className="mt-2 text-base text-accent font-bold">{formattedPrice.replace('$', '$ ')}</CardDescription>
+        </CardContent>
+        <CardFooter className="p-4 pt-0 flex flex-col gap-2">
+          <Button asChild className="w-full transition-transform duration-300 hover:scale-105">
+            <Link href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}>
+              <MessageCircle className="mr-2 h-4 w-4" />
+              {t('common.order_whatsapp')}
             </Link>
-        </Button>
-      </CardFooter>
-    </Card>
+          </Button>
+        </CardFooter>
+      </Card>
+    </Link>
   );
 }
 
