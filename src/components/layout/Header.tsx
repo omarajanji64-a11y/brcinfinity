@@ -103,6 +103,9 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
+          <Link href="/about-us" className="text-white hover:text-white/80 transition-colors font-medium">
+            About Us
+          </Link>
         </nav>
         
         <div className="flex items-center justify-start md:justify-center col-start-1 md:col-start-2">
