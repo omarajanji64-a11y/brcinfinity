@@ -1,3 +1,4 @@
+//
 'use client';
 
 import Header from '@/components/layout/Header';
@@ -85,37 +86,6 @@ export default function MissionVisionPage() {
     </div>
   );
 }
-// CLEAN END OF FILE
-
-// REMOVE ALL CODE BELOW THIS LINE (if any)
-                      {item.icon}
-                    </div>
-                    <h3 className="font-headline text-2xl font-bold text-white mb-3 group-hover:text-accent transition-colors">
-                      {item.title}
-                    </h3>
-                    <p className="text-white/70 leading-relaxed">
-                      {item.description}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Vision Section */}
-        <section className="py-20 px-4 bg-secondary/20">
-          <div className="container mx-auto max-w-6xl">
-            <div className="text-center mb-16 animate-fade-in-up">
-              <h2 className="font-headline text-4xl md:text-5xl font-bold text-white mb-4">
-                {t('mission_vision.our_vision')}
-              </h2>
-              <p className="text-white/70 text-lg max-w-3xl mx-auto">
-                {t('mission_vision.vision_intro')}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {visions.map((item, index) => (
                 <Card 
                   key={index}
