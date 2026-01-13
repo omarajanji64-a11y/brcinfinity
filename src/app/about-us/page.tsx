@@ -20,33 +20,29 @@ const IconFrame = ({ children }: { children: ReactNode }) => (
   </div>
 );
 
-const HeritageIcon = ({ className }: IconProps) => (
+const LuxuryIcon = ({ className }: IconProps) => (
   <svg className={className} viewBox="0 0 64 64" fill="none" aria-hidden="true">
-    <path d="M12 22 32 8l20 14v20L32 56 12 42V22Z" stroke="currentColor" strokeWidth="1.6" />
-    <path d="M20 30 32 22l12 8v12l-12 8-12-8V30Z" stroke="currentColor" strokeWidth="1.6" />
-    <path d="M24 36h16" stroke="currentColor" strokeWidth="1.6" />
-    <path d="M32 22v20" stroke="currentColor" strokeWidth="1.6" />
-    <circle cx="32" cy="32" r="3.5" stroke="currentColor" strokeWidth="1.6" />
+    <path d="M12 24 24 10h16l12 14-20 30-20-30Z" stroke="currentColor" strokeWidth="1.6" />
+    <path d="M24 10 32 28 40 10" stroke="currentColor" strokeWidth="1.6" />
+    <path d="M20 24h24" stroke="currentColor" strokeWidth="1.6" />
   </svg>
 );
 
-const CraftIcon = ({ className }: IconProps) => (
+const TimelessIcon = ({ className }: IconProps) => (
   <svg className={className} viewBox="0 0 64 64" fill="none" aria-hidden="true">
-    <path d="M10 28 32 10l22 18v18L32 58 10 46V28Z" stroke="currentColor" strokeWidth="1.6" />
-    <path d="M18 28h28M18 36h28" stroke="currentColor" strokeWidth="1.6" />
-    <path d="M24 44h16" stroke="currentColor" strokeWidth="1.6" />
-    <path d="M24 20 32 26l8-6" stroke="currentColor" strokeWidth="1.6" />
-    <path d="M24 20v10M40 20v10" stroke="currentColor" strokeWidth="1.6" />
+    <path d="M20 12h24M20 52h24" stroke="currentColor" strokeWidth="1.6" />
+    <path d="M24 12c0 10 16 10 16 20s-16 10-16 20" stroke="currentColor" strokeWidth="1.6" />
+    <path d="M24 12h16M24 52h16" stroke="currentColor" strokeWidth="1.6" />
+    <circle cx="32" cy="32" r="3" stroke="currentColor" strokeWidth="1.6" />
   </svg>
 );
 
-const SignatureIcon = ({ className }: IconProps) => (
+const LegacyIcon = ({ className }: IconProps) => (
   <svg className={className} viewBox="0 0 64 64" fill="none" aria-hidden="true">
-    <path d="M14 18h36l6 10-6 18-18 10-18-10-6-18 6-10Z" stroke="currentColor" strokeWidth="1.6" />
-    <path d="M22 30c4-6 16-6 20 0" stroke="currentColor" strokeWidth="1.6" />
-    <path d="M20 38h24" stroke="currentColor" strokeWidth="1.6" />
-    <path d="M26 42h12" stroke="currentColor" strokeWidth="1.6" />
-    <circle cx="32" cy="28" r="3.5" stroke="currentColor" strokeWidth="1.6" />
+    <path d="M16 16h32M18 22h28" stroke="currentColor" strokeWidth="1.6" />
+    <path d="M20 22v26M44 22v26" stroke="currentColor" strokeWidth="1.6" />
+    <path d="M14 48h36M12 52h40" stroke="currentColor" strokeWidth="1.6" />
+    <path d="M26 30h12M26 36h12" stroke="currentColor" strokeWidth="1.6" />
   </svg>
 );
 
@@ -67,15 +63,6 @@ const SustainabilityIcon = ({ className }: IconProps) => (
   </svg>
 );
 
-const LegacyIcon = ({ className }: IconProps) => (
-  <svg className={className} viewBox="0 0 64 64" fill="none" aria-hidden="true">
-    <path d="M10 24 32 12l22 12v16L32 52 10 40V24Z" stroke="currentColor" strokeWidth="1.6" />
-    <path d="M20 24v16l12 6 12-6V24" stroke="currentColor" strokeWidth="1.6" />
-    <path d="M24 30h16" stroke="currentColor" strokeWidth="1.6" />
-    <path d="M24 36h16" stroke="currentColor" strokeWidth="1.6" />
-  </svg>
-);
-
 export default function AboutUsPage() {
   const { t } = useTranslation();
 
@@ -84,7 +71,7 @@ export default function AboutUsPage() {
       title: 'Amaçlı Lüks',
       description:
         'Klasik çizgiyi modern konforla birleştiren, her detayıyla ayrıcalık hissi veren mobilyalar üretmek.',
-      Icon: SignatureIcon,
+      Icon: LuxuryIcon,
     },
     {
       title: 'Güvenli ve Dayanıklı',
@@ -105,7 +92,7 @@ export default function AboutUsPage() {
       title: 'Zamansız İmza',
       description:
         'Klasik estetikte modern bir yorumla, dünyada zamansız ve güçlü bir marka izi bırakmak.',
-      Icon: HeritageIcon,
+      Icon: TimelessIcon,
     },
     {
       title: 'Ustalık Mirası',
@@ -117,7 +104,7 @@ export default function AboutUsPage() {
       title: 'Sorumlu Lüks',
       description:
         'Sürdürülebilir üretimi lüksle buluşturarak sektör için kalıcı ve ilham veren bir standart oluşturmak.',
-      Icon: SustainabilityIcon,
+      Icon: LuxuryIcon,
     },
   ];
 
@@ -125,17 +112,14 @@ export default function AboutUsPage() {
     {
       title: t('home.why_us_1_title'),
       description: t('home.why_us_1_desc'),
-      Icon: CraftIcon,
     },
     {
       title: t('home.why_us_2_title'),
       description: t('home.why_us_2_desc'),
-      Icon: SignatureIcon,
     },
     {
       title: t('home.why_us_3_title'),
       description: t('home.why_us_3_desc'),
-      Icon: HeritageIcon,
     },
   ];
 
@@ -200,11 +184,8 @@ export default function AboutUsPage() {
                     <h2 className="text-2xl font-headline font-semibold">{t('home.why_us_title')}</h2>
                   </div>
                   <div className="space-y-4">
-                    {whyUs.map(({ title, description, Icon }) => (
+                    {whyUs.map(({ title, description }) => (
                       <div key={title} className="flex gap-4">
-                        <IconFrame>
-                          <Icon className="h-7 w-7 text-accent" />
-                        </IconFrame>
                         <div>
                           <h3 className="font-semibold text-foreground">{title}</h3>
                           <p className="text-sm text-muted-foreground">{description}</p>
