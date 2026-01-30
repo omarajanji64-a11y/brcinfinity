@@ -48,15 +48,14 @@ import {
   FileText,
 } from "lucide-react";
 
-import { toast } from "@/hooks/use-toast";
-import ProductForm from "./ProductForm";
-import AiProductImporterCard from "./AiProductImporterCard";
+import { useToast } from "@/hooks/use-toast";
+import ProductForm from "@/components/admin/ProductForm";
+// import AiProductImporterCard from "./AiProductImporterCard";
 import { useProducts } from "@/hooks/use-products";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@/lib/i18n";
 
 export default function ProductsPage() {
-  const { t, i18n } = useTranslation();
-  const language = i18n.language;
+  const { t, language } = useTranslation();
 
   const { products, isLoading: isLoadingProducts, deleteProduct } = useProducts();
 
@@ -135,7 +134,7 @@ export default function ProductsPage() {
 
         {/* IMPORT */}
         <div className="grid gap-8 md:grid-cols-2">
-          <AiProductImporterCard />
+          {/* <AiProductImporterCard /> */}
           <Card>
             <CardHeader>
               <CardTitle>{t("admin_products.import_products_title")}</CardTitle>
