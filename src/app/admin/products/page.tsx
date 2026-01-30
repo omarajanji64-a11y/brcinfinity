@@ -1,7 +1,5 @@
-       });
-        } finally {
-          setIsImporting(false);
-          setCsvFile(null); 
+      
+    File(null); 
         }
       },
       error: (error) => {
