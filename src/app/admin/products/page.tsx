@@ -1,15 +1,120 @@
-      
-    File(null); 
-        }
+"use client";
+
+import { useState } from "react";
+import Papa from "papaparse";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+
+import {
+  PlusCircle,
+  MoreHorizontal,
+  Upload,
+  Loader2,
+  CheckCircle,
+  AlertTriangle,
+  FileText,
+} from "lucide-react";
+
+import { toast } from "@/hooks/use-toast";
+import ProductForm from "./ProductForm";
+import AiProductImporterCard from "./AiProductImporterCard";
+import { useProducts } from "@/hooks/use-products";
+import { useTranslation } from "react-i18next";
+
+export default function ProductsPage() {
+  const { t, i18n } = useTranslation();
+  const language = i18n.language;
+
+  const { products, isLoading: isLoadingProducts, deleteProduct } = useProducts();
+
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+
+  const [csvFile, setCsvFile] = useState<File | null>(null);
+  const [isImporting, setIsImporting] = useState(false);
+  const [importStatus, setImportStatus] = useState<"idle" | "success" | "error">("idle");
+  const [importedProductsPreview, setImportedProductsPreview] = useState<any[]>([]);
+
+  const handleAddNew = () => {
+    setSelectedProduct(null);
+    setIsFormOpen(true);
+  };
+
+  const handleEdit = (product: any) => {
+    setSelectedProduct(product);
+    setIsFormOpen(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    await deleteProduct(id);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCsvFile(e.target.files?.[0] ?? null);
+  };
+
+  const handleImport = () => {
+    if (!csvFile) return;
+
+    setIsImporting(true);
+    setImportStatus("idle");
+
+    Papa.parse(csvFile, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        setImportedProductsPreview(results.data as any[]);
+        setImportStatus("success");
+        setIsImporting(false);
+        setCsvFile(null);
+
+        toast({
+          title: t("admin_products.toast_import_success_title"),
+          description: t("admin_products.toast_import_success_desc"),
+        });
       },
       error: (error) => {
         console.error("PapaParse Error:", error);
         setIsImporting(false);
-        setImportStatus('error');
+        setImportStatus("error");
+
         toast({
-            variant: "destructive",
-            title: t('admin_products.toast_import_error_title'),
-            description: t('admin_products.toast_papa_parse_error_desc'),
+          variant: "destructive",
+          title: t("admin_products.toast_import_error_title"),
+          description: t("admin_products.toast_papa_parse_error_desc"),
         });
       },
     });
@@ -17,155 +122,131 @@
 
   return (
     <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <div className="space-y-8">
+      <div className="space-y-8">
         <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-headline font-bold">{t('admin_nav.products')}</h1>
-            <div className="flex items-center gap-4">
-            <Button onClick={handleAddNew}>
-                <PlusCircle className="mr-2 h-4 w-4" /> {t('admin_products.add_product_button')}
-            </Button>
-            </div>
-        </div>
-        
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-2">
-            <AiProductImporterCard />
-            <Card>
-                <CardHeader>
-                    <CardTitle>{t('admin_products.import_products_title')}</CardTitle>
-                    <CardDescription>{t('admin_products.import_products_desc')}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="grid w-full items-center gap-3">
-                    <Label htmlFor="csv-import">{t('admin_products.csv_file_label')}</Label>
-                    <div className="flex gap-2">
-                        <Input id="csv-import" type="file" accept=".csv" onChange={handleFileChange} />
-                        <Button onClick={handleImport} disabled={isImporting || !csvFile}>
-                        {isImporting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
-                        {t('admin_products.import_button')}
-                        </Button>
-                    </div>
-                    </div>
-                </CardContent>
-                {importStatus === 'success' && importedProductsPreview.length > 0 && (
-                    <CardFooter>
-                        <Alert variant="default">
-                            <CheckCircle className="h-4 w-4" />
-                            <AlertTitle>{t('admin_products.import_preview_title')}</AlertTitle>
-                            <AlertDescription>
-                                {t('admin_products.import_preview_success_desc', { count: importedProductsPreview.length })}
-                            </AlertDescription>
-                        </Alert>
-                    </CardFooter>
-                )}
-                {importStatus === 'error' && (
-                    <CardFooter>
-                        <Alert variant="destructive">
-                            <AlertTriangle className="h-4 w-4" />
-                            <AlertTitle>{t('admin_products.toast_import_failed_title')}</AlertTitle>
-                            <AlertDescription>
-                                {t('admin_products.import_failed_desc')}</AlertDescription>
-                        </Alert>
-                    </CardFooter>
-                )}
-            </Card>
+          <h1 className="text-3xl font-headline font-bold">
+            {t("admin_nav.products")}
+          </h1>
+          <Button onClick={handleAddNew}>
+            <PlusCircle className="mr-2 h-4 w-4" />
+            {t("admin_products.add_product_button")}
+          </Button>
         </div>
 
-
-        <Card>
+        {/* IMPORT */}
+        <div className="grid gap-8 md:grid-cols-2">
+          <AiProductImporterCard />
+          <Card>
             <CardHeader>
-            <CardTitle>{t('admin_products.product_list_title')}</CardTitle>
-            <CardDescription>{t('admin_products.product_list_desc')}</CardDescription>
+              <CardTitle>{t("admin_products.import_products_title")}</CardTitle>
+              <CardDescription>
+                {t("admin_products.import_products_desc")}
+              </CardDescription>
             </CardHeader>
             <CardContent>
-            <Table>
-                <TableHeader>
-                <TableRow>
-                    <TableHead className="hidden w-[100px] sm:table-cell">{t('admin_products.table_header_image')}</TableHead>
-                    <TableHead>{t('admin_products.table_header_name')}</TableHead>
-                    <TableHead>{t('admin_products.table_header_category')}</TableHead>
-                    <TableHead className="hidden md:table-cell">{t('admin_products.table_header_price')}</TableHead>
-                    <TableHead className="hidden md:table-cell">{t('admin_products.table_header_stock')}</TableHead>
-                    <TableHead>
-                    <span className="sr-only">{t('admin_products.table_header_actions')}</span>
-                    </TableHead>
-                </TableRow>
-                </TableHeader>
-                <TableBody>
-                {isLoadingProducts ? (
-                    [...Array(5)].map((_, i) => (
-                    <TableRow key={i}>
-                        <TableCell className="hidden sm:table-cell"><Skeleton className="h-16 w-16 rounded-md" /></TableCell>
-                        <TableCell><Skeleton className="h-6 w-32" /></TableCell>
-                        <TableCell><Skeleton className="h-6 w-24" /></TableCell>
-                        <TableCell className="hidden md:table-cell"><Skeleton className="h-6 w-16" /></TableCell>
-                        <TableCell className="hidden md:table-cell"><Skeleton className="h-6 w-12" /></TableCell>
-                        <TableCell><Skeleton className="h-8 w-8" /></TableCell>
-                    </TableRow>
-                    ))
-                ) : (
-                    products?.map((product) => {
-                    const productName = product.name[language] ?? product.name['en'];
-                    // Get first image from imageUrls array, or fallback to imageUrl for backward compatibility
-                    const displayImageUrl = (product.imageUrls && product.imageUrls.length > 0) 
-                      ? product.imageUrls[0] 
-                      : product.imageUrl;
-                    const isValidUrl = typeof displayImageUrl === 'string' && displayImageUrl.startsWith('https://');
-                    return (
-                        <TableRow key={product.id}>
-                        <TableCell className="hidden sm:table-cell">
-                            {isValidUrl ? (
-                            <img
-                                alt={productName}
-                                className="aspect-square rounded-md object-cover"
-                                height="64"
-                                src={displayImageUrl}
-                                width="64"
-                            />
-                            ) : (
-                            <div className="w-16 h-16 bg-secondary rounded-md flex items-center justify-center">
-                                <FileText className="h-6 w-6 text-muted-foreground"/>
-                            </div>
-                            )}
-                        </TableCell>
-                        <TableCell className="font-medium">{productName}</TableCell>
-                        <TableCell>
-                            <Badge variant="outline">{product.category[language] ?? product.category['en']}</Badge>
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell">${product.price.toLocaleString()}</TableCell>
-                        <TableCell className="hidden md:table-cell">{product.stock}</TableCell>
-                        <TableCell>
-                            <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button aria-haspopup="true" size="icon" variant="ghost">
-                                <MoreHorizontal className="h-4 w-4" />
-                                <span className="sr-only">{t('admin_products.actions_menu_label')}</span>
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => handleEdit(product)}>{t('common.edit')}</DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleDelete(product.id)} className="text-destructive">{t('common.delete')}</DropdownMenuItem>
-                            </DropdownMenuContent>
-                            </DropdownMenu>
-                        </TableCell>
-                        </TableRow>
-                    );
-                    })
-                )}
-                </TableBody>
-            </Table>
+              <Label>CSV</Label>
+              <div className="flex gap-2">
+                <Input type="file" accept=".csv" onChange={handleFileChange} />
+                <Button onClick={handleImport} disabled={isImporting || !csvFile}>
+                  {isImporting ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Upload className="mr-2 h-4 w-4" />
+                  )}
+                  {t("admin_products.import_button")}
+                </Button>
+              </div>
             </CardContent>
-        </Card>
+            {importStatus === "success" && (
+              <CardFooter>
+                <Alert>
+                  <CheckCircle className="h-4 w-4" />
+                  <AlertTitle>Imported</AlertTitle>
+                  <AlertDescription>
+                    {importedProductsPreview.length} products ready
+                  </AlertDescription>
+                </Alert>
+              </CardFooter>
+            )}
+            {importStatus === "error" && (
+              <CardFooter>
+                <Alert variant="destructive">
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertTitle>Error</AlertTitle>
+                  <AlertDescription>CSV import failed</AlertDescription>
+                </Alert>
+              </CardFooter>
+            )}
+          </Card>
         </div>
-        <DialogContent className="sm:max-w-[600px] max-h-[90vh] flex flex-col">
-            <DialogHeader>
-                <DialogTitle>{selectedProduct ? t('admin_products.edit_product_title') : t('admin_products.add_product_title')}</DialogTitle>
-                <DialogDescription>
-                    {selectedProduct ? t('admin_products.edit_product_desc') : t('admin_products.add_product_desc')}</DialogDescription>
-            </DialogHeader>
-            <div className="overflow-y-auto pr-6">
-                <ProductForm product={selectedProduct} onSave={() => setIsFormOpen(false)} />
-            </div>
+
+        {/* TABLE */}
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("admin_products.product_list_title")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Price</TableHead>
+                  <TableHead />
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {isLoadingProducts ? (
+                  <TableRow>
+                    <TableCell colSpan={3}>
+                      <Skeleton className="h-6 w-full" />
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  products?.map((p) => (
+                    <TableRow key={p.id}>
+                      <TableCell>{p.name?.[language] ?? p.name?.en}</TableCell>
+                      <TableCell>${p.price}</TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button size="icon" variant="ghost">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                            <DropdownMenuItem onClick={() => handleEdit(p)}>
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              className="text-destructive"
+                              onClick={() => handleDelete(p.id)}
+                            >
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>
+              {selectedProduct ? "Edit Product" : "Add Product"}
+            </DialogTitle>
+            <DialogDescription />
+          </DialogHeader>
+          <ProductForm
+            product={selectedProduct}
+            onSave={() => setIsFormOpen(false)}
+          />
         </DialogContent>
+      </div>
     </Dialog>
   );
 }
