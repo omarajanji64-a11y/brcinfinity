@@ -121,7 +121,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <CardContent className="p-4 flex-grow flex flex-col text-center">
           <CardTitle className="font-headline text-lg mt-2">{productName}</CardTitle>
           <div className='flex-grow' />
-          <CardDescription className="mt-2 text-base text-accent font-bold">{formattedPrice.replace('$', '$ ')}</CardDescription>
+          {product.price > 0 && <CardDescription className="mt-2 text-base text-accent font-bold">{formattedPrice.replace('$', '$ ')}</CardDescription>}
         </CardContent>
         <CardFooter className="p-4 pt-0 flex flex-col gap-2">
           <Button asChild className="w-full transition-transform duration-300 hover:scale-105">
@@ -135,5 +135,3 @@ export default function ProductCard({ product }: ProductCardProps) {
     </Link>
   );
 }
-
-    

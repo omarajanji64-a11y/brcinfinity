@@ -41,7 +41,7 @@ const productFormSchema = z.object({
   style: z.enum(['Modern', 'Classic']),
   shortDescription: localizedStringSchema,
   description: localizedStringSchema,
-  price: z.preprocess((a) => parseFloat(z.string().parse(a)), z.number().positive()),
+  price: z.preprocess((a) => parseFloat(z.string().parse(a)), z.number().min(0)),
   stock: z.preprocess((a) => parseInt(z.string().parse(a), 10), z.number().int().min(0)),
   imageUrl: z.string().url('Please enter a valid URL.').optional().or(z.literal('')),
   imageUrls: z.array(z.string().url('Please enter a valid URL.')).optional(),
@@ -272,5 +272,3 @@ function FormField({ name, label, type = 'text', placeholder, errors, register, 
     </div>
   );
 }
-
-    
