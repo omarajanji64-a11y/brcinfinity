@@ -1,187 +1,173 @@
-'use client';
-
-import { useState } from 'react';
-import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { doc } from 'firebase/firestore';
-import { MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
-
-import { useTranslation } from '@/lib/i18n';
-import { useMemoFirebase, useDoc, useFirestore } from '@/firebase/client-provider';
-import type { Product } from '@/lib/data';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Button } from '@/components/ui/button';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-
-const transformCloudinaryUrl = (url: string) => {
-  if (!url || !url.includes('/upload/')) return url;
-  const parts = url.split('/upload/');
-  return `${parts[0]}/upload/w_1200,h_900,c_fill,g_auto/${parts[1]}`;
-};
-
-export default function ProductDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const { t, language } = useTranslation();
-  const firestore = useFirestore();
-
-  const productRef = useMemoFirebase(() => {
-    if (!firestore) return null;
-    return doc(firestore, 'products', params.id);
-  }, [firestore, params.id]);
-
-  const { data: product, isLoading, error } = useDoc<Product>(productRef);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  if (isLoading) {
-    return (
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-grow container mx-auto px-4 py-12">
-          <Skeleton className="h-[60vh] w-full" />
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  if (error || !product) {
-    return notFound();
-  }
-
-  const images =
-    (product as any).imageUrls?.length > 0
-      ? (product as any).imageUrls
-      : product.imageUrl
-      ? [product.imageUrl]
-      : [];
-
-  const productName = product.name[language] ?? product.name.en;
-
-  const showPrice =
-    typeof product.price === 'number' && product.price > 0;
-
-  const formattedPrice = showPrice
-    ? new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(product.price!)
-    : null;
-
-  const phoneNumber = '905467898968';
-  const message = t('whatsapp.order_message', {
-    productName,
-    productImage: images[0] || '',
-  });
-
-  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
-    message
-  )}`;
-
-  const nextImage = () => {
-    if (images.length === 0) return;
-    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+       });
+        } finally {
+          setIsImporting(false);
+          setCsvFile(null); 
+        }
+      },
+      error: (error) => {
+        console.error("PapaParse Error:", error);
+        setIsImporting(false);
+        setImportStatus('error');
+        toast({
+            variant: "destructive",
+            title: t('admin_products.toast_import_error_title'),
+            description: t('admin_products.toast_papa_parse_error_desc'),
+        });
+      },
+    });
   };
-
-  const prevImage = () => {
-    if (images.length === 0) return;
-    setCurrentImageIndex(
-      (prev) => (prev - 1 + images.length) % images.length
-    );
-  };
-
-  const currentImage = images[currentImageIndex];
-  const transformedImage = currentImage
-    ? transformCloudinaryUrl(currentImage)
-    : '';
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <main className="flex-grow container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div className="relative">
-            {images.length > 0 ? (
-              <>
-                <img
-                  src={transformedImage}
-                  alt={productName}
-                  className="w-full h-[400px] object-cover rounded-lg shadow-lg"
-                />
-
-                {images.length > 1 && (
-                  <>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white"
-                      onClick={prevImage}
-                    >
-                      <ChevronLeft className="h-5 w-5" />
-                    </Button>
-
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white"
-                      onClick={nextImage}
-                    >
-                      <ChevronRight className="h-5 w-5" />
-                    </Button>
-                  </>
-                )}
-              </>
-            ) : (
-              <Skeleton className="w-full h-[400px]" />
-            )}
-          </div>
-
-          <div>
-            <h1 className="font-headline text-3xl md:text-4xl font-bold mb-4">
-              {productName}
-            </h1>
-
-            <div className="text-lg text-muted-foreground mb-2">
-              {product.category[language] ?? product.category.en}
-            </div>
-
-            {showPrice && (
-              <div className="text-xl font-bold text-accent mb-6">
-                {formattedPrice!.replace('$', '$ ')}
-              </div>
-            )}
-
-            <div className="mb-6">
-              <div className="font-semibold mb-1">
-                {t('product_page.description')}
-              </div>
-              <div>
-                {product.description[language] ??
-                  product.description.en}
-              </div>
-            </div>
-
-            <Button asChild className="w-full mt-4">
-              <Link
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <MessageCircle className="mr-2 h-4 w-4" />
-                {t('common.order_whatsapp')}
-              </Link>
+    <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+        <div className="space-y-8">
+        <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-headline font-bold">{t('admin_nav.products')}</h1>
+            <div className="flex items-center gap-4">
+            <Button onClick={handleAddNew}>
+                <PlusCircle className="mr-2 h-4 w-4" /> {t('admin_products.add_product_button')}
             </Button>
-          </div>
+            </div>
         </div>
-      </main>
-      <Footer />
-    </div>
+        
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-2">
+            <AiProductImporterCard />
+            <Card>
+                <CardHeader>
+                    <CardTitle>{t('admin_products.import_products_title')}</CardTitle>
+                    <CardDescription>{t('admin_products.import_products_desc')}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="grid w-full items-center gap-3">
+                    <Label htmlFor="csv-import">{t('admin_products.csv_file_label')}</Label>
+                    <div className="flex gap-2">
+                        <Input id="csv-import" type="file" accept=".csv" onChange={handleFileChange} />
+                        <Button onClick={handleImport} disabled={isImporting || !csvFile}>
+                        {isImporting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
+                        {t('admin_products.import_button')}
+                        </Button>
+                    </div>
+                    </div>
+                </CardContent>
+                {importStatus === 'success' && importedProductsPreview.length > 0 && (
+                    <CardFooter>
+                        <Alert variant="default">
+                            <CheckCircle className="h-4 w-4" />
+                            <AlertTitle>{t('admin_products.import_preview_title')}</AlertTitle>
+                            <AlertDescription>
+                                {t('admin_products.import_preview_success_desc', { count: importedProductsPreview.length })}
+                            </AlertDescription>
+                        </Alert>
+                    </CardFooter>
+                )}
+                {importStatus === 'error' && (
+                    <CardFooter>
+                        <Alert variant="destructive">
+                            <AlertTriangle className="h-4 w-4" />
+                            <AlertTitle>{t('admin_products.toast_import_failed_title')}</AlertTitle>
+                            <AlertDescription>
+                                {t('admin_products.import_failed_desc')}</AlertDescription>
+                        </Alert>
+                    </CardFooter>
+                )}
+            </Card>
+        </div>
+
+
+        <Card>
+            <CardHeader>
+            <CardTitle>{t('admin_products.product_list_title')}</CardTitle>
+            <CardDescription>{t('admin_products.product_list_desc')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+            <Table>
+                <TableHeader>
+                <TableRow>
+                    <TableHead className="hidden w-[100px] sm:table-cell">{t('admin_products.table_header_image')}</TableHead>
+                    <TableHead>{t('admin_products.table_header_name')}</TableHead>
+                    <TableHead>{t('admin_products.table_header_category')}</TableHead>
+                    <TableHead className="hidden md:table-cell">{t('admin_products.table_header_price')}</TableHead>
+                    <TableHead className="hidden md:table-cell">{t('admin_products.table_header_stock')}</TableHead>
+                    <TableHead>
+                    <span className="sr-only">{t('admin_products.table_header_actions')}</span>
+                    </TableHead>
+                </TableRow>
+                </TableHeader>
+                <TableBody>
+                {isLoadingProducts ? (
+                    [...Array(5)].map((_, i) => (
+                    <TableRow key={i}>
+                        <TableCell className="hidden sm:table-cell"><Skeleton className="h-16 w-16 rounded-md" /></TableCell>
+                        <TableCell><Skeleton className="h-6 w-32" /></TableCell>
+                        <TableCell><Skeleton className="h-6 w-24" /></TableCell>
+                        <TableCell className="hidden md:table-cell"><Skeleton className="h-6 w-16" /></TableCell>
+                        <TableCell className="hidden md:table-cell"><Skeleton className="h-6 w-12" /></TableCell>
+                        <TableCell><Skeleton className="h-8 w-8" /></TableCell>
+                    </TableRow>
+                    ))
+                ) : (
+                    products?.map((product) => {
+                    const productName = product.name[language] ?? product.name['en'];
+                    // Get first image from imageUrls array, or fallback to imageUrl for backward compatibility
+                    const displayImageUrl = (product.imageUrls && product.imageUrls.length > 0) 
+                      ? product.imageUrls[0] 
+                      : product.imageUrl;
+                    const isValidUrl = typeof displayImageUrl === 'string' && displayImageUrl.startsWith('https://');
+                    return (
+                        <TableRow key={product.id}>
+                        <TableCell className="hidden sm:table-cell">
+                            {isValidUrl ? (
+                            <img
+                                alt={productName}
+                                className="aspect-square rounded-md object-cover"
+                                height="64"
+                                src={displayImageUrl}
+                                width="64"
+                            />
+                            ) : (
+                            <div className="w-16 h-16 bg-secondary rounded-md flex items-center justify-center">
+                                <FileText className="h-6 w-6 text-muted-foreground"/>
+                            </div>
+                            )}
+                        </TableCell>
+                        <TableCell className="font-medium">{productName}</TableCell>
+                        <TableCell>
+                            <Badge variant="outline">{product.category[language] ?? product.category['en']}</Badge>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">${product.price.toLocaleString()}</TableCell>
+                        <TableCell className="hidden md:table-cell">{product.stock}</TableCell>
+                        <TableCell>
+                            <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button aria-haspopup="true" size="icon" variant="ghost">
+                                <MoreHorizontal className="h-4 w-4" />
+                                <span className="sr-only">{t('admin_products.actions_menu_label')}</span>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => handleEdit(product)}>{t('common.edit')}</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleDelete(product.id)} className="text-destructive">{t('common.delete')}</DropdownMenuItem>
+                            </DropdownMenuContent>
+                            </DropdownMenu>
+                        </TableCell>
+                        </TableRow>
+                    );
+                    })
+                )}
+                </TableBody>
+            </Table>
+            </CardContent>
+        </Card>
+        </div>
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] flex flex-col">
+            <DialogHeader>
+                <DialogTitle>{selectedProduct ? t('admin_products.edit_product_title') : t('admin_products.add_product_title')}</DialogTitle>
+                <DialogDescription>
+                    {selectedProduct ? t('admin_products.edit_product_desc') : t('admin_products.add_product_desc')}</DialogDescription>
+            </DialogHeader>
+            <div className="overflow-y-auto pr-6">
+                <ProductForm product={selectedProduct} onSave={() => setIsFormOpen(false)} />
+            </div>
+        </DialogContent>
+    </Dialog>
   );
 }
