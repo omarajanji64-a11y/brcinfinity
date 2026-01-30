@@ -124,7 +124,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
           <div>
             <h1 className="font-headline text-3xl md:text-4xl font-bold mb-4">{productName}</h1>
             <div className="text-lg text-muted-foreground mb-2">{product.category[language] ?? product.category.en}</div>
-            <div className="text-xl font-bold text-accent mb-6">{formattedPrice.replace('$', '$ ')}</div>
+            {product.price > 0 && <div className="text-xl font-bold text-accent mb-6">{formattedPrice.replace('$', '$ ')}</div>}
             <div className="mb-6">
               <div className="font-semibold mb-1">{t('product_page.description')}</div>
               <div>{product.description[language] ?? product.description.en}</div>
