@@ -233,7 +233,7 @@ export default function ProductsPage() {
           </CardContent>
         </Card>
 
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[600px] h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {selectedProduct ? "Edit Product" : "Add Product"}
