@@ -52,11 +52,6 @@ interface ProductToImport {
   previewUrl: string;
 }
 
-interface FailedProductFeedback {
-    name: string;
-    reason: string;
-}
-
 export default function ProductsPage() {
   const { t, language } = useTranslation();
   const { toast } = useToast();
@@ -155,40 +150,24 @@ export default function ProductsPage() {
     });
 
     try {
-        const response = await axios.post('/api/products/bulk', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-            // Important to get the full response, not just the data
-            validateStatus: status => status < 500 
+      const response = await axios.post('/api/products/bulk', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.status === 201) {
+        toast({
+          title: "Bulk Import Successful",
+          description: response.data.message,
         });
-
-        if (response.status === 201) {
-             toast({
-                title: "Bulk Import Successful",
-                description: `${response.data.successfulProducts.length} products were added.`,
-              });
-        } else if (response.status === 207) {
-            const { successfulProducts, failedProducts } = response.data;
-            const failedList = failedProducts.map((p: FailedProductFeedback) => `  - ${p.name}: ${p.reason}`).join('\n');
-            toast({
-                duration: 10000, // Keep toast open longer for detailed info
-                title: "Bulk Import Partially Successful",
-                description: (
-                    <div className="flex flex-col gap-2">
-                        <span>{successfulProducts.length} out of {productsToImport.length} products were added.</span>
-                        <span className="font-bold">The following failed:</span>
-                        <pre className="text-xs whitespace-pre-wrap">{failedList}</pre>
-                    </div>
-                )
-              });
-        } else { // Handle 4xx client errors that pass validateStatus
-            throw new Error(response.data.message || `Client error: ${response.status}`);
-        }
-
-        mutateProducts(); // Re-fetch the product list to show new additions
+        mutateProducts();
         setIsImportEditorOpen(false);
         setProductsToImport([]);
+      } else {
+          // This case should ideally not be hit with the new backend logic
+          throw new Error(response.data.message || `An unexpected status code was received: ${response.status}`);
+      }
 
     } catch (error) {
         const axiosError = error as AxiosError<{ message: string }>;
@@ -197,9 +176,10 @@ export default function ProductsPage() {
             variant: "destructive",
             title: "Bulk Import Failed",
             description: errorMessage,
+            duration: 8000,
         });
     } finally {
-        setIsProcessing(false);
+      setIsProcessing(false);
     }
   };
 
@@ -207,9 +187,7 @@ export default function ProductsPage() {
     <>
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
         <DialogContent className="sm:max-w-[600px] h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{selectedProduct ? "Edit Product" : "Add Product"}</DialogTitle>
-          </DialogHeader>
+          <DialogHeader><DialogTitle>{selectedProduct ? "Edit Product" : "Add Product"}</DialogTitle></DialogHeader>
           <ProductForm product={selectedProduct} onSave={() => setIsFormOpen(false)} />
         </DialogContent>
       </Dialog>
@@ -218,7 +196,7 @@ export default function ProductsPage() {
         <DialogContent className="max-w-[90vw] h-[90vh] flex flex-col">
           <DialogHeader>
             <DialogTitle>Bulk Import Products</DialogTitle>
-            <DialogDescription>Review and edit the products before importing.</DialogDescription>
+            <DialogDescription>Review and edit the products before importing. This is a transactional operation - all products must be valid to proceed.</DialogDescription>
           </DialogHeader>
           <div className="flex-grow overflow-y-auto p-1">
             <Table>
