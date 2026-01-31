@@ -4,7 +4,6 @@ import { google } from 'googleapis';
 import { v2 as cloudinary } from 'cloudinary';
 import stream from 'stream';
 
-// Configure Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -14,18 +13,11 @@ cloudinary.config({
 const uploadToCloudinary = (fileStream: stream.Readable, fileName: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
-      {
-        folder: 'google-drive-imports',
-        public_id: fileName,
-      },
+      { folder: 'google-drive-imports', public_id: fileName },
       (error, result) => {
-        if (error) {
-          reject(new Error(`Cloudinary upload failed for ${fileName}: ${error.message}`));
-        } else if (result) {
-          resolve(result.secure_url);
-        } else {
-          reject(new Error('Cloudinary upload failed to return a result.'));
-        }
+        if (error) reject(new Error(`Cloudinary upload failed for ${fileName}: ${error.message}`));
+        else if (result) resolve(result.secure_url);
+        else reject(new Error('Cloudinary upload failed to return a result.'));
       }
     );
     fileStream.pipe(uploadStream);
@@ -33,47 +25,43 @@ const uploadToCloudinary = (fileStream: stream.Readable, fileName: string): Prom
 };
 
 export async function POST(req: NextRequest) {
-    // 1. Environment Variable Check
-    const requiredEnvVars = [
-        'CLOUDINARY_CLOUD_NAME',
-        'CLOUDINARY_API_KEY',
-        'CLOUDINARY_API_SECRET',
-        'GOOGLE_SERVICE_ACCOUNT_EMAIL',
-        'GOOGLE_PRIVATE_KEY',
-    ];
-    const missingEnvVars = requiredEnvVars.filter(v => !process.env[v]);
-    if (missingEnvVars.length > 0) {
-        const errorMessage = `Missing required environment variables: ${missingEnvVars.join(', ')}. Please check your server configuration.`;
-        console.error(errorMessage);
-        return NextResponse.json({ error: errorMessage }, { status: 500 });
-    }
-
     try {
-        const { googleDriveLink } = await req.json();
+        const requiredEnvVars = ['CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET', 'GOOGLE_SERVICE_ACCOUNT_EMAIL', 'GOOGLE_PRIVATE_KEY'];
+        const missingEnvVars = requiredEnvVars.filter(v => !process.env[v]);
+        if (missingEnvVars.length > 0) {
+            throw new Error(`Missing required environment variables: ${missingEnvVars.join(', ')}. Please check your server configuration.`);
+        }
 
+        const { googleDriveLink } = await req.json();
         if (!googleDriveLink) {
             return NextResponse.json({ error: 'Google Drive link is required' }, { status: 400 });
         }
 
-        // 2. Extract Folder ID
         const folderIdMatch = googleDriveLink.match(/folders\/([a-zA-Z0-9_-]+)/);
         if (!folderIdMatch || !folderIdMatch[1]) {
             return NextResponse.json({ error: 'Invalid Google Drive folder link. Please provide a valid folder link.' }, { status: 400 });
         }
         const folderId = folderIdMatch[1];
 
-        // 3. Google Drive Authentication
+        const client_email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL!;
+        const private_key_from_env = process.env.GOOGLE_PRIVATE_KEY!;
+        const private_key = private_key_from_env.replace(/\\n/g, '\n');
+
+        if (!private_key.startsWith('-----BEGIN PRIVATE KEY-----')) {
+            throw new Error("The `GOOGLE_PRIVATE_KEY` environment variable appears to be malformed. It should start with '-----BEGIN PRIVATE KEY-----'. Please check your environment configuration.");
+        }
+
         const auth = new google.auth.GoogleAuth({
-            credentials: {
-              client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-              private_key: process.env.GOOGLE_PRIVATE_KEY!.replace(/\\n/g, '\n'),
-            },
+            credentials: { client_email, private_key },
             scopes: ['https://www.googleapis.com/auth/drive.readonly'],
         });
 
+        if (!auth || typeof auth.getAccessToken !== 'function') {
+            throw new Error("The Google authentication object could not be created correctly. This is a strong indicator that the service account credentials (email or private key) are invalid or malformed. Please verify them in your environment variables.");
+        }
+
         const drive = google.drive({ version: 'v3', auth });
 
-        // 4. List files in the folder
         const listResponse = await drive.files.list({
             q: `'${folderId}' in parents and (mimeType='image/jpeg' or mimeType='image/png')`,
             fields: 'files(id, name)',
@@ -85,42 +73,21 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ imageUrls: [], message: 'No image files (JPEG or PNG) found in the specified Google Drive folder.' });
         }
 
-        // 5. Download from Drive and Upload to Cloudinary
         const imageUrls = await Promise.all(
             files.map(async (file) => {
-                if (!file.id || !file.name) {
-                  console.warn("A file in Google Drive is missing an ID or a name, skipping it.", file);
-                  return null; // Skip this file
-                }
-                
-                try {
-                    const fileResponse = await drive.files.get(
-                        { fileId: file.id, alt: 'media' },
-                        { responseType: 'stream' }
-                    );
-                    const cloudinaryUrl = await uploadToCloudinary(fileResponse.data as stream.Readable, file.name);
-                    return cloudinaryUrl;
-                } catch(uploadError: any) {
-                    console.error(`Failed to process file ${file.name} (ID: ${file.id}):`, uploadError);
-                    throw new Error(`Failed to process file '${file.name}': ${uploadError.message}`);
-                }
+                if (!file.id || !file.name) return null;
+                const fileResponse = await drive.files.get({ fileId: file.id, alt: 'media' }, { responseType: 'stream' });
+                return uploadToCloudinary(fileResponse.data as stream.Readable, file.name);
             })
         );
         
-        const successfulUploads = imageUrls.filter(url => url !== null) as string[];
-
-        // 6. Return the Cloudinary URLs
+        const successfulUploads = imageUrls.filter(Boolean) as string[];
         return NextResponse.json({ imageUrls: successfulUploads });
 
     } catch (error: any) {
-        console.error('Full error object during import:', error);
+        console.error('An error occurred during the import process:', error);
 
-        if (error.message.includes("cannot use 'in' operator to search for '_delegate'")) {
-            const detailedMessage = `Google Drive authentication failed. This is often due to malformed or incorrect service account credentials in your environment variables. Please double-check GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY.`;
-            return NextResponse.json({ error: detailedMessage }, { status: 500 });
-        }
-
-        if (error.code && error.errors) {
+        if (error.code && error.errors && Array.isArray(error.errors) && error.errors.length > 0) {
             const googleError = error.errors[0];
             let detailedMessage = googleError.message || 'A Google API error occurred.';
             if (googleError.reason === 'notFound') {
