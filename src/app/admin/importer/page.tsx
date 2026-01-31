@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/hooks/use-toast';
 import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 // Define the Product interface
 interface Product {
@@ -176,12 +177,22 @@ export default function ImageImporterPage() {
                                             checked={selectedIndices.includes(index)}
                                             className="mt-1"
                                         />
-                                        <div className="flex-shrink-0">
-                                            <div className="flex flex-wrap gap-2 w-48">
-                                                {product.image_urls.map((url, imgIndex) => (
-                                                    <img key={imgIndex} src={url} alt={`Product ${index + 1} Image ${imgIndex + 1}`} className="w-20 h-20 object-cover rounded-md" />
-                                                ))}
-                                            </div>
+                                        <div className="flex-shrink-0 w-48">
+                                            {product.image_urls.length > 1 ? (
+                                                <Carousel className="w-full">
+                                                    <CarouselContent>
+                                                        {product.image_urls.map((url, imgIndex) => (
+                                                            <CarouselItem key={imgIndex}>
+                                                                <img src={url} alt={`Product ${index + 1} Image ${imgIndex + 1}`} className="w-full h-32 object-cover rounded-md" />
+                                                            </CarouselItem>
+                                                        ))}
+                                                    </CarouselContent>
+                                                    <CarouselPrevious />
+                                                    <CarouselNext />
+                                                </Carousel>
+                                            ) : (
+                                                <img src={product.image_urls[0]} alt={`Product ${index + 1} Image 1`} className="w-full h-32 object-cover rounded-md" />
+                                            )}
                                         </div>
                                         <div className="flex-1 space-y-2">
                                             <Input
