@@ -1,4 +1,3 @@
-'''
 import { NextRequest, NextResponse } from 'next/server';
 import { google } from 'googleapis';
 import { v2 as cloudinary } from 'cloudinary';
@@ -96,8 +95,7 @@ export async function POST(req: NextRequest) {
 
     } catch (error) {
         console.error('An error occurred during the import process:', error);
-        // A more specific error could be returned based on the error type
-        return NextResponse.json({ error: 'Failed to import images. Please check your setup and permissions.' }, { status: 500 });
+        const errorMessage = (error as Error).message || 'Failed to import images. Please check your setup and permissions.';
+        return NextResponse.json({ error: errorMessage }, { status: 500 });
     }
 }
-''
