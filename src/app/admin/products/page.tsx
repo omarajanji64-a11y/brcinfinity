@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Papa from "papaparse";
 import {
   Dialog,
   DialogContent,
@@ -16,7 +15,6 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-  CardFooter,
 } from "@/components/ui/card";
 import {
   Table,
@@ -36,15 +34,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import {
-  PlusCircle,
-  MoreHorizontal,
-  Upload,
-  Loader2,
-  CheckCircle,
-  AlertTriangle,
-} from "lucide-react";
+import { PlusCircle, MoreHorizontal, Upload, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import ProductForm from "@/components/admin/ProductForm";
 import DriveLinkImporterCard from "@/components/admin/DriveLinkImporterCard";
@@ -62,21 +52,21 @@ interface ProductToImport {
   previewUrl: string;
 }
 
+interface FailedProductFeedback {
+    name: string;
+    reason: string;
+}
+
 export default function ProductsPage() {
   const { t, language } = useTranslation();
   const { toast } = useToast();
-  const { products, isLoading: isLoadingProducts, deleteProduct, addProducts } = useProducts();
+  const { products, isLoading: isLoadingProducts, deleteProduct, mutateProducts } = useProducts();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
-  
-  const [csvFile, setCsvFile] = useState<File | null>(null);
-  const [isImporting, setIsImporting] = useState(false);
-  const [importStatus, setImportStatus] = useState<"idle" | "success" | "error">("idle");
-  const [importedProductsPreview, setImportedProductsPreview] = useState<any[]>([]);
 
   const [productsToImport, setProductsToImport] = useState<ProductToImport[]>([]);
-  const [isBulkImporting, setIsBulkImporting] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [isImportEditorOpen, setIsImportEditorOpen] = useState(false);
   const [loadingCounter, setLoadingCounter] = useState(0);
   const [bulkImportTotal, setBulkImportTotal] = useState(0);
@@ -95,146 +85,142 @@ export default function ProductsPage() {
     await deleteProduct(id);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCsvFile(e.target.files?.[0] ?? null);
-  };
-
   const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
     setBulkImportTotal(files.length);
-    setIsBulkImporting(true);
+    setIsProcessing(true);
     setLoadingCounter(0);
     setProductsToImport([]);
 
     const readFileAsPromise = (file: File): Promise<ProductToImport> => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            
-            reader.onload = (event) => {
-                if (event.target?.result) {
-                    setLoadingCounter(prev => prev + 1);
-                    resolve({
-                        id: `${file.name}-${Date.now()}`,
-                        name: file.name.split('.').slice(0, -1).join('.'),
-                        price: 0,
-                        stock: 1,
-                        imageFile: file,
-                        previewUrl: event.target.result as string,
-                    });
-                } else {
-                    reject(new Error(`Failed to read file: ${file.name}`));
-                }
-            };
-
-            reader.onerror = (error) => {
-                console.error("FileReader error: ", error);
-                reject(new Error(`Could not read file ${file.name}. It may be corrupt.`));
-            };
-
-            reader.readAsDataURL(file);
-        });
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          if (event.target?.result) {
+            setLoadingCounter((prev) => prev + 1);
+            resolve({
+              id: `${file.name.split('.').slice(0, -1).join('.')}-${Date.now()}`,
+              name: file.name.split('.').slice(0, -1).join('.'),
+              price: 0,
+              stock: 1,
+              imageFile: file,
+              previewUrl: event.target.result as string,
+            });
+          } else {
+            reject(new Error(`Failed to read file: ${file.name}`));
+          }
+        };
+        reader.onerror = (error) => reject(new Error(`Could not read file ${file.name}. It may be corrupt.`));
+        reader.readAsDataURL(file);
+      });
     };
 
     try {
-        const allFiles = Array.from(files);
-        const newProducts = await Promise.all(allFiles.map(readFileAsPromise));
-        
-        setProductsToImport(newProducts);
-        setIsImportEditorOpen(true);
-
+      const allFiles = Array.from(files);
+      const newProducts = await Promise.all(allFiles.map(readFileAsPromise));
+      setProductsToImport(newProducts);
+      setIsImportEditorOpen(true);
     } catch (error) {
-        toast({
-            variant: "destructive",
-            title: "File Reading Error",
-            description: error instanceof Error ? error.message : "An unknown error occurred while reading files.",
-        });
+      toast({
+        variant: "destructive",
+        title: "File Reading Error",
+        description: error instanceof Error ? error.message : "An unknown error occurred while reading files.",
+      });
     } finally {
-        setIsBulkImporting(false);
-        e.target.value = ''; // Reset file input
+      setIsProcessing(false);
+      e.target.value = '';
     }
   };
 
-  const handleImport = () => {
-    if (!csvFile) return;
-    setIsImporting(true);
-    setImportStatus("idle");
-    // ... (existing CSV import logic)
-  };
-  
   const handleProductToImportChange = (id: string, field: keyof ProductToImport, value: string | number) => {
-    setProductsToImport(prev => 
-      prev.map(p => p.id === id ? { ...p, [field]: value } : p)
+    setProductsToImport((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, [field]: value } : p))
     );
   };
 
   const handleFinalBulkImport = async () => {
-    setIsBulkImporting(true);
+    setIsProcessing(true);
     const formData = new FormData();
-    
+
     const productMetadata = productsToImport.map(({ imageFile, previewUrl, ...meta }) => ({
-        ...meta,
-        fileName: imageFile.name,
+      ...meta,
+      fileName: imageFile.name,
     }));
 
     formData.append('products', JSON.stringify(productMetadata));
-
-    productsToImport.forEach(p => {
-        formData.append('files', p.imageFile);
+    productsToImport.forEach((p) => {
+      formData.append('files', p.imageFile);
     });
 
     try {
-      await addProducts(formData);
-      
-      toast({
-        title: t("admin_products.toast_bulk_import_success_title"),
-        description: `${productsToImport.length} products added successfully.`,
-      });
-      
-      setIsImportEditorOpen(false);
-      setProductsToImport([]);
+        const response = await axios.post('/api/products/bulk', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+            // Important to get the full response, not just the data
+            validateStatus: status => status < 500 
+        });
+
+        if (response.status === 201) {
+             toast({
+                title: "Bulk Import Successful",
+                description: `${response.data.successfulProducts.length} products were added.`,
+              });
+        } else if (response.status === 207) {
+            const { successfulProducts, failedProducts } = response.data;
+            const failedList = failedProducts.map((p: FailedProductFeedback) => `  - ${p.name}: ${p.reason}`).join('\n');
+            toast({
+                duration: 10000, // Keep toast open longer for detailed info
+                title: "Bulk Import Partially Successful",
+                description: (
+                    <div className="flex flex-col gap-2">
+                        <span>{successfulProducts.length} out of {productsToImport.length} products were added.</span>
+                        <span className="font-bold">The following failed:</span>
+                        <pre className="text-xs whitespace-pre-wrap">{failedList}</pre>
+                    </div>
+                )
+              });
+        } else { // Handle 4xx client errors that pass validateStatus
+            throw new Error(response.data.message || `Client error: ${response.status}`);
+        }
+
+        mutateProducts(); // Re-fetch the product list to show new additions
+        setIsImportEditorOpen(false);
+        setProductsToImport([]);
 
     } catch (error) {
-      const axiosError = error as AxiosError<{ message: string }>;
-      toast({
-        variant: "destructive",
-        title: t("admin_products.toast_bulk_import_error_title"),
-        description: axiosError.response?.data?.message || t("admin_products.bulk_import_error_desc"),
-      });
+        const axiosError = error as AxiosError<{ message: string }>;
+        const errorMessage = axiosError.response?.data?.message || (error as Error).message || "An unknown error occurred.";
+        toast({
+            variant: "destructive",
+            title: "Bulk Import Failed",
+            description: errorMessage,
+        });
     } finally {
-      setIsBulkImporting(false);
+        setIsProcessing(false);
     }
   };
-
 
   return (
     <>
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        {/* Main Product Form Dialog */}
         <DialogContent className="sm:max-w-[600px] h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
-              {selectedProduct ? "Edit Product" : "Add Product"}
-            </DialogTitle>
+            <DialogTitle>{selectedProduct ? "Edit Product" : "Add Product"}</DialogTitle>
           </DialogHeader>
-          <ProductForm
-            product={selectedProduct}
-            onSave={() => setIsFormOpen(false)}
-          />
+          <ProductForm product={selectedProduct} onSave={() => setIsFormOpen(false)} />
         </DialogContent>
       </Dialog>
-      
+
       <Dialog open={isImportEditorOpen} onOpenChange={setIsImportEditorOpen}>
-        {/* Bulk Import Editor Dialog */}
         <DialogContent className="max-w-[90vw] h-[90vh] flex flex-col">
           <DialogHeader>
             <DialogTitle>Bulk Import Products</DialogTitle>
-            <DialogDescription>
-              Review and edit the products before importing.
-            </DialogDescription>
+            <DialogDescription>Review and edit the products before importing.</DialogDescription>
           </DialogHeader>
-          <div className="flex-grow overflow-y-auto">
+          <div className="flex-grow overflow-y-auto p-1">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -245,41 +231,21 @@ export default function ProductsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {productsToImport.map(p => (
+                {productsToImport.map((p) => (
                   <TableRow key={p.id}>
-                    <TableCell>
-                      <Image src={p.previewUrl} alt={p.name} width={60} height={60} className="rounded-md object-cover"/>
-                    </TableCell>
-                    <TableCell>
-                      <Input 
-                        value={p.name}
-                        onChange={(e) => handleProductToImportChange(p.id, 'name', e.target.value)}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Input 
-                        type="number"
-                        value={p.price}
-                        onChange={(e) => handleProductToImportChange(p.id, 'price', Number(e.target.value))}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Input 
-                        type="number"
-                        value={p.stock}
-                        onChange={(e) => handleProductToImportChange(p.id, 'stock', Number(e.target.value))}
-                      />
-                    </TableCell>
+                    <TableCell><Image src={p.previewUrl} alt={p.name} width={60} height={60} className="rounded-md object-cover" /></TableCell>
+                    <TableCell><Input value={p.name} onChange={(e) => handleProductToImportChange(p.id, 'name', e.target.value)} /></TableCell>
+                    <TableCell><Input type="number" value={p.price} onChange={(e) => handleProductToImportChange(p.id, 'price', Number(e.target.value))} /></TableCell>
+                    <TableCell><Input type="number" value={p.stock} onChange={(e) => handleProductToImportChange(p.id, 'stock', Number(e.target.value))} /></TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsImportEditorOpen(false)} disabled={isBulkImporting}>Cancel</Button>
-            <Button onClick={handleFinalBulkImport} disabled={isBulkImporting}>
-              {isBulkImporting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              Add {productsToImport.length} Products
+            <Button variant="outline" onClick={() => setIsImportEditorOpen(false)} disabled={isProcessing}>Cancel</Button>
+            <Button onClick={handleFinalBulkImport} disabled={isProcessing}>
+              {isProcessing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Add {productsToImport.length} Products
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -287,44 +253,29 @@ export default function ProductsPage() {
 
       <div className="space-y-8">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-headline font-bold">
-            {t("admin_nav.products")}
-          </h1>
-          <Button onClick={handleAddNew}>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            {t("admin_products.add_product_button")}
-          </Button>
+          <h1 className="text-3xl font-headline font-bold">{t("admin_nav.products")}</h1>
+          <Button onClick={handleAddNew}><PlusCircle className="mr-2 h-4 w-4" />{t("admin_products.add_product_button")}</Button>
         </div>
 
         <div className="grid gap-8 md:grid-cols-2">
-          {/* DriveLinkImporterCard and CSV Importer */}
           <DriveLinkImporterCard />
           <Card>
             <CardHeader>
-              <CardTitle>Bulk Product Import</CardTitle>
-              <CardDescription>
-                Upload multiple PNG images to create new products in bulk.
-              </CardDescription>
+              <CardTitle>{t("admin_products.bulk_import_title")}</CardTitle>
+              <CardDescription>{t("admin_products.bulk_import_desc")}</CardDescription>
             </CardHeader>
             <CardContent>
               <Label>PNG Images</Label>
               <div className="flex items-center gap-4">
-                <Input type="file" accept="image/png" multiple onChange={handleImageFileChange} disabled={isBulkImporting} className="flex-grow" />
-                {isBulkImporting && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        <span>Loading: {loadingCounter}/{bulkImportTotal}</span>
-                    </div>
-                )}
+                <Input type="file" accept="image/png" multiple onChange={handleImageFileChange} disabled={isProcessing} className="flex-grow" />
+                {isProcessing && loadingCounter > 0 && (<div className="flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap"><Loader2 className="h-4 w-4 animate-spin" /><span>Loading: {loadingCounter}/{bulkImportTotal}</span></div>)}
               </div>
             </CardContent>
           </Card>
         </div>
 
         <Card>
-          <CardHeader>
-            <CardTitle>{t("admin_products.product_list_title")}</CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle>{t("admin_products.product_list_title")}</CardTitle></CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
@@ -335,40 +286,22 @@ export default function ProductsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {isLoadingProducts ? (
-                  <TableRow>
-                    <TableCell colSpan={3}>
-                      <Skeleton className="h-8 w-full" />
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  products?.map((p) => (
+                {isLoadingProducts ? (<TableRow><TableCell colSpan={3}><Skeleton className="h-8 w-full" /></TableCell></TableRow>) : (products?.map((p) => (
                     <TableRow key={p.id}>
                       <TableCell>{p.name?.[language] ?? p.name?.en}</TableCell>
                       <TableCell>${p.price}</TableCell>
                       <TableCell>
                         <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button size="icon" variant="ghost">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
+                          <DropdownMenuTrigger asChild><Button size="icon" variant="ghost"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
                           <DropdownMenuContent>
-                            <DropdownMenuItem onClick={() => handleEdit(p)}>
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              className="text-destructive"
-                              onClick={() => handleDelete(p.id)}
-                            >
-                              Delete
-                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleEdit(p)}>Edit</DropdownMenuItem>
+                            <DropdownMenuItem className="text-destructive" onClick={() => handleDelete(p.id)}>Delete</DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
                     </TableRow>
-                  ))
-                )}
+                  )))
+                }
               </TableBody>
             </Table>
           </CardContent>
