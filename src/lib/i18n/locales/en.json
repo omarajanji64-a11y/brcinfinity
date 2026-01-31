@@ -178,7 +178,7 @@
     "image_links_button": "Import Image Links",
     "image_links_editor_title": "Review Imported Products",
     "image_links_editor_desc": "Each link becomes a product. Edit the details below before saving.",
-    "image_links_default_name": "Imported Product",
+    "image_links_default_name": "BRC INFINITY",
     "image_links_error_desc": "Please paste at least one image URL.",
     "csv_links_title": "Import from CSV",
     "csv_links_desc": "Paste CSV content or upload a CSV file that contains image URLs.",

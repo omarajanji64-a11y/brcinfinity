@@ -92,13 +92,13 @@ export default function CloudinaryLinkImporterCard({ onProductImported }: Cloudi
       return;
     }
 
-      const drafts = linkList.map((url, index) => ({
-        id: uuidv4(),
-        imageUrl: url,
+    const drafts = linkList.map((url, index) => ({
+      id: uuidv4(),
+      imageUrl: url,
         name: `${t("admin_products.image_links_default_name")} ${index + 1}`,
-        category: "",
-        style: "Modern",
-        price: "0",
+      category: "",
+      style: "Modern",
+      price: "0",
       stock: "1",
       shortDescription: "",
       description: "",

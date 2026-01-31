@@ -176,7 +176,7 @@
     "image_links_button": "Görsel bağlantılarını içe aktar",
     "image_links_editor_title": "İçe aktarılan ürünleri gözden geçir",
     "image_links_editor_desc": "Her bağlantı bir ürün olur. Kaydetmeden önce düzenleyin.",
-    "image_links_default_name": "İçe aktarılan ürün",
+    "image_links_default_name": "BRC INFINITY",
     "image_links_error_desc": "En az bir görsel URL'si yapıştırın.",
     "csv_links_title": "CSV'den içe aktar",
     "csv_links_desc": "Görsel URL'leri içeren CSV içeriği yapıştırın veya CSV dosyası yükleyin.",

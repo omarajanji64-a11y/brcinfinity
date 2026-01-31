@@ -176,7 +176,7 @@
     "image_links_button": "Importer des liens d'images",
     "image_links_editor_title": "Vérifier les produits importés",
     "image_links_editor_desc": "Chaque lien devient un produit. Modifiez les détails avant d'enregistrer.",
-    "image_links_default_name": "Produit importé",
+    "image_links_default_name": "BRC INFINITY",
     "image_links_error_desc": "Veuillez coller au moins une URL d'image.",
     "csv_links_title": "Importer depuis un CSV",
     "csv_links_desc": "Collez du contenu CSV ou téléchargez un fichier CSV contenant des URL d'images.",
