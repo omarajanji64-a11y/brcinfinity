@@ -1,25 +1,25 @@
-"use client";
+'use client';
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Progress } from "@/components/ui/progress";
+import { Progress } from '@/components/ui/progress';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 // Define the Product interface
 interface Product {
   name: string;
   price: number;
   quantity: number;
-  collection: string;
-  image_url: string;
+  collection: 'modern' | 'classic';
+  image_urls: string[];
 }
 
 export default function ImageImporterPage() {
     const [googleDriveLink, setGoogleDriveLink] = useState('');
     const [isImporting, setIsImporting] = useState(false);
-    const [imageUrls, setImageUrls] = useState<string[]>([]);
     const { toast } = useToast();
     const [progress, setProgress] = useState(0);
     const [products, setProducts] = useState<Product[]>([]);
@@ -36,7 +36,6 @@ export default function ImageImporterPage() {
 
         setIsImporting(true);
         setProgress(0);
-        setImageUrls([]);
         setProducts([]);
 
         try {
@@ -58,17 +57,16 @@ export default function ImageImporterPage() {
             }
 
             const data = await response.json();
-            setImageUrls(data.imageUrls);
             
-            // Initialize products with default values
-            const initialProducts: Product[] = data.imageUrls.map((url: string) => ({
+            // Initialize one product with all image URLs
+            const initialProduct: Product = {
               name: "BRC INFINITY",
               price: 0,
               quantity: 1,
               collection: "modern",
-              image_url: url,
-            }));
-            setProducts(initialProducts);
+              image_urls: data.imageUrls,
+            };
+            setProducts([initialProduct]);
 
             setProgress(100);
 
@@ -90,9 +88,9 @@ export default function ImageImporterPage() {
         }
     };
 
-    const handleProductChange = (index: number, field: keyof Product, value: string | number) => {
+    const handleProductChange = (index: number, field: keyof Product, value: string | number | string[]) => {
       const updatedProducts = [...products];
-      updatedProducts[index] = { ...updatedProducts[index], [field]: value };
+      (updatedProducts[index] as any)[field] = value;
       setProducts(updatedProducts);
     };
 
@@ -131,7 +129,7 @@ export default function ImageImporterPage() {
                 <CardHeader>
                     <CardTitle>Google Drive to Cloudinary Image Importer</CardTitle>
                     <CardDescription>
-                        Paste a Google Drive link to upload images to Cloudinary and generate a CSV of the image URLs.
+                        Paste a Google Drive link to upload images to Cloudinary and create a new product.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -155,7 +153,7 @@ export default function ImageImporterPage() {
                     <CardHeader>
                         <CardTitle>Bulk Product Editor</CardTitle>
                         <CardDescription>
-                            Edit the products below and click "Add All Products" to save them.
+                            Edit the product below and click "Add Product" to save it.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -163,7 +161,11 @@ export default function ImageImporterPage() {
                             {products.map((product, index) => (
                                 <Card key={index}>
                                     <CardHeader>
-                                        <img src={product.image_url} alt={`Product ${index + 1}`} className="w-full h-32 object-cover" />
+                                        <div className="grid grid-cols-3 gap-2">
+                                            {product.image_urls.map((url, imgIndex) => (
+                                                <img key={imgIndex} src={url} alt={`Product ${index + 1} Image ${imgIndex + 1}`} className="w-full h-32 object-cover" />
+                                            ))}
+                                        </div>
                                     </CardHeader>
                                     <CardContent className="space-y-2">
                                         <Input
@@ -183,16 +185,20 @@ export default function ImageImporterPage() {
                                             onChange={(e) => handleProductChange(index, 'quantity', Number(e.target.value))}
                                             placeholder="Quantity"
                                         />
-                                        <Input
-                                            value={product.collection}
-                                            onChange={(e) => handleProductChange(index, 'collection', e.target.value)}
-                                            placeholder="Collection"
-                                        />
+                                        <Select onValueChange={(value) => handleProductChange(index, 'collection', value)} defaultValue={product.collection}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a collection" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="modern">Modern</SelectItem>
+                                                <SelectItem value="classic">Classic</SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                     </CardContent>
                                 </Card>
                             ))}
                         </div>
-                        <Button onClick={handleAddProducts} className="mt-4">Add All Products</Button>
+                        <Button onClick={handleAddProducts} className="mt-4">Add Product</Button>
                     </CardContent>
                 </Card>
             )}

@@ -7,7 +7,7 @@ interface Product {
   price: number;
   quantity: number;
   collection: string;
-  image_url: string;
+  image_urls: string[];
 }
 
 export async function POST(req: NextRequest) {
