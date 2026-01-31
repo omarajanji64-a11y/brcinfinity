@@ -195,6 +195,7 @@
     "merge_products_button": "Combinar seleccionados ({{count}})",
     "merge_dialog_title": "Combinar productos",
     "merge_dialog_desc": "Crea un solo producto con los elementos seleccionados y personaliza sus detalles.",
+    "merge_selected_products_label": "Productos seleccionados",
     "merge_images_label": "Imágenes combinadas",
     "merge_save_button": "Crear producto combinado",
     "merge_success_title": "Productos combinados",

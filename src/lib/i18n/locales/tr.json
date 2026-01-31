@@ -193,6 +193,7 @@
     "merge_products_button": "Seçileni birleştir ({{count}})",
     "merge_dialog_title": "Ürünleri birleştir",
     "merge_dialog_desc": "Seçili ürünlerden tek bir ürün oluşturun ve detaylarını düzenleyin.",
+    "merge_selected_products_label": "Seçili ürünler",
     "merge_images_label": "Birleştirilen görseller",
     "merge_save_button": "Birleştirilmiş ürünü oluştur",
     "merge_success_title": "Ürünler birleştirildi",

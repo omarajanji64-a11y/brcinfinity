@@ -193,6 +193,7 @@
     "merge_products_button": "Fusionner les sélectionnés ({{count}})",
     "merge_dialog_title": "Fusionner les produits",
     "merge_dialog_desc": "Créez un seul produit à partir des éléments sélectionnés et personnalisez ses détails.",
+    "merge_selected_products_label": "Produits sélectionnés",
     "merge_images_label": "Images fusionnées",
     "merge_save_button": "Créer le produit fusionné",
     "merge_success_title": "Produits fusionnés",

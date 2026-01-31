@@ -195,6 +195,7 @@
     "merge_products_button": "Merge Selected ({{count}})",
     "merge_dialog_title": "Merge Products",
     "merge_dialog_desc": "Create a single product from the selected items and customize its details.",
+    "merge_selected_products_label": "Selected Products",
     "merge_images_label": "Merged Images",
     "merge_save_button": "Create Merged Product",
     "merge_success_title": "Products Merged",

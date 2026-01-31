@@ -296,8 +296,13 @@ export default function ProductsPage() {
     return merged;
   };
 
+  const selectedProducts = useMemo(
+    () => productList.filter((product) => selectedProductIds.has(product.id)),
+    [productList, selectedProductIds]
+  );
+
   const openMergeDialog = () => {
-    const selected = productList.filter((product) => selectedProductIds.has(product.id));
+    const selected = selectedProducts;
     if (selected.length < 2) return;
 
     const first = selected[0];
@@ -316,7 +321,7 @@ export default function ProductsPage() {
   };
 
   const handleMergeSave = async () => {
-    const selected = productList.filter((product) => selectedProductIds.has(product.id));
+    const selected = selectedProducts;
     if (selected.length < 2) return;
     if (mergeImages.length === 0) {
       toast({
@@ -470,13 +475,58 @@ export default function ProductsPage() {
       </Dialog>
 
       <Dialog open={isMergeOpen} onOpenChange={setIsMergeOpen}>
-        <DialogContent className="max-w-[90vw] h-[90vh] overflow-y-auto">
+        <DialogContent className="w-[95vw] h-[95vh] max-w-[95vw] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{t("admin_products.merge_dialog_title")}</DialogTitle>
             <DialogDescription>{t("admin_products.merge_dialog_desc")}</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
+            <div>
+              <Label>{t("admin_products.merge_selected_products_label")}</Label>
+              <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {selectedProducts.map((product) => {
+                  const urls = Array.isArray(product.imageUrls) && product.imageUrls.length > 0
+                    ? product.imageUrls
+                    : product.imageUrl
+                      ? [product.imageUrl]
+                      : [];
+                  return (
+                    <div key={product.id} className="rounded-lg border p-3 bg-card">
+                      <div className="flex items-center gap-3">
+                        {urls[0] ? (
+                          <img
+                            src={urls[0]}
+                            alt={getLocalized(product.name)}
+                            className="h-20 w-20 rounded-md object-cover"
+                          />
+                        ) : (
+                          <div className="h-20 w-20 rounded-md bg-muted" />
+                        )}
+                        <div className="space-y-1">
+                          <p className="text-sm font-semibold">{getLocalized(product.name)}</p>
+                          <p className="text-xs text-muted-foreground">{getLocalized(product.category)}</p>
+                          <p className="text-xs text-muted-foreground">${product.price}</p>
+                        </div>
+                      </div>
+                      {urls.length > 1 && (
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {urls.slice(1, 6).map((url: string, index: number) => (
+                            <img
+                              key={`${product.id}-merge-${index}`}
+                              src={url}
+                              alt={`${getLocalized(product.name)} ${index + 2}`}
+                              className="h-12 w-12 rounded-md object-cover"
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
             <div>
               <Label>{t("admin_products.merge_images_label")}</Label>
               <div className="mt-2 flex flex-wrap gap-2">
@@ -485,7 +535,7 @@ export default function ProductsPage() {
                     key={`merge-image-${index}`}
                     src={url}
                     alt={`Merge ${index + 1}`}
-                    className="h-20 w-20 rounded-md object-cover"
+                    className="h-24 w-24 rounded-md object-cover"
                   />
                 ))}
               </div>
