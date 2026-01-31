@@ -1,51 +1,62 @@
+
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/firebase/index';
 import { collection, doc, writeBatch } from 'firebase/firestore';
+import { Readable } from 'stream';
+import cloudinary from '@/lib/cloudinary';
 
-interface Product {
-  name: string;
-  price: number;
-  quantity: number;
-  collection: string;
-  image_urls: string[];
-}
+const uploadStreamToCloudinary = (stream: Readable, fileName: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: 'bulk-product-imports',
+        public_id: fileName,
+      },
+      (error, result) => {
+        if (error) {
+          reject(new Error(`Cloudinary upload failed for ${fileName}: ${error.message}`));
+        } else if (result) {
+          resolve(result.secure_url);
+        } else {
+          reject(new Error('Cloudinary upload did not return a result.'));
+        }
+      }
+    );
+    stream.pipe(uploadStream);
+  });
+};
 
 export async function POST(req: NextRequest) {
   try {
-    const { products } = await req.json();
+    const formData = await req.formData();
+    const files = formData.getAll('files') as File[];
 
-    if (!products || !Array.isArray(products) || products.length === 0) {
-      return NextResponse.json({ message: 'No products to add. The request body must contain a JSON array of products.' }, { status: 400 });
-    }
-
-    if (products.length > 400) {
-      return NextResponse.json({ message: 'Cannot add more than 400 products at a time.' }, { status: 400 });
+    if (!files || files.length === 0) {
+      return NextResponse.json({ error: 'No files were uploaded.' }, { status: 400 });
     }
 
     const batch = writeBatch(db);
     const productCollection = collection(db, 'products');
 
-    for (const product of products) {
-        // Validate product data
-        if (!product.name || typeof product.name !== 'string' ||
-            !product.price || typeof product.price !== 'number' ||
-            !product.quantity || typeof product.quantity !== 'number' ||
-            !product.collection || typeof product.collection !== 'string') {
-          return NextResponse.json({
-            message: 'Invalid product data. Each product must have a name (string), price (number), quantity (number), and collection (string).',
-            invalidProduct: product
-          }, { status: 400 });
-        }
+    for (const file of files) {
+        const readableStream = new Readable();
+        const buffer = Buffer.from(await file.arrayBuffer());
+        readableStream.push(buffer);
+        readableStream.push(null);
 
-        const imageUrls = Array.isArray(product.image_urls) ? product.image_urls : [];
+        const imageUrl = await uploadStreamToCloudinary(readableStream, file.name);
+
+        const productName = file.name.split('.').slice(0, -1).join('.'); // Remove extension
 
         const productData = {
-            name: product.name,
-            price: product.price,
-            quantity: product.quantity,
-            collection: product.collection,
-            image_url: imageUrls[0] || null,
-            additional_image_urls: imageUrls.slice(1),
+            name: { en: productName, fr: productName, tr: productName },
+            category: { en: 'Uncategorized', fr: 'Non classé', tr: 'Kategorize edilmemiş' },
+            style: 'Modern',
+            shortDescription: { en: '', fr: '', tr: '' },
+            description: { en: '', fr: '', tr: '' },
+            price: 0,
+            stock: 0,
+            imageUrl: imageUrl,
         };
 
         const docRef = doc(productCollection);
@@ -54,14 +65,14 @@ export async function POST(req: NextRequest) {
 
     await batch.commit();
 
-    return NextResponse.json({ message: 'Products added successfully' }, { status: 201 });
+    return NextResponse.json({ message: `${files.length} products added successfully` }, { status: 201 });
   } catch (error: any) {
     console.error('Error adding products:', error);
-    
+
     if (error instanceof SyntaxError) {
         return NextResponse.json({ message: 'Invalid JSON in request body. Please check the format of the data you are sending.', error: error.message }, { status: 400 });
     }
-    
+
     // Check if it's a Firestore error
     if (error.code) {
         return NextResponse.json({ message: `Firestore error: ${error.message}`, code: error.code }, { status: 500 });
