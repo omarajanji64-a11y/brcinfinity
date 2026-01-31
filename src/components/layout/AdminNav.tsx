@@ -22,6 +22,7 @@ export default function AdminNav() {
     { href: '/admin/theme', label: t('admin_nav.theme'), icon: Palette },
     { href: '/admin/branding', label: t('admin_nav.branding'), icon: Paintbrush },
     { href: '/admin/seo', label: t('admin_nav.seo'), icon: Bot },
+    { href: '/admin/importer', label: 'Importer', icon: FileText },
   ];
   
   return (
