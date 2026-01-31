@@ -111,7 +111,7 @@
   "admin_homepage": {
     "title": "Homepage Management",
     "hero_content_title": "Hero Section Content",
-    "hero_content_desc": "Manage the main title and subtitle for your homepage'''s hero section.",
+    "hero_content_desc": "Manage the main title and subtitle for your homepage's hero section.",
     "main_title_label": "Main Title",
     "subtitle_label": "Subtitle",
     "subtitle_placeholder": "Experience the pinnacle of luxury...",
@@ -196,7 +196,7 @@
     "toast_bulk_import_success_title": "Bulk Import Successful",
     "bulk_import_success_desc": "The new products have been created and are now available in the product list.",
     "toast_bulk_import_error_title": "Bulk Import Failed",
-    "toast_bulk_import_error_desc": "An error occurred while trying to import the products. Please try again."
+    "bulk_import_error_desc": "An error occurred while trying to import the products. Please try again."
   },
   "admin_branding": {
     "title": "Branding Management",
