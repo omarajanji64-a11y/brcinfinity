@@ -1,7 +1,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { Readable } from 'stream';
-import cloudinary from '@/lib/cloudinary';
+import cloudinary from '../../../lib/cloudinary';
 import axios from 'axios';
 
 // Reusable function to upload a file stream to Cloudinary

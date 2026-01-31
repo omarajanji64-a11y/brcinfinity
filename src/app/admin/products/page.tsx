@@ -173,7 +173,7 @@ export default function ProductsPage() {
                   <AlertTriangle className="h-4 w-4" />
                   <AlertTitle>Error</AlertTitle>
                   <AlertDescription>CSV import failed</AlertDescription>
-                </Aler
+                </Alert>
               </CardFooter>
             )}
           </Card>
