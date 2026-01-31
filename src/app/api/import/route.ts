@@ -20,7 +20,6 @@ const uploadToCloudinary = (fileStream: stream.Readable, fileName: string): Prom
       },
       (error, result) => {
         if (error) {
-          // Add more context to the error
           reject(new Error(`Cloudinary upload failed for ${fileName}: ${error.message}`));
         } else if (result) {
           resolve(result.secure_url);
@@ -64,27 +63,21 @@ export async function POST(req: NextRequest) {
         const folderId = folderIdMatch[1];
 
         // 3. Google Drive Authentication
-        let drive;
-        try {
-            const auth = new google.auth.GoogleAuth({
-                credentials: {
-                  client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-                  private_key: process.env.GOOGLE_PRIVATE_KEY!.replace(/\\n/g, '\n'),
-                },
-                scopes: ['https://www.googleapis.com/auth/drive.readonly'],
-            });
-            drive = google.drive({ version: 'v3', auth });
-        } catch (authError: any) {
-            console.error('Google Drive authentication failed:', authError);
-            throw new Error(`Google Drive authentication failed: ${authError.message}. Check your service account credentials.`);
-        }
+        const auth = new google.auth.GoogleAuth({
+            credentials: {
+              client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+              private_key: process.env.GOOGLE_PRIVATE_KEY!.replace(/\\n/g, '\n'),
+            },
+            scopes: ['https://www.googleapis.com/auth/drive.readonly'],
+        });
 
+        const drive = google.drive({ version: 'v3', auth });
 
         // 4. List files in the folder
         const listResponse = await drive.files.list({
             q: `'${folderId}' in parents and (mimeType='image/jpeg' or mimeType='image/png')`,
             fields: 'files(id, name)',
-            pageSize: 100 // Add page size to handle more files if needed
+            pageSize: 100
         });
 
         const files = listResponse.data.files;
@@ -108,9 +101,7 @@ export async function POST(req: NextRequest) {
                     const cloudinaryUrl = await uploadToCloudinary(fileResponse.data as stream.Readable, file.name);
                     return cloudinaryUrl;
                 } catch(uploadError: any) {
-                    // This allows Promise.all to continue even if one upload fails.
                     console.error(`Failed to process file ${file.name} (ID: ${file.id}):`, uploadError);
-                    // Re-throwing to be caught by the outer catch block.
                     throw new Error(`Failed to process file '${file.name}': ${uploadError.message}`);
                 }
             })
@@ -122,8 +113,13 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ imageUrls: successfulUploads });
 
     } catch (error: any) {
-        console.error('An error occurred during the import process:', error);
-        // Check for common Google API errors
+        console.error('Full error object during import:', error);
+
+        if (error.message.includes("cannot use 'in' operator to search for '_delegate'")) {
+            const detailedMessage = `Google Drive authentication failed. This is often due to malformed or incorrect service account credentials in your environment variables. Please double-check GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY.`;
+            return NextResponse.json({ error: detailedMessage }, { status: 500 });
+        }
+
         if (error.code && error.errors) {
             const googleError = error.errors[0];
             let detailedMessage = googleError.message || 'A Google API error occurred.';
