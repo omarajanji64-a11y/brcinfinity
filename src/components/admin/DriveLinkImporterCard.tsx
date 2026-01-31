@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { doc, setDoc } from "firebase/firestore";
+import { collection, doc, writeBatch } from "firebase/firestore";
 import {
   Card,
   CardHeader,
@@ -21,6 +21,22 @@ import { useTranslation } from "@/lib/i18n";
 import { Textarea } from "@/components/ui/textarea";
 import { useFirestore } from "@/firebase/client-provider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 type DriveImportResponse = {
   imageUrls: string[];
@@ -38,27 +54,30 @@ const DEFAULT_CATEGORY = {
   tr: "Kategorize edilmemiş",
 };
 
+type ImportProductDraft = {
+  id: string;
+  imageUrl: string;
+  name: string;
+  category: string;
+  style: "Modern" | "Classic";
+  price: string;
+  stock: string;
+  shortDescription: string;
+  description: string;
+};
+
 export default function DriveLinkImporterCard({ onProductImported }: DriveLinkImporterCardProps) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const firestore = useFirestore();
 
   const [link, setLink] = useState("");
-  const [productName, setProductName] = useState("");
-  const [category, setCategory] = useState("");
-  const [style, setStyle] = useState<"Modern" | "Classic">("Modern");
-  const [price, setPrice] = useState("0");
-  const [stock, setStock] = useState("1");
-  const [shortDescription, setShortDescription] = useState("");
-  const [description, setDescription] = useState("");
   const [isImporting, setIsImporting] = useState(false);
   const [importStatus, setImportStatus] = useState<"idle" | "success" | "error">("idle");
   const [importedImageUrls, setImportedImageUrls] = useState<string[]>([]);
-
-  const resolvedCategory = useMemo(() => {
-    const trimmed = category.trim();
-    return trimmed.length > 0 ? trimmed : null;
-  }, [category]);
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [productsToImport, setProductsToImport] = useState<ImportProductDraft[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLink(e.target.value);
@@ -70,6 +89,7 @@ export default function DriveLinkImporterCard({ onProductImported }: DriveLinkIm
     setIsImporting(true);
     setImportStatus("idle");
     setImportedImageUrls([]);
+    setProductsToImport([]);
 
     try {
       const response = await fetch("/api/upload/link", {
@@ -91,54 +111,30 @@ export default function DriveLinkImporterCard({ onProductImported }: DriveLinkIm
         throw new Error(t("admin_products.toast_drive_import_error_desc"));
       }
 
-      const resolvedName = productName.trim() || folderName || t("admin_products.drive_import_default_name");
-      const resolvedPrice = Number(price);
-      const resolvedStock = Number(stock);
-      const localizedName = { en: resolvedName, fr: resolvedName, tr: resolvedName };
-      const localizedCategory = resolvedCategory
-        ? { en: resolvedCategory, fr: resolvedCategory, tr: resolvedCategory }
-        : DEFAULT_CATEGORY;
-
-      const productData = {
-        id: uuidv4(),
-        name: localizedName,
-        category: localizedCategory,
-        style,
-        shortDescription: {
-          en: shortDescription,
-          fr: shortDescription,
-          tr: shortDescription,
-        },
-        description: {
-          en: description,
-          fr: description,
-          tr: description,
-        },
-        price: Number.isFinite(resolvedPrice) ? resolvedPrice : 0,
-        stock: Number.isFinite(resolvedStock) ? resolvedStock : 0,
-        imageUrl: newUrls[0],
-        imageUrls: newUrls,
-      };
-
-      const productRef = doc(firestore, "products", productData.id);
-      await setDoc(productRef, productData, { merge: true });
-
       setImportedImageUrls(newUrls);
       setImportStatus("success");
-      setLink(""); // Clear input on success
-      setProductName("");
-      setCategory("");
-      setPrice("0");
-      setStock("1");
-      setShortDescription("");
-      setDescription("");
+
+      const baseName = folderName?.trim() || t("admin_products.drive_import_default_name");
+      const drafts: ImportProductDraft[] = newUrls.map((url, index) => ({
+        id: uuidv4(),
+        imageUrl: url,
+        name: `${baseName} ${index + 1}`,
+        category: "",
+        style: "Modern",
+        price: "0",
+        stock: "1",
+        shortDescription: "",
+        description: "",
+      }));
+
+      setProductsToImport(drafts);
+      setIsEditorOpen(true);
 
       toast({
         title: t("admin_products.toast_drive_import_success_title"),
         description: t("admin_products.toast_drive_import_success_desc"),
       });
 
-      onProductImported?.();
     } catch (error: any) {
       console.error("Drive Import Error:", error);
       setImportStatus("error");
@@ -152,111 +148,209 @@ export default function DriveLinkImporterCard({ onProductImported }: DriveLinkIm
     }
   };
 
+  const handleDraftChange = (id: string, field: keyof ImportProductDraft, value: string) => {
+    setProductsToImport((prev) =>
+      prev.map((product) => (product.id === id ? { ...product, [field]: value } : product))
+    );
+  };
+
+  const handleSaveProducts = async () => {
+    if (productsToImport.length === 0) return;
+    setIsSaving(true);
+
+    try {
+      const batch = writeBatch(firestore);
+      const productCollection = collection(firestore, "products");
+
+      productsToImport.forEach((product) => {
+        const resolvedName = product.name.trim() || t("admin_products.drive_import_default_name");
+        const resolvedCategory = product.category.trim();
+        const localizedName = { en: resolvedName, fr: resolvedName, tr: resolvedName };
+        const localizedCategory = resolvedCategory.length > 0
+          ? { en: resolvedCategory, fr: resolvedCategory, tr: resolvedCategory }
+          : DEFAULT_CATEGORY;
+        const resolvedPrice = Number(product.price);
+        const resolvedStock = Number(product.stock);
+
+        const productData = {
+          id: product.id,
+          name: localizedName,
+          category: localizedCategory,
+          style: product.style,
+          shortDescription: {
+            en: product.shortDescription,
+            fr: product.shortDescription,
+            tr: product.shortDescription,
+          },
+          description: {
+            en: product.description,
+            fr: product.description,
+            tr: product.description,
+          },
+          price: Number.isFinite(resolvedPrice) ? resolvedPrice : 0,
+          stock: Number.isFinite(resolvedStock) ? resolvedStock : 0,
+          imageUrl: product.imageUrl,
+          imageUrls: [product.imageUrl],
+        };
+
+        const docRef = doc(productCollection, product.id);
+        batch.set(docRef, productData, { merge: true });
+      });
+
+      await batch.commit();
+
+      setIsEditorOpen(false);
+      setProductsToImport([]);
+      setLink("");
+      onProductImported?.();
+      toast({
+        title: t("admin_products.toast_product_saved_title"),
+        description: t("admin_products.toast_product_saved_desc"),
+      });
+    } catch (error: any) {
+      console.error("Drive Import Save Error:", error);
+      toast({
+        variant: "destructive",
+        title: t("admin_products.toast_drive_import_error_title"),
+        description: error.message || t("admin_products.toast_drive_import_error_desc"),
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t("admin_products.import_drive_link_title")}</CardTitle>
-        <CardDescription>{t("admin_products.import_drive_link_desc")}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="drive-link">{t("admin_products.drive_link_label")}</Label>
-            <Input
-              id="drive-link"
-              type="url"
-              placeholder="https://drive.google.com/drive/folders/..."
-              value={link}
-              onChange={handleLinkChange}
-            />
+    <>
+      <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
+        <DialogContent className="max-w-[95vw] h-[90vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle>{t("admin_products.drive_import_editor_title")}</DialogTitle>
+            <DialogDescription>{t("admin_products.drive_import_editor_desc")}</DialogDescription>
+          </DialogHeader>
+          <div className="flex-grow overflow-y-auto p-1">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[90px]">{t("admin_products.table_header_image")}</TableHead>
+                  <TableHead>{t("admin_products.table_header_name")}</TableHead>
+                  <TableHead className="w-[140px]">{t("admin_products.drive_import_category_label")}</TableHead>
+                  <TableHead className="w-[140px]">{t("admin_products.drive_import_style_label")}</TableHead>
+                  <TableHead className="w-[120px]">{t("admin_products.table_header_price")}</TableHead>
+                  <TableHead className="w-[120px]">{t("admin_products.table_header_stock")}</TableHead>
+                  <TableHead>{t("admin_products.drive_import_short_desc_label")}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {productsToImport.map((product) => (
+                  <TableRow key={product.id}>
+                    <TableCell>
+                      <img
+                        src={product.imageUrl}
+                        alt={product.name}
+                        className="h-16 w-16 rounded-md object-cover"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        value={product.name}
+                        onChange={(event) => handleDraftChange(product.id, "name", event.target.value)}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        value={product.category}
+                        onChange={(event) => handleDraftChange(product.id, "category", event.target.value)}
+                        placeholder={t("admin_products.drive_import_category_placeholder")}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Select
+                        value={product.style}
+                        onValueChange={(value) => handleDraftChange(product.id, "style", value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Modern">{t("admin_products.drive_import_style_modern")}</SelectItem>
+                          <SelectItem value="Classic">{t("admin_products.drive_import_style_classic")}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        type="number"
+                        min="0"
+                        value={product.price}
+                        onChange={(event) => handleDraftChange(product.id, "price", event.target.value)}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        type="number"
+                        min="0"
+                        value={product.stock}
+                        onChange={(event) => handleDraftChange(product.id, "stock", event.target.value)}
+                      />
+                    </TableCell>
+                    <TableCell className="min-w-[220px]">
+                      <Textarea
+                        value={product.shortDescription}
+                        onChange={(event) => handleDraftChange(product.id, "shortDescription", event.target.value)}
+                        placeholder={t("admin_products.drive_import_short_desc_placeholder")}
+                      />
+                      <Textarea
+                        className="mt-2"
+                        value={product.description}
+                        onChange={(event) => handleDraftChange(product.id, "description", event.target.value)}
+                        placeholder={t("admin_products.drive_import_desc_placeholder")}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditorOpen(false)} disabled={isSaving}>
+              {t("common.cancel")}
+            </Button>
+            <Button onClick={handleSaveProducts} disabled={isSaving}>
+              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {t("admin_products.drive_import_save_button", { count: productsToImport.length })}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+      <Card>
+        <CardHeader>
+          <CardTitle>{t("admin_products.import_drive_link_title")}</CardTitle>
+          <CardDescription>{t("admin_products.import_drive_link_desc")}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="drive-product-name">{t("admin_products.drive_import_name_label")}</Label>
+              <Label htmlFor="drive-link">{t("admin_products.drive_link_label")}</Label>
               <Input
-                id="drive-product-name"
-                value={productName}
-                onChange={(event) => setProductName(event.target.value)}
-                placeholder={t("admin_products.drive_import_name_placeholder")}
+                id="drive-link"
+                type="url"
+                placeholder="https://drive.google.com/drive/folders/..."
+                value={link}
+                onChange={handleLinkChange}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="drive-product-category">{t("admin_products.drive_import_category_label")}</Label>
-              <Input
-                id="drive-product-category"
-                value={category}
-                onChange={(event) => setCategory(event.target.value)}
-                placeholder={t("admin_products.drive_import_category_placeholder")}
-              />
-            </div>
-          </div>
 
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="space-y-2">
-              <Label htmlFor="drive-product-style">{t("admin_products.drive_import_style_label")}</Label>
-              <Select value={style} onValueChange={(value) => setStyle(value as "Modern" | "Classic")}>
-                <SelectTrigger id="drive-product-style">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Modern">{t("admin_products.drive_import_style_modern")}</SelectItem>
-                  <SelectItem value="Classic">{t("admin_products.drive_import_style_classic")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="drive-product-price">{t("admin_products.drive_import_price_label")}</Label>
-              <Input
-                id="drive-product-price"
-                type="number"
-                min="0"
-                value={price}
-                onChange={(event) => setPrice(event.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="drive-product-stock">{t("admin_products.drive_import_stock_label")}</Label>
-              <Input
-                id="drive-product-stock"
-                type="number"
-                min="0"
-                value={stock}
-                onChange={(event) => setStock(event.target.value)}
-              />
-            </div>
+            <Button onClick={handleImport} disabled={isImporting || !link}>
+              {isImporting ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Link className="mr-2 h-4 w-4" />
+              )}
+              {t("admin_products.drive_import_button")}
+            </Button>
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="drive-product-short-desc">{t("admin_products.drive_import_short_desc_label")}</Label>
-            <Textarea
-              id="drive-product-short-desc"
-              value={shortDescription}
-              onChange={(event) => setShortDescription(event.target.value)}
-              placeholder={t("admin_products.drive_import_short_desc_placeholder")}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="drive-product-desc">{t("admin_products.drive_import_desc_label")}</Label>
-            <Textarea
-              id="drive-product-desc"
-              value={description}
-              onChange={(event) => setDescription(event.target.value)}
-              placeholder={t("admin_products.drive_import_desc_placeholder")}
-            />
-          </div>
-
-          <Button onClick={handleImport} disabled={isImporting || !link}>
-            {isImporting ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Link className="mr-2 h-4 w-4" />
-            )}
-            {t("admin_products.drive_import_button")}
-          </Button>
-        </div>
-      </CardContent>
+        </CardContent>
       {importStatus === "success" && importedImageUrls.length > 0 && (
         <CardFooter>
           <Alert>
@@ -281,6 +375,7 @@ export default function DriveLinkImporterCard({ onProductImported }: DriveLinkIm
           </Alert>
         </CardFooter>
       )}
-    </Card>
+      </Card>
+    </>
   );
 }
