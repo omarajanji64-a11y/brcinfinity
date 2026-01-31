@@ -1,33 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/firebase/index';
-import { collection, doc, writeBatch } from 'firebase/firestore';
 import { Readable } from 'stream';
 import cloudinary from '@/lib/cloudinary';
 
-interface ProductMetadata {
-  id: string;
-  name: string;
-  price: number;
-  stock: number;
-  fileName: string;
-}
-
-interface CloudinaryUploadResult {
+interface UploadResult {
     status: "fulfilled" | "rejected";
-    value?: { public_id: string; secure_url: string; };
+    value?: { public_id: string; secure_url: string; original_filename: string; };
     reason?: any;
     fileName: string;
 }
 
-const uploadStreamToCloudinary = (stream: Readable, fileName: string): Promise<{public_id: string, secure_url: string}> => {
+const uploadStreamToCloudinary = (stream: Readable, fileName: string): Promise<{public_id: string, secure_url: string, original_filename: string}> => {
+    // Use a unique public_id to prevent overwrites and allow for easier rollbacks if needed.
     const public_id = `brc-infinity-products/${fileName.split('.').slice(0, -1).join('.')}-${Date.now()}`;
     return new Promise((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
             { public_id, overwrite: true },
             (error, result) => {
-                if (error) return reject(new Error(`Cloudinary upload failed for ${fileName}: ${error.message}`));
-                if (result) return resolve({ public_id: result.public_id, secure_url: result.secure_url });
-                reject(new Error('Cloudinary upload did not return a result.'));
+                if (error) return reject(new Error(`Upload failed for ${fileName}: ${error.message}`));
+                if (result) return resolve({ public_id: result.public_id, secure_url: result.secure_url, original_filename: fileName });
+                reject(new Error(`Upload for ${fileName} did not return a result.`));
             }
         );
         stream.pipe(uploadStream);
@@ -45,25 +36,14 @@ const deleteFromCloudinary = (public_id: string) => {
 
 export async function POST(req: NextRequest) {
     const formData = await req.formData();
-    const productMetadataString = formData.get('products') as string;
     const files = formData.getAll('files') as File[];
 
-    if (!productMetadataString || !files || files.length === 0) {
-      return NextResponse.json({ message: 'Missing product data or files.' }, { status: 400 });
-    }
-
-    const productMetadata: ProductMetadata[] = JSON.parse(productMetadataString);
-    if (productMetadata.length !== files.length) {
-      return NextResponse.json({ message: 'Mismatch between product data and number of files.' }, { status: 400 });
+    if (!files || files.length === 0) {
+      return NextResponse.json({ message: 'No files provided.' }, { status: 400 });
     }
 
     // --- PHASE 1: UPLOAD ALL IMAGES TO CLOUDINARY --- 
-    const uploadPromises: Promise<CloudinaryUploadResult>[] = files.map(async file => {
-        const metadata = productMetadata.find(p => p.fileName === file.name);
-        if (!metadata) {
-            return { status: 'rejected', reason: 'No matching metadata found', fileName: file.name };
-        }
-
+    const uploadPromises: Promise<UploadResult>[] = files.map(async file => {
         try {
             const buffer = Buffer.from(await file.arrayBuffer());
             const readableStream = new Readable();
@@ -78,13 +58,13 @@ export async function POST(req: NextRequest) {
 
     const uploadResults = await Promise.all(uploadPromises);
 
-    const successfulUploads = uploadResults.filter(r => r.status === 'fulfilled');
+    const successfulUploads = uploadResults.filter((r): r is { status: 'fulfilled', value: Required<UploadResult['value']>, fileName: string } => r.status === 'fulfilled' && r.value !== undefined);
     const failedUploads = uploadResults.filter(r => r.status === 'rejected');
 
-    // --- ROLLBACK PHASE: If any upload fails, delete successful ones and abort --- 
+    // --- ROLLBACK PHASE: If any upload fails, delete all successful ones and abort --- 
     if (failedUploads.length > 0) {
-        console.error("Bulk import failed. Rolling back successful uploads.", { failedUploads });
-        const rollbackPromises = successfulUploads.map(r => r.value?.public_id ? deleteFromCloudinary(r.value.public_id) : Promise.resolve());
+        console.error("Image upload failed. Rolling back successful uploads.", { failedUploads });
+        const rollbackPromises = successfulUploads.map(r => deleteFromCloudinary(r.value.public_id));
         await Promise.all(rollbackPromises);
 
         const firstError = failedUploads[0];
@@ -95,42 +75,14 @@ export async function POST(req: NextRequest) {
         }, { status: 500 });
     }
 
-    // --- PHASE 2: COMMIT TO DATABASE (only if all uploads succeeded) ---
-    try {
-        const batch = writeBatch(db);
-        const productCollection = collection(db, 'products');
+    // --- SUCCESS: Return the URLs of the uploaded images --- 
+    const responsePayload = {
+        message: `${successfulUploads.length} images uploaded successfully.`,
+        uploads: successfulUploads.map(r => ({ 
+            fileName: r.fileName, 
+            url: r.value.secure_url 
+        }))
+    };
 
-        uploadResults.forEach(result => {
-            const metadata = productMetadata.find(p => p.fileName === result.fileName);
-            const uploadValue = result.value;
-
-            if (metadata && uploadValue) {
-                const productData = {
-                    id: metadata.id, 
-                    name: { en: metadata.name, fr: metadata.name, tr: metadata.name },
-                    category: { en: 'Uncategorized', fr: 'Non classé', tr: 'Kategorize edilmemiş' },
-                    style: 'Modern',
-                    shortDescription: { en: '', fr: '', tr: '' },
-                    description: { en: '', fr: '', tr: '' },
-                    price: metadata.price,
-                    stock: metadata.stock,
-                    imageUrl: uploadValue.secure_url,
-                };
-                const docRef = doc(productCollection, metadata.id);
-                batch.set(docRef, productData);
-            }
-        });
-
-        await batch.commit();
-
-        return NextResponse.json({ message: `${productMetadata.length} products added successfully` }, { status: 201 });
-
-    } catch (dbError: any) {
-        // If DB commit fails, we must still roll back the Cloudinary uploads
-        console.error("Database commit failed after successful image uploads. Rolling back images.", { dbError });
-        const rollbackPromises = successfulUploads.map(r => r.value?.public_id ? deleteFromCloudinary(r.value.public_id) : Promise.resolve());
-        await Promise.all(rollbackPromises);
-        
-        return NextResponse.json({ message: `Database error after uploads: ${dbError.message}. All uploaded images have been deleted.` }, { status: 500 });
-    }
+    return NextResponse.json(responsePayload, { status: 200 });
 }
