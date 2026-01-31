@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Papa from "papaparse";
 import { v4 as uuidv4 } from "uuid";
 import { collection, doc, writeBatch } from "firebase/firestore";
 import {
@@ -33,7 +34,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Loader2, Link } from "lucide-react";
+import { Loader2, FileText } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type ImportProductDraft = {
@@ -54,26 +55,48 @@ const DEFAULT_CATEGORY = {
   tr: "Kategorize edilmemiş",
 };
 
-const splitLinks = (raw: string) => {
-  return raw
-    .split(/[\n,]+/)
-    .map((link) => link.trim())
-    .filter(Boolean);
+const isLikelyUrl = (value: string) => /^https?:\/\//i.test(value.trim());
+
+const extractUrlsFromCsv = (csvText: string) => {
+  const parsed = Papa.parse<string[]>(csvText, {
+    skipEmptyLines: true,
+  });
+
+  if (parsed.errors.length > 0) {
+    throw new Error(parsed.errors[0].message || "CSV parse error");
+  }
+
+  const urls: string[] = [];
+
+  parsed.data.forEach((row) => {
+    if (Array.isArray(row)) {
+      row.forEach((cell) => {
+        const value = String(cell ?? "").trim();
+        if (value && isLikelyUrl(value)) urls.push(value);
+      });
+    } else {
+      const value = String(row ?? "").trim();
+      if (value && isLikelyUrl(value)) urls.push(value);
+    }
+  });
+
+  return urls;
 };
 
-interface CloudinaryLinkImporterCardProps {
+interface CsvLinkImporterCardProps {
   onProductImported?: () => void;
 }
 
-export default function CloudinaryLinkImporterCard({ onProductImported }: CloudinaryLinkImporterCardProps) {
+export default function CsvLinkImporterCard({ onProductImported }: CsvLinkImporterCardProps) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const firestore = useFirestore();
 
-  const [links, setLinks] = useState("");
+  const [csvText, setCsvText] = useState("");
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [productsToImport, setProductsToImport] = useState<ImportProductDraft[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [isParsing, setIsParsing] = useState(false);
 
   const handleDraftChange = (id: string, field: keyof ImportProductDraft, value: string) => {
     setProductsToImport((prev) =>
@@ -81,24 +104,15 @@ export default function CloudinaryLinkImporterCard({ onProductImported }: Cloudi
     );
   };
 
-  const handleImport = () => {
-    const linkList = splitLinks(links);
-    if (linkList.length === 0) {
-      toast({
-        variant: "destructive",
-        title: t("admin_products.toast_drive_import_error_title"),
-        description: t("admin_products.image_links_error_desc"),
-      });
-      return;
-    }
-
-      const drafts = linkList.map((url, index) => ({
-        id: uuidv4(),
-        imageUrl: url,
-        name: `${t("admin_products.image_links_default_name")} ${index + 1}`,
-        category: "",
-        style: "Modern",
-        price: "0",
+  const buildDrafts = (urls: string[]) => {
+    const baseName = t("admin_products.image_links_default_name");
+    const drafts = urls.map((url, index) => ({
+      id: uuidv4(),
+      imageUrl: url,
+      name: `${baseName} ${index + 1}`,
+      category: "",
+      style: "Modern",
+      price: "0",
       stock: "1",
       shortDescription: "",
       description: "",
@@ -106,6 +120,58 @@ export default function CloudinaryLinkImporterCard({ onProductImported }: Cloudi
 
     setProductsToImport(drafts);
     setIsEditorOpen(true);
+  };
+
+  const parseCsv = async (text: string) => {
+    setIsParsing(true);
+    try {
+      const urls = extractUrlsFromCsv(text);
+      if (urls.length === 0) {
+        throw new Error(t("admin_products.csv_links_error_desc"));
+      }
+      buildDrafts(urls);
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: t("admin_products.toast_drive_import_error_title"),
+        description: error.message || t("admin_products.csv_links_error_desc"),
+      });
+    } finally {
+      setIsParsing(false);
+    }
+  };
+
+  const handleImport = () => {
+    if (!csvText.trim()) {
+      toast({
+        variant: "destructive",
+        title: t("admin_products.toast_drive_import_error_title"),
+        description: t("admin_products.csv_links_error_desc"),
+      });
+      return;
+    }
+    void parseCsv(csvText);
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const text = String(reader.result ?? "");
+      setCsvText(text);
+      void parseCsv(text);
+      event.target.value = "";
+    };
+    reader.onerror = () => {
+      toast({
+        variant: "destructive",
+        title: t("admin_products.toast_drive_import_error_title"),
+        description: t("admin_products.csv_links_error_desc"),
+      });
+    };
+    reader.readAsText(file);
   };
 
   const handleSaveProducts = async () => {
@@ -155,14 +221,14 @@ export default function CloudinaryLinkImporterCard({ onProductImported }: Cloudi
 
       setIsEditorOpen(false);
       setProductsToImport([]);
-      setLinks("");
+      setCsvText("");
       onProductImported?.();
       toast({
         title: t("admin_products.toast_product_saved_title"),
         description: t("admin_products.toast_product_saved_desc"),
       });
     } catch (error: any) {
-      console.error("Image Links Import Save Error:", error);
+      console.error("CSV Import Save Error:", error);
       toast({
         variant: "destructive",
         title: t("admin_products.toast_drive_import_error_title"),
@@ -178,8 +244,8 @@ export default function CloudinaryLinkImporterCard({ onProductImported }: Cloudi
       <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
         <DialogContent className="max-w-[95vw] h-[90vh] flex flex-col">
           <DialogHeader>
-          <DialogTitle>{t("admin_products.image_links_editor_title")}</DialogTitle>
-          <DialogDescription>{t("admin_products.image_links_editor_desc")}</DialogDescription>
+            <DialogTitle>{t("admin_products.csv_links_editor_title")}</DialogTitle>
+            <DialogDescription>{t("admin_products.csv_links_editor_desc")}</DialogDescription>
           </DialogHeader>
           <div className="flex-grow overflow-y-auto p-1">
             <Table>
@@ -279,23 +345,32 @@ export default function CloudinaryLinkImporterCard({ onProductImported }: Cloudi
 
       <Card>
         <CardHeader>
-          <CardTitle>{t("admin_products.image_links_title")}</CardTitle>
-          <CardDescription>{t("admin_products.image_links_desc")}</CardDescription>
+          <CardTitle>{t("admin_products.csv_links_title")}</CardTitle>
+          <CardDescription>{t("admin_products.csv_links_desc")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="cloudinary-links">{t("admin_products.image_links_label")}</Label>
+              <Label htmlFor="csv-links">{t("admin_products.csv_links_paste_label")}</Label>
               <Textarea
-                id="cloudinary-links"
-                placeholder={t("admin_products.image_links_placeholder")}
-                value={links}
-                onChange={(event) => setLinks(event.target.value)}
+                id="csv-links"
+                placeholder={t("admin_products.csv_links_placeholder")}
+                value={csvText}
+                onChange={(event) => setCsvText(event.target.value)}
               />
             </div>
-            <Button onClick={handleImport} disabled={!links.trim()}>
-              <Link className="mr-2 h-4 w-4" />
-              {t("admin_products.image_links_button")}
+            <div className="space-y-2">
+              <Label htmlFor="csv-file">{t("admin_products.csv_links_upload_label")}</Label>
+              <Input
+                id="csv-file"
+                type="file"
+                accept=".csv,text/csv"
+                onChange={handleFileChange}
+              />
+            </div>
+            <Button onClick={handleImport} disabled={!csvText.trim() || isParsing}>
+              {isParsing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <FileText className="mr-2 h-4 w-4" />}
+              {t("admin_products.csv_links_button")}
             </Button>
           </div>
         </CardContent>
