@@ -1,3 +1,4 @@
+'''
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/firebase/index';
 import { collection, doc, writeBatch } from 'firebase/firestore';
@@ -26,16 +27,19 @@ export async function POST(req: NextRequest) {
     const productCollection = collection(db, 'products');
 
     for (const product of products) {
-        const [image_url, ...additional_image_urls] = product.image_urls;
-        const productData = {
-            ...product,
-            image_url,
-            additional_image_urls,
-        };
-        delete (productData as any).image_urls;
+        const imageUrls = Array.isArray(product.image_urls) ? product.image_urls : [];
 
-      const docRef = doc(productCollection);
-      batch.set(docRef, productData);
+        const productData = {
+            name: product.name,
+            price: product.price,
+            quantity: product.quantity,
+            collection: product.collection,
+            image_url: imageUrls[0] || null,
+            additional_image_urls: imageUrls.slice(1),
+        };
+
+        const docRef = doc(productCollection);
+        batch.set(docRef, productData);
     }
 
     await batch.commit();
@@ -46,3 +50,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }
+'''
