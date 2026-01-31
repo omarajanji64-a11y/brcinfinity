@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -117,8 +117,29 @@ export default function ImageImporterPage() {
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Failed to add products.');
+                const errorData = await response.json().catch(() => ({ message: 'Failed to parse error response from server.' }));
+                let descriptionNode: ReactNode = null;
+
+                if (errorData.invalidProduct) {
+                    const formattedJson = JSON.stringify(errorData.invalidProduct, null, 2);
+                    descriptionNode = (
+                        <>
+                            <p>The following product data is invalid:</p>
+                            <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+                                <code className="text-white">{formattedJson}</code>
+                            </pre>
+                        </>
+                    );
+                } else if (errorData.error) {
+                    descriptionNode = `Server error details: ${errorData.error}`;
+                }
+
+                toast({
+                    variant: 'destructive',
+                    title: errorData.message || 'Failed to add products.',
+                    description: descriptionNode,
+                });
+                return;
             }
 
             toast({ title: 'Success', description: 'All products have been added successfully.' });
@@ -126,7 +147,11 @@ export default function ImageImporterPage() {
             setSelectedIndices([]);
         } catch (error) {
             console.error(error);
-            toast({ variant: 'destructive', title: 'Error', description: (error as Error).message || 'An unexpected error occurred.' });
+            toast({
+                variant: 'destructive',
+                title: 'An unexpected error occurred',
+                description: (error as Error).message || 'Please check the console for more details.',
+            });
         }
     };
 
