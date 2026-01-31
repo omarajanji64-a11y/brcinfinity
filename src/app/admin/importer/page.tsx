@@ -60,7 +60,7 @@ export default function ImageImporterPage() {
             toast({
                 variant: 'destructive',
                 title: 'Error',
-                description: error.message || 'An unexpected error occurred.',
+                description: (error as Error).message || 'An unexpected error occurred.',
             });
             setProgress(0);
         } finally {
@@ -79,10 +79,8 @@ export default function ImageImporterPage() {
         }
 
         const csvContent = "data:text/csv;charset=utf-8,"
-            + "image_url
-"
-            + imageUrls.join("
-");
+            + "image_url\n"
+            + imageUrls.join("\n");
 
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
