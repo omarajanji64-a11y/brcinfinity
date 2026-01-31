@@ -1,26 +1,27 @@
+
 import { NextRequest, NextResponse } from 'next/server';
 import { google } from 'googleapis';
 import { v2 as cloudinary } from 'cloudinary';
 import stream from 'stream';
 
-// Configure Cloudinary with your credentials from environment variables
+// Configure Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// This function will upload a file stream to Cloudinary
 const uploadToCloudinary = (fileStream: stream.Readable, fileName: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
-        folder: 'google-drive-imports', // Optional: specify a folder in Cloudinary
+        folder: 'google-drive-imports',
         public_id: fileName,
       },
       (error, result) => {
         if (error) {
-          reject(error);
+          // Add more context to the error
+          reject(new Error(`Cloudinary upload failed for ${fileName}: ${error.message}`));
         } else if (result) {
           resolve(result.secure_url);
         } else {
@@ -32,70 +33,109 @@ const uploadToCloudinary = (fileStream: stream.Readable, fileName: string): Prom
   });
 };
 
-
 export async function POST(req: NextRequest) {
-    const { googleDriveLink } = await req.json();
-
-    if (!googleDriveLink) {
-        return NextResponse.json({ error: 'Google Drive link is required' }, { status: 400 });
+    // 1. Environment Variable Check
+    const requiredEnvVars = [
+        'CLOUDINARY_CLOUD_NAME',
+        'CLOUDINARY_API_KEY',
+        'CLOUDINARY_API_SECRET',
+        'GOOGLE_SERVICE_ACCOUNT_EMAIL',
+        'GOOGLE_PRIVATE_KEY',
+    ];
+    const missingEnvVars = requiredEnvVars.filter(v => !process.env[v]);
+    if (missingEnvVars.length > 0) {
+        const errorMessage = `Missing required environment variables: ${missingEnvVars.join(', ')}. Please check your server configuration.`;
+        console.error(errorMessage);
+        return NextResponse.json({ error: errorMessage }, { status: 500 });
     }
 
     try {
-        // 1. Authenticate with Google Drive API using a Service Account
-        // Make sure to share your Google Drive folder with the service account's email address
-        const auth = new google.auth.GoogleAuth({
-            credentials: {
-              client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-              private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'), // Ensure newlines are correctly formatted
-            },
-            scopes: ['https://www.googleapis.com/auth/drive.readonly'],
-        });
+        const { googleDriveLink } = await req.json();
 
-        const drive = google.drive({ version: 'v3', auth });
+        if (!googleDriveLink) {
+            return NextResponse.json({ error: 'Google Drive link is required' }, { status: 400 });
+        }
 
-        // 2. Extract Folder ID from Google Drive Link
+        // 2. Extract Folder ID
         const folderIdMatch = googleDriveLink.match(/folders\/([a-zA-Z0-9_-]+)/);
         if (!folderIdMatch || !folderIdMatch[1]) {
-            return NextResponse.json({ error: 'Invalid Google Drive folder link' }, { status: 400 });
+            return NextResponse.json({ error: 'Invalid Google Drive folder link. Please provide a valid folder link.' }, { status: 400 });
         }
         const folderId = folderIdMatch[1];
 
-        // 3. List files in the Google Drive folder
+        // 3. Google Drive Authentication
+        let drive;
+        try {
+            const auth = new google.auth.GoogleAuth({
+                credentials: {
+                  client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+                  private_key: process.env.GOOGLE_PRIVATE_KEY!.replace(/\\n/g, '\n'),
+                },
+                scopes: ['https://www.googleapis.com/auth/drive.readonly'],
+            });
+            drive = google.drive({ version: 'v3', auth });
+        } catch (authError: any) {
+            console.error('Google Drive authentication failed:', authError);
+            throw new Error(`Google Drive authentication failed: ${authError.message}. Check your service account credentials.`);
+        }
+
+
+        // 4. List files in the folder
         const listResponse = await drive.files.list({
-            q: `\'${folderId}\' in parents and (mimeType='image/jpeg' or mimeType='image/png')`,
+            q: `'${folderId}' in parents and (mimeType='image/jpeg' or mimeType='image/png')`,
             fields: 'files(id, name)',
+            pageSize: 100 // Add page size to handle more files if needed
         });
 
         const files = listResponse.data.files;
         if (!files || files.length === 0) {
-            return NextResponse.json({ imageUrls: [] });
+            return NextResponse.json({ imageUrls: [], message: 'No image files (JPEG or PNG) found in the specified Google Drive folder.' });
         }
 
-        // 4. Download from Drive and Upload to Cloudinary for each file
+        // 5. Download from Drive and Upload to Cloudinary
         const imageUrls = await Promise.all(
             files.map(async (file) => {
                 if (!file.id || !file.name) {
-                  throw new Error("A file is missing an ID or a name.");
+                  console.warn("A file in Google Drive is missing an ID or a name, skipping it.", file);
+                  return null; // Skip this file
                 }
                 
-                // Get the file stream from Google Drive
-                const fileResponse = await drive.files.get(
-                    { fileId: file.id, alt: 'media' },
-                    { responseType: 'stream' }
-                );
-
-                // Upload the stream to Cloudinary
-                const cloudinaryUrl = await uploadToCloudinary(fileResponse.data as stream.Readable, file.name);
-                return cloudinaryUrl;
+                try {
+                    const fileResponse = await drive.files.get(
+                        { fileId: file.id, alt: 'media' },
+                        { responseType: 'stream' }
+                    );
+                    const cloudinaryUrl = await uploadToCloudinary(fileResponse.data as stream.Readable, file.name);
+                    return cloudinaryUrl;
+                } catch(uploadError: any) {
+                    // This allows Promise.all to continue even if one upload fails.
+                    console.error(`Failed to process file ${file.name} (ID: ${file.id}):`, uploadError);
+                    // Re-throwing to be caught by the outer catch block.
+                    throw new Error(`Failed to process file '${file.name}': ${uploadError.message}`);
+                }
             })
         );
+        
+        const successfulUploads = imageUrls.filter(url => url !== null) as string[];
 
-        // 5. Return the Cloudinary URLs
-        return NextResponse.json({ imageUrls });
+        // 6. Return the Cloudinary URLs
+        return NextResponse.json({ imageUrls: successfulUploads });
 
-    } catch (error) {
+    } catch (error: any) {
         console.error('An error occurred during the import process:', error);
-        const errorMessage = (error as Error).message || 'Failed to import images. Please check your setup and permissions.';
+        // Check for common Google API errors
+        if (error.code && error.errors) {
+            const googleError = error.errors[0];
+            let detailedMessage = googleError.message || 'A Google API error occurred.';
+            if (googleError.reason === 'notFound') {
+                detailedMessage = `The specified Google Drive folder was not found. Please check the link and ensure the folder is shared with the service account: ${process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL}.`;
+            } else if (googleError.reason === 'forbidden') {
+                 detailedMessage = `Permission denied for the Google Drive folder. Please ensure the folder is shared with the service account: ${process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL}.`;
+            }
+            return NextResponse.json({ error: detailedMessage }, { status: 500 });
+        }
+        
+        const errorMessage = error.message || 'An unknown error occurred during image import. Please check server logs.';
         return NextResponse.json({ error: errorMessage }, { status: 500 });
     }
 }

@@ -50,11 +50,12 @@ export default function ImageImporterPage() {
 
             setProgress(75);
 
-            if (!response.ok) {
-                throw new Error('Failed to import images.');
-            }
-
             const data = await response.json();
+
+            if (!response.ok) {
+                // Use the detailed error message from the backend
+                throw new Error(data.error || 'Failed to import images.');
+            }
             
             const initialProducts: Product[] = data.imageUrls.map((url: string) => ({
               name: "BRC INFINITY",
@@ -66,11 +67,19 @@ export default function ImageImporterPage() {
             setProducts(initialProducts);
 
             setProgress(100);
-            toast({ title: 'Import Successful', description: 'Images have been imported and are ready for editing.' });
+            toast({ 
+                title: 'Import Successful', 
+                description: data.message || 'Images have been imported and are ready for editing.' 
+            });
 
         } catch (error) {
             console.error(error);
-            toast({ variant: 'destructive', title: 'Error', description: (error as Error).message || 'An unexpected error occurred.' });
+            toast({ 
+                variant: 'destructive', 
+                title: 'Import Error', 
+                description: (error as Error).message || 'An unexpected error occurred.',
+                duration: 9000, // Show the toast for longer
+            });
             setProgress(0);
         } finally {
             setIsImporting(false);
