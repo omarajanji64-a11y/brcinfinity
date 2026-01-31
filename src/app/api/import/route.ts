@@ -27,9 +27,10 @@ const uploadToCloudinary = (fileStream: stream.Readable, fileName: string): Prom
 export async function POST(req: NextRequest) {
     try {
         const requiredEnvVars = ['CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET', 'GOOGLE_SERVICE_ACCOUNT_EMAIL', 'GOOGLE_PRIVATE_KEY'];
-        const missingEnvVars = requiredEnvVars.filter(v => !process.env[v]);
-        if (missingEnvVars.length > 0) {
-            throw new Error(`Missing required environment variables: ${missingEnvVars.join(', ')}. Please check your server configuration.`);
+        for (const v of requiredEnvVars) {
+            if (!process.env[v]) {
+                throw new Error(`Missing required environment variable: ${v}. Please check your server configuration.`);
+            }
         }
 
         const { googleDriveLink } = await req.json();
@@ -44,11 +45,13 @@ export async function POST(req: NextRequest) {
         const folderId = folderIdMatch[1];
 
         const client_email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL!;
-        const private_key_from_env = process.env.GOOGLE_PRIVATE_KEY!;
-        const private_key = private_key_from_env.replace(/\\n/g, '\n');
+        const private_key = process.env.GOOGLE_PRIVATE_KEY!.replace(/\\n/g, '\n');
 
         if (!private_key.startsWith('-----BEGIN PRIVATE KEY-----')) {
-            throw new Error("The `GOOGLE_PRIVATE_KEY` environment variable appears to be malformed. It should start with '-----BEGIN PRIVATE KEY-----'. Please check your environment configuration.");
+            throw new Error("The `GOOGLE_PRIVATE_KEY` environment variable appears to be malformed. It must be a string that starts with '-----BEGIN PRIVATE KEY-----'. Please check your environment configuration.");
+        }
+         if (!client_email.includes('@')) {
+             throw new Error("The `GOOGLE_SERVICE_ACCOUNT_EMAIL` environment variable is malformed. It must be a valid service account email address.");
         }
 
         const auth = new google.auth.GoogleAuth({
@@ -56,17 +59,21 @@ export async function POST(req: NextRequest) {
             scopes: ['https://www.googleapis.com/auth/drive.readonly'],
         });
 
-        if (!auth || typeof auth.getAccessToken !== 'function') {
-            throw new Error("The Google authentication object could not be created correctly. This is a strong indicator that the service account credentials (email or private key) are invalid or malformed. Please verify them in your environment variables.");
-        }
-
         const drive = google.drive({ version: 'v3', auth });
 
-        const listResponse = await drive.files.list({
-            q: `'${folderId}' in parents and (mimeType='image/jpeg' or mimeType='image/png')`,
-            fields: 'files(id, name)',
-            pageSize: 100
-        });
+        let listResponse;
+        try {
+            listResponse = await drive.files.list({
+                q: `'${folderId}' in parents and (mimeType='image/jpeg' or mimeType='image/png')`,
+                fields: 'files(id, name)',
+                pageSize: 100
+            });
+        } catch (error: any) {
+            if (error.message.includes("cannot use 'in' operator to search for '_delegate'")) {
+                 throw new Error("A critical Google Drive authentication error occurred. This is almost always caused by malformed credentials in your environment variables. Please meticulously check your `GOOGLE_SERVICE_ACCOUNT_EMAIL` and `GOOGLE_PRIVATE_KEY`. The private key must be correctly formatted, including the `-----BEGIN` and `-----END` lines, with `\n` for newlines.");
+            }
+            throw error;
+        }
 
         const files = listResponse.data.files;
         if (!files || files.length === 0) {
@@ -85,17 +92,13 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ imageUrls: successfulUploads });
 
     } catch (error: any) {
-        console.error('An error occurred during the import process:', error);
+        console.error('[Import API Error]', error);
 
-        if (error.code && error.errors && Array.isArray(error.errors) && error.errors.length > 0) {
-            const googleError = error.errors[0];
-            let detailedMessage = googleError.message || 'A Google API error occurred.';
-            if (googleError.reason === 'notFound') {
-                detailedMessage = `The specified Google Drive folder was not found. Please check the link and ensure the folder is shared with the service account: ${process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL}.`;
-            } else if (googleError.reason === 'forbidden') {
-                 detailedMessage = `Permission denied for the Google Drive folder. Please ensure the folder is shared with the service account: ${process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL}.`;
-            }
-            return NextResponse.json({ error: detailedMessage }, { status: 500 });
+        if (error.code === 404 || (error.errors && error.errors[0]?.reason === 'notFound')) {
+            return NextResponse.json({ error: `The specified Google Drive folder was not found. Please check the link and ensure the folder is shared with the service account: ${process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL}.` }, { status: 404 });
+        }
+        if (error.code === 403 || (error.errors && error.errors[0]?.reason === 'forbidden')) {
+             return NextResponse.json({ error: `Permission denied for the Google Drive folder. Please ensure the folder is shared with the service account: ${process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL}.` }, { status: 403 });
         }
         
         const errorMessage = error.message || 'An unknown error occurred during image import. Please check server logs.';
