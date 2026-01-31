@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Progress } from '@/components/ui/progress';
@@ -23,20 +24,18 @@ export default function ImageImporterPage() {
     const { toast } = useToast();
     const [progress, setProgress] = useState(0);
     const [products, setProducts] = useState<Product[]>([]);
+    const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
 
     const handleImport = async () => {
         if (!googleDriveLink) {
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description: 'Please paste a Google Drive link.',
-            });
+            toast({ variant: 'destructive', title: 'Error', description: 'Please paste a Google Drive link.' });
             return;
         }
 
         setIsImporting(true);
         setProgress(0);
         setProducts([]);
+        setSelectedIndices([]);
 
         try {
             toast({ title: 'Importing...', description: 'Connecting to the server.' });
@@ -44,9 +43,7 @@ export default function ImageImporterPage() {
 
             const response = await fetch('/api/import', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ googleDriveLink }),
             });
 
@@ -58,30 +55,21 @@ export default function ImageImporterPage() {
 
             const data = await response.json();
             
-            // Initialize one product with all image URLs
-            const initialProduct: Product = {
+            const initialProducts: Product[] = data.imageUrls.map((url: string) => ({
               name: "BRC INFINITY",
               price: 0,
               quantity: 1,
               collection: "modern",
-              image_urls: data.imageUrls,
-            };
-            setProducts([initialProduct]);
+              image_urls: [url], // Each product starts with one image
+            }));
+            setProducts(initialProducts);
 
             setProgress(100);
-
-            toast({
-                title: 'Import Successful',
-                description: 'Images have been imported and are ready for editing.',
-            });
+            toast({ title: 'Import Successful', description: 'Images have been imported and are ready for editing.' });
 
         } catch (error) {
             console.error(error);
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description: (error as Error).message || 'An unexpected error occurred.',
-            });
+            toast({ variant: 'destructive', title: 'Error', description: (error as Error).message || 'An unexpected error occurred.' });
             setProgress(0);
         } finally {
             setIsImporting(false);
@@ -94,32 +82,50 @@ export default function ImageImporterPage() {
       setProducts(updatedProducts);
     };
 
+    const handleSelectionChange = (index: number, checked: boolean) => {
+      if (checked) {
+        setSelectedIndices(prev => [...prev, index]);
+      } else {
+        setSelectedIndices(prev => prev.filter(i => i !== index));
+      }
+    };
+
+    const handleGroupProducts = () => {
+      if (selectedIndices.length < 2) return;
+
+      const groupedImageUrls = selectedIndices.flatMap(index => products[index].image_urls);
+      const firstSelectedProduct = products[selectedIndices[0]];
+
+      const newProduct: Product = {
+        ...firstSelectedProduct,
+        image_urls: groupedImageUrls,
+      };
+
+      const remainingProducts = products.filter((_, index) => !selectedIndices.includes(index));
+      
+      setProducts([newProduct, ...remainingProducts]);
+      setSelectedIndices([]);
+    };
+
     const handleAddProducts = async () => {
         try {
             const response = await fetch('/api/products/bulk', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ products }),
             });
 
             if (!response.ok) {
-                throw new Error('Failed to add products.');
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to add products.');
             }
 
-            toast({
-                title: 'Success',
-                description: 'All products have been added successfully.',
-            });
-            setProducts([]); // Clear products after adding
+            toast({ title: 'Success', description: 'All products have been added successfully.' });
+            setProducts([]);
+            setSelectedIndices([]);
         } catch (error) {
             console.error(error);
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description: (error as Error).message || 'An unexpected error occurred.',
-            });
+            toast({ variant: 'destructive', title: 'Error', description: (error as Error).message || 'An unexpected error occurred.' });
         }
     };
 
@@ -129,7 +135,7 @@ export default function ImageImporterPage() {
                 <CardHeader>
                     <CardTitle>Google Drive to Cloudinary Image Importer</CardTitle>
                     <CardDescription>
-                        Paste a Google Drive link to upload images to Cloudinary and create a new product.
+                        Paste a Google Drive link to upload images to Cloudinary, edit, and add them as products.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -153,52 +159,63 @@ export default function ImageImporterPage() {
                     <CardHeader>
                         <CardTitle>Bulk Product Editor</CardTitle>
                         <CardDescription>
-                            Edit the product below and click "Add Product" to save it.
+                            Select products to group them, or edit individually and click "Add All Products".
                         </CardDescription>
+                         {selectedIndices.length > 1 && (
+                            <Button onClick={handleGroupProducts} className="mt-2">Group Selected</Button>
+                        )}
                     </CardHeader>
                     <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="flex flex-col gap-4">
                             {products.map((product, index) => (
-                                <Card key={index}>
-                                    <CardHeader>
-                                        <div className="grid grid-cols-3 gap-2">
-                                            {product.image_urls.map((url, imgIndex) => (
-                                                <img key={imgIndex} src={url} alt={`Product ${index + 1} Image ${imgIndex + 1}`} className="w-full h-32 object-cover" />
-                                            ))}
+                                <Card key={index} className={selectedIndices.includes(index) ? 'border-2 border-primary' : ''}>
+                                    <div className="flex items-start p-4 space-x-4">
+                                        <Checkbox
+                                            id={`select-${index}`}
+                                            onCheckedChange={(checked) => handleSelectionChange(index, !!checked)}
+                                            checked={selectedIndices.includes(index)}
+                                            className="mt-1"
+                                        />
+                                        <div className="flex-shrink-0">
+                                            <div className="flex flex-wrap gap-2 w-48">
+                                                {product.image_urls.map((url, imgIndex) => (
+                                                    <img key={imgIndex} src={url} alt={`Product ${index + 1} Image ${imgIndex + 1}`} className="w-20 h-20 object-cover rounded-md" />
+                                                ))}
+                                            </div>
                                         </div>
-                                    </CardHeader>
-                                    <CardContent className="space-y-2">
-                                        <Input
-                                            value={product.name}
-                                            onChange={(e) => handleProductChange(index, 'name', e.target.value)}
-                                            placeholder="Product Name"
-                                        />
-                                        <Input
-                                            type="number"
-                                            value={product.price}
-                                            onChange={(e) => handleProductChange(index, 'price', Number(e.target.value))}
-                                            placeholder="Price"
-                                        />
-                                        <Input
-                                            type="number"
-                                            value={product.quantity}
-                                            onChange={(e) => handleProductChange(index, 'quantity', Number(e.target.value))}
-                                            placeholder="Quantity"
-                                        />
-                                        <Select onValueChange={(value) => handleProductChange(index, 'collection', value)} defaultValue={product.collection}>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select a collection" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="modern">Modern</SelectItem>
-                                                <SelectItem value="classic">Classic</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </CardContent>
+                                        <div className="flex-1 space-y-2">
+                                            <Input
+                                                value={product.name}
+                                                onChange={(e) => handleProductChange(index, 'name', e.target.value)}
+                                                placeholder="Product Name"
+                                            />
+                                            <Input
+                                                type="number"
+                                                value={product.price}
+                                                onChange={(e) => handleProductChange(index, 'price', Number(e.target.value))}
+                                                placeholder="Price"
+                                            />
+                                            <Input
+                                                type="number"
+                                                value={product.quantity}
+                                                onChange={(e) => handleProductChange(index, 'quantity', Number(e.target.value))}
+                                                placeholder="Quantity"
+                                            />
+                                            <Select onValueChange={(value) => handleProductChange(index, 'collection', value)} defaultValue={product.collection}>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a collection" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="modern">Modern</SelectItem>
+                                                    <SelectItem value="classic">Classic</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
                                 </Card>
                             ))}
                         </div>
-                        <Button onClick={handleAddProducts} className="mt-4">Add Product</Button>
+                        <Button onClick={handleAddProducts} className="mt-4 w-full">Add All Products</Button>
                     </CardContent>
                 </Card>
             )}
