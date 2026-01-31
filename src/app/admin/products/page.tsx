@@ -79,6 +79,7 @@ export default function ProductsPage() {
   const [isBulkImporting, setIsBulkImporting] = useState(false);
   const [isImportEditorOpen, setIsImportEditorOpen] = useState(false);
   const [loadingCounter, setLoadingCounter] = useState(0);
+  const [bulkImportTotal, setBulkImportTotal] = useState(0);
 
   const handleAddNew = () => {
     setSelectedProduct(null);
@@ -102,37 +103,57 @@ export default function ProductsPage() {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
+    setBulkImportTotal(files.length);
     setIsBulkImporting(true);
     setLoadingCounter(0);
-    const newProducts: ProductToImport[] = [];
-    
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const reader = new FileReader();
-      
-      reader.onload = (event) => {
-        newProducts.push({
-          id: `${file.name}-${Date.now()}`,
-          name: file.name.split('.').slice(0, -1).join('.'), // filename without extension
-          price: 0,
-          stock: 1,
-          imageFile: file,
-          previewUrl: event.target?.result as string,
-        });
-        
-        setLoadingCounter(prev => prev + 1);
+    setProductsToImport([]);
 
-        if (newProducts.length === files.length) {
-          setProductsToImport(newProducts);
-          setIsImportEditorOpen(true);
-          setIsBulkImporting(false);
-        }
-      };
-      
-      reader.readAsDataURL(file);
+    const readFileAsPromise = (file: File): Promise<ProductToImport> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            
+            reader.onload = (event) => {
+                if (event.target?.result) {
+                    setLoadingCounter(prev => prev + 1);
+                    resolve({
+                        id: `${file.name}-${Date.now()}`,
+                        name: file.name.split('.').slice(0, -1).join('.'),
+                        price: 0,
+                        stock: 1,
+                        imageFile: file,
+                        previewUrl: event.target.result as string,
+                    });
+                } else {
+                    reject(new Error(`Failed to read file: ${file.name}`));
+                }
+            };
+
+            reader.onerror = (error) => {
+                console.error("FileReader error: ", error);
+                reject(new Error(`Could not read file ${file.name}. It may be corrupt.`));
+            };
+
+            reader.readAsDataURL(file);
+        });
+    };
+
+    try {
+        const allFiles = Array.from(files);
+        const newProducts = await Promise.all(allFiles.map(readFileAsPromise));
+        
+        setProductsToImport(newProducts);
+        setIsImportEditorOpen(true);
+
+    } catch (error) {
+        toast({
+            variant: "destructive",
+            title: "File Reading Error",
+            description: error instanceof Error ? error.message : "An unknown error occurred while reading files.",
+        });
+    } finally {
+        setIsBulkImporting(false);
+        e.target.value = ''; // Reset file input
     }
-     // Reset file input
-     e.target.value = '';
   };
 
   const handleImport = () => {
@@ -287,12 +308,12 @@ export default function ProductsPage() {
             </CardHeader>
             <CardContent>
               <Label>PNG Images</Label>
-              <div className="flex gap-2">
-                <Input type="file" accept="image/png" multiple onChange={handleImageFileChange} disabled={isBulkImporting} />
+              <div className="flex items-center gap-4">
+                <Input type="file" accept="image/png" multiple onChange={handleImageFileChange} disabled={isBulkImporting} className="flex-grow" />
                 {isBulkImporting && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap">
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        <span>Loading: {loadingCounter}/{productsToImport.length}</span>
+                        <span>Loading: {loadingCounter}/{bulkImportTotal}</span>
                     </div>
                 )}
               </div>
