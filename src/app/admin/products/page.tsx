@@ -153,14 +153,14 @@ export default function ProductsPage() {
       setBulkImportStatus("success");
       toast({
         title: t("admin_products.toast_bulk_import_success_title"),
-        description: response.data.message,
+        description: t("admin_products.bulk_import_success_desc"),
       });
     } catch (error) { 
       setBulkImportStatus("error");
       toast({
         variant: "destructive",
         title: t("admin_products.toast_bulk_import_error_title"),
-        description: t("admin_products.toast_bulk_import_error_desc"),
+        description: t("admin_products.bulk_import_error_desc"),
       });
     } finally {
       setIsBulkImporting(false);
