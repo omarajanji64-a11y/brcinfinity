@@ -26,8 +26,16 @@ export async function POST(req: NextRequest) {
     const productCollection = collection(db, 'products');
 
     for (const product of products) {
+        const [image_url, ...additional_image_urls] = product.image_urls;
+        const productData = {
+            ...product,
+            image_url,
+            additional_image_urls,
+        };
+        delete (productData as any).image_urls;
+
       const docRef = doc(productCollection);
-      batch.set(docRef, product);
+      batch.set(docRef, productData);
     }
 
     await batch.commit();
