@@ -53,7 +53,7 @@ import ProductForm from "@/components/admin/ProductForm";
 import DriveLinkImporterCard from "@/components/admin/DriveLinkImporterCard";
 import { useProducts } from "@/hooks/use-products";
 import { useTranslation } from "@/lib/i18n";
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 export default function ProductsPage() {
   const { t, language } = useTranslation();
@@ -155,13 +155,21 @@ export default function ProductsPage() {
         title: t("admin_products.toast_bulk_import_success_title"),
         description: t("admin_products.bulk_import_success_desc"),
       });
-    } catch (error) { 
-      setBulkImportStatus("error");
-      toast({
-        variant: "destructive",
-        title: t("admin_products.toast_bulk_import_error_title"),
-        description: t("admin_products.bulk_import_error_desc"),
-      });
+    } catch (error) {
+        setBulkImportStatus("error");
+        if (error instanceof AxiosError && error.response?.data?.message) {
+            toast({
+                variant: "destructive",
+                title: t("admin_products.toast_bulk_import_error_title"),
+                description: error.response.data.message,
+            });
+        } else {
+            toast({
+                variant: "destructive",
+                title: t("admin_products.toast_bulk_import_error_title"),
+                description: t("admin_products.bulk_import_error_desc"),
+            });
+        }
     } finally {
       setIsBulkImporting(false);
       setImageFiles([]);
