@@ -50,7 +50,7 @@ import {
 
 import { useToast } from "@/hooks/use-toast";
 import ProductForm from "@/components/admin/ProductForm";
-// import AiProductImporterCard from "./AiProductImporterCard";
+import DriveLinkImporterCard from "@/components/admin/DriveLinkImporterCard";
 import { useProducts } from "@/hooks/use-products";
 import { useTranslation } from "@/lib/i18n";
 
@@ -134,7 +134,7 @@ export default function ProductsPage() {
 
         {/* IMPORT */}
         <div className="grid gap-8 md:grid-cols-2">
-          {/* <AiProductImporterCard /> */}
+          <DriveLinkImporterCard />
           <Card>
             <CardHeader>
               <CardTitle>{t("admin_products.import_products_title")}</CardTitle>
@@ -173,7 +173,7 @@ export default function ProductsPage() {
                   <AlertTriangle className="h-4 w-4" />
                   <AlertTitle>Error</AlertTitle>
                   <AlertDescription>CSV import failed</AlertDescription>
-                </Alert>
+                </Aler
               </CardFooter>
             )}
           </Card>
