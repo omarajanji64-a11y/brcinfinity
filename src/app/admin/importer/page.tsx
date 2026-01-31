@@ -19,40 +19,33 @@ interface Product {
   image_urls: string[];
 }
 
-export default function FileUploaderPage() {
-    const [files, setFiles] = useState<File[]>([]);
-    const [isUploading, setIsUploading] = useState(false);
+export default function ImageImporterPage() {
+    const [googleDriveLink, setGoogleDriveLink] = useState('');
+    const [isImporting, setIsImporting] = useState(false);
     const { toast } = useToast();
     const [progress, setProgress] = useState(0);
     const [products, setProducts] = useState<Product[]>([]);
     const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files) {
-            setFiles(Array.from(event.target.files));
-        }
-    };
-
-    const handleUpload = async () => {
-        if (files.length === 0) {
-            toast({ variant: 'destructive', title: 'Error', description: 'Please select files to upload.' });
+    const handleImport = async () => {
+        if (!googleDriveLink) {
+            toast({ variant: 'destructive', title: 'Error', description: 'Please paste a Google Drive link.' });
             return;
         }
 
-        setIsUploading(true);
+        setIsImporting(true);
         setProgress(0);
         setProducts([]);
         setSelectedIndices([]);
-        const formData = new FormData();
-        files.forEach(file => formData.append('files', file));
 
         try {
-            toast({ title: 'Uploading...', description: 'Sending files to the server.' });
+            toast({ title: 'Importing...', description: 'Connecting to the server.' });
             setProgress(25);
 
-            const response = await fetch('/api/upload', {
+            const response = await fetch('/api/import', {
                 method: 'POST',
-                body: formData,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ googleDriveLink }),
             });
 
             setProgress(75);
@@ -60,7 +53,8 @@ export default function FileUploaderPage() {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || 'Failed to upload files.');
+                // Use the detailed error message from the backend
+                throw new Error(data.error || 'Failed to import images.');
             }
             
             const initialProducts: Product[] = data.imageUrls.map((url: string) => ({
@@ -68,27 +62,27 @@ export default function FileUploaderPage() {
               price: 0,
               quantity: 1,
               collection: "modern",
-              image_urls: [url], 
+              image_urls: [url], // Each product starts with one image
             }));
             setProducts(initialProducts);
 
             setProgress(100);
             toast({ 
-                title: 'Upload Successful', 
-                description: 'Images have been uploaded and are ready for editing.' 
+                title: 'Import Successful', 
+                description: data.message || 'Images have been imported and are ready for editing.' 
             });
 
         } catch (error) {
             console.error(error);
             toast({ 
                 variant: 'destructive', 
-                title: 'Upload Error', 
+                title: 'Import Error', 
                 description: (error as Error).message || 'An unexpected error occurred.',
-                duration: 9000,
+                duration: 9000, // Show the toast for longer
             });
             setProgress(0);
         } finally {
-            setIsUploading(false);
+            setIsImporting(false);
         }
     };
 
@@ -174,25 +168,24 @@ export default function FileUploaderPage() {
         <div className="space-y-4">
             <Card>
                 <CardHeader>
-                    <CardTitle>Direct Image Uploader</CardTitle>
+                    <CardTitle>Google Drive to Cloudinary Image Importer</CardTitle>
                     <CardDescription>
-                        Select image files from your computer to upload them, edit details, and add them as products.
+                        Paste a Google Drive link to upload images to Cloudinary, edit, and add them as products.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="flex space-x-2">
                         <Input
-                            type="file"
-                            multiple
-                            onChange={handleFileChange}
-                            disabled={isUploading}
-                            className="flex-grow"
+                            placeholder="Paste Google Drive link here..."
+                            value={googleDriveLink}
+                            onChange={(e) => setGoogleDriveLink(e.target.value)}
+                            disabled={isImporting}
                         />
-                        <Button onClick={handleUpload} disabled={isUploading || files.length === 0}>
-                            {isUploading ? 'Uploading...' : 'Upload'}
+                        <Button onClick={handleImport} disabled={isImporting}>
+                            {isImporting ? 'Importing...' : 'Import'}
                         </Button>
                     </div>
-                    {isUploading && <Progress value={progress} />}
+                    {isImporting && <Progress value={progress} />}
                 </CardContent>
             </Card>
 
