@@ -37,7 +37,7 @@ export default function Footer() {
           <div>
             <h3 className="font-headline font-semibold text-white">{t('footer.contact_us')}</h3>
             <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-              <li>İkitelli OSB, 1. İkitelli Cad., 34000 Başakşehir/İstanbul</li>
+              <li>Masko mobilyacılar sitesi 18/B No 35 Istanbul, Turkey</li>
               <li className="font-code">+90 546 789 89 68</li>
             </ul>
           </div>
