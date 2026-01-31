@@ -315,7 +315,7 @@ export default function AboutUsPage() {
                 <div className="space-y-3 text-sm text-muted-foreground">
                   <div>
                     <p className="uppercase tracking-[0.2em] text-xs text-muted-foreground">{t('contact_page.showroom.address')}</p>
-                    <p>İkitelli OSB, 1. İkitelli Cad., 34000 Başakşehir/İstanbul</p>
+                    <p>Masko mobilyacılar sitesi 18/B No 35 Istanbul, Turkey</p>
                   </div>
                   <div>
                     <p className="uppercase tracking-[0.2em] text-xs text-muted-foreground">{t('contact_page.showroom.phone')}</p>

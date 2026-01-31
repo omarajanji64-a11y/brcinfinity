@@ -146,7 +146,7 @@ export default function ContactPage() {
                     <MapPin className="h-6 w-6 text-accent mt-1" />
                     <div>
                       <h3 className="font-semibold">{t('contact_page.showroom.address')}</h3>
-                      <p className="text-muted-foreground">İkitelli OSB, 1. İkitelli Cad., 34000 Başakşehir/İstanbul</p>
+                      <p className="text-muted-foreground">Masko mobilyacılar sitesi 18/B No 35 Istanbul, Turkey</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
