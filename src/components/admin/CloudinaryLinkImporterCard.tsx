@@ -9,18 +9,14 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-  CardFooter,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { Loader2, CheckCircle, AlertTriangle, Link } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/i18n";
-import { Textarea } from "@/components/ui/textarea";
 import { useFirestore } from "@/firebase/client-provider";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -37,22 +33,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-type DriveImportResponse = {
-  imageUrls: string[];
-  folderName?: string | null;
-  source: "file" | "folder";
-};
-
-interface DriveLinkImporterCardProps {
-  onProductImported?: () => void;
-}
-
-const DEFAULT_CATEGORY = {
-  en: "Uncategorized",
-  fr: "Non classé",
-  tr: "Kategorize edilmemiş",
-};
+import { Loader2, Link } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type ImportProductDraft = {
   id: string;
@@ -66,92 +48,64 @@ type ImportProductDraft = {
   description: string;
 };
 
-export default function DriveLinkImporterCard({ onProductImported }: DriveLinkImporterCardProps) {
+const DEFAULT_CATEGORY = {
+  en: "Uncategorized",
+  fr: "Non classé",
+  tr: "Kategorize edilmemiş",
+};
+
+const splitLinks = (raw: string) => {
+  return raw
+    .split(/[\n,]+/)
+    .map((link) => link.trim())
+    .filter(Boolean);
+};
+
+interface CloudinaryLinkImporterCardProps {
+  onProductImported?: () => void;
+}
+
+export default function CloudinaryLinkImporterCard({ onProductImported }: CloudinaryLinkImporterCardProps) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const firestore = useFirestore();
 
-  const [link, setLink] = useState("");
-  const [isImporting, setIsImporting] = useState(false);
-  const [importStatus, setImportStatus] = useState<"idle" | "success" | "error">("idle");
-  const [importedImageUrls, setImportedImageUrls] = useState<string[]>([]);
+  const [links, setLinks] = useState("");
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [productsToImport, setProductsToImport] = useState<ImportProductDraft[]>([]);
   const [isSaving, setIsSaving] = useState(false);
-
-  const handleLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLink(e.target.value);
-  };
-
-  const handleImport = async () => {
-    if (!link) return;
-
-    setIsImporting(true);
-    setImportStatus("idle");
-    setImportedImageUrls([]);
-    setProductsToImport([]);
-
-    try {
-      const response = await fetch("/api/upload/link", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ link }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Import failed");
-      }
-
-      const { imageUrls, folderName } = (await response.json()) as DriveImportResponse;
-      const newUrls = imageUrls || [];
-      if (newUrls.length === 0) {
-        throw new Error(t("admin_products.toast_drive_import_error_desc"));
-      }
-
-      setImportedImageUrls(newUrls);
-      setImportStatus("success");
-
-      const baseName = folderName?.trim() || t("admin_products.drive_import_default_name");
-      const drafts: ImportProductDraft[] = newUrls.map((url, index) => ({
-        id: uuidv4(),
-        imageUrl: url,
-        name: `${baseName} ${index + 1}`,
-        category: "",
-        style: "Modern",
-        price: "0",
-        stock: "1",
-        shortDescription: "",
-        description: "",
-      }));
-
-      setProductsToImport(drafts);
-      setIsEditorOpen(true);
-
-      toast({
-        title: t("admin_products.toast_drive_import_success_title"),
-        description: t("admin_products.toast_drive_import_success_desc"),
-      });
-
-    } catch (error: any) {
-      console.error("Drive Import Error:", error);
-      setImportStatus("error");
-      toast({
-        variant: "destructive",
-        title: t("admin_products.toast_drive_import_error_title"),
-        description: error.message || t("admin_products.toast_drive_import_error_desc"),
-      });
-    } finally {
-      setIsImporting(false);
-    }
-  };
 
   const handleDraftChange = (id: string, field: keyof ImportProductDraft, value: string) => {
     setProductsToImport((prev) =>
       prev.map((product) => (product.id === id ? { ...product, [field]: value } : product))
     );
+  };
+
+  const handleImport = () => {
+    const linkList = splitLinks(links);
+    if (linkList.length === 0) {
+      toast({
+        variant: "destructive",
+        title: t("admin_products.toast_drive_import_error_title"),
+        description: t("admin_products.cloudinary_links_error_desc"),
+      });
+      return;
+    }
+
+    const drafts = linkList.map((url, index) => ({
+      id: uuidv4(),
+      imageUrl: url,
+      name: `${t("admin_products.cloudinary_links_default_name")} ${index + 1}`,
+      category: "",
+      style: "Modern",
+      price: "0",
+      stock: "1",
+      shortDescription: "",
+      description: "",
+    }));
+
+    setProductsToImport(drafts);
+    setIsEditorOpen(true);
   };
 
   const handleSaveProducts = async () => {
@@ -163,7 +117,7 @@ export default function DriveLinkImporterCard({ onProductImported }: DriveLinkIm
       const productCollection = collection(firestore, "products");
 
       productsToImport.forEach((product) => {
-        const resolvedName = product.name.trim() || t("admin_products.drive_import_default_name");
+        const resolvedName = product.name.trim() || t("admin_products.cloudinary_links_default_name");
         const resolvedCategory = product.category.trim();
         const localizedName = { en: resolvedName, fr: resolvedName, tr: resolvedName };
         const localizedCategory = resolvedCategory.length > 0
@@ -201,14 +155,14 @@ export default function DriveLinkImporterCard({ onProductImported }: DriveLinkIm
 
       setIsEditorOpen(false);
       setProductsToImport([]);
-      setLink("");
+      setLinks("");
       onProductImported?.();
       toast({
         title: t("admin_products.toast_product_saved_title"),
         description: t("admin_products.toast_product_saved_desc"),
       });
     } catch (error: any) {
-      console.error("Drive Import Save Error:", error);
+      console.error("Cloudinary Import Save Error:", error);
       toast({
         variant: "destructive",
         title: t("admin_products.toast_drive_import_error_title"),
@@ -224,8 +178,8 @@ export default function DriveLinkImporterCard({ onProductImported }: DriveLinkIm
       <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
         <DialogContent className="max-w-[95vw] h-[90vh] flex flex-col">
           <DialogHeader>
-            <DialogTitle>{t("admin_products.drive_import_editor_title")}</DialogTitle>
-            <DialogDescription>{t("admin_products.drive_import_editor_desc")}</DialogDescription>
+            <DialogTitle>{t("admin_products.cloudinary_links_editor_title")}</DialogTitle>
+            <DialogDescription>{t("admin_products.cloudinary_links_editor_desc")}</DialogDescription>
           </DialogHeader>
           <div className="flex-grow overflow-y-auto p-1">
             <Table>
@@ -325,55 +279,26 @@ export default function DriveLinkImporterCard({ onProductImported }: DriveLinkIm
 
       <Card>
         <CardHeader>
-          <CardTitle>{t("admin_products.import_drive_link_title")}</CardTitle>
-          <CardDescription>{t("admin_products.import_drive_link_desc")}</CardDescription>
+          <CardTitle>{t("admin_products.cloudinary_links_title")}</CardTitle>
+          <CardDescription>{t("admin_products.cloudinary_links_desc")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="drive-link">{t("admin_products.drive_link_label")}</Label>
+              <Label htmlFor="cloudinary-links">{t("admin_products.cloudinary_links_label")}</Label>
               <Textarea
-                id="drive-link"
-                placeholder={t("admin_products.drive_link_placeholder")}
-                value={link}
-                onChange={handleLinkChange}
+                id="cloudinary-links"
+                placeholder={t("admin_products.cloudinary_links_placeholder")}
+                value={links}
+                onChange={(event) => setLinks(event.target.value)}
               />
             </div>
-
-            <Button onClick={handleImport} disabled={isImporting || !link}>
-              {isImporting ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Link className="mr-2 h-4 w-4" />
-              )}
-              {t("admin_products.drive_import_button")}
+            <Button onClick={handleImport} disabled={!links.trim()}>
+              <Link className="mr-2 h-4 w-4" />
+              {t("admin_products.cloudinary_links_button")}
             </Button>
           </div>
         </CardContent>
-      {importStatus === "success" && importedImageUrls.length > 0 && (
-        <CardFooter>
-          <Alert>
-            <CheckCircle className="h-4 w-4" />
-            <AlertTitle>{t("admin_products.import_success_title")}</AlertTitle>
-            <AlertDescription>
-              <div className="flex flex-col gap-2">
-                <span>{t("admin_products.drive_import_success_count", { count: importedImageUrls.length })}</span>
-                <a href={importedImageUrls[0]} target="_blank" rel="noopener noreferrer" className="underline">
-                  {t("admin_products.view_imported_image")}
-                </a>
-              </div>
-            </AlertDescription>
-          </Alert>
-        </CardFooter>
-      )}
-      {importStatus === "error" && (
-        <CardFooter>
-          <Alert variant="destructive">
-            <AlertTriangle className="h-4 w-4" />
-            <AlertTitle>{t("admin_products.import_error_title")}</AlertTitle>
-          </Alert>
-        </CardFooter>
-      )}
       </Card>
     </>
   );

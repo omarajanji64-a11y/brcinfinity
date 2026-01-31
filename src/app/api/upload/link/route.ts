@@ -82,6 +82,13 @@ const parseDriveLink = (link: string): DriveLinkInfo | null => {
   return null;
 };
 
+const splitLinks = (rawLink: string): string[] => {
+  return rawLink
+    .split(/[\n,]+/)
+    .map((link) => link.trim())
+    .filter(Boolean);
+};
+
 const fetchFolderName = async (folderId: string): Promise<string | null> => {
   if (!GOOGLE_DRIVE_API_KEY) return null;
   const response = await axios.get<{ name?: string }>(
@@ -182,9 +189,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Google Drive link is required.' }, { status: 400 });
     }
 
-    const driveInfo = parseDriveLink(link);
+    const linkParts = splitLinks(link);
+    const driveInfos = linkParts.map(parseDriveLink);
 
-    if (!driveInfo) {
+    if (driveInfos.length === 0 || driveInfos.some((info) => !info)) {
       return NextResponse.json(
         { error: 'Invalid Google Drive link format. Please use a file or folder link from drive.google.com.' },
         { status: 400 }
@@ -194,7 +202,25 @@ export async function POST(req: NextRequest) {
     let filesToUpload: { id: string; name: string }[] = [];
     let folderName: string | null = null;
 
-    if (driveInfo.type === 'folder') {
+    const folderInfos = driveInfos.filter((info): info is DriveLinkInfo => !!info && info.type === 'folder');
+    const fileInfos = driveInfos.filter((info): info is DriveLinkInfo => !!info && info.type === 'file');
+
+    if (folderInfos.length > 0 && !GOOGLE_DRIVE_API_KEY) {
+      return NextResponse.json(
+        { error: 'Folder links require a Google Drive API key. Please provide file links instead.' },
+        { status: 400 }
+      );
+    }
+
+    if (folderInfos.length > 1) {
+      return NextResponse.json(
+        { error: 'Please import one folder at a time.' },
+        { status: 400 }
+      );
+    }
+
+    if (folderInfos.length === 1) {
+      const driveInfo = folderInfos[0];
       const images = await listFolderImages(driveInfo.id);
       if (images.length === 0) {
         return NextResponse.json(
@@ -206,7 +232,7 @@ export async function POST(req: NextRequest) {
       filesToUpload = images.map((image) => ({ id: image.id, name: image.name }));
       folderName = await fetchFolderName(driveInfo.id);
     } else {
-      filesToUpload = [{ id: driveInfo.id, name: driveInfo.id }];
+      filesToUpload = fileInfos.map((info) => ({ id: info.id, name: info.id }));
     }
 
     const uploadOutcomes = await runWithConcurrency(filesToUpload, 3, async (file) => {
@@ -251,7 +277,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       imageUrls,
       folderName,
-      source: driveInfo.type,
+      source: folderInfos.length === 1 ? 'folder' : 'file',
     });
   } catch (error: any) {
     console.error('[Google Drive Link Import API Error]', error);
