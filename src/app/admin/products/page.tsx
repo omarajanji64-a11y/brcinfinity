@@ -53,6 +53,7 @@ import ProductForm from "@/components/admin/ProductForm";
 import DriveLinkImporterCard from "@/components/admin/DriveLinkImporterCard";
 import { useProducts } from "@/hooks/use-products";
 import { useTranslation } from "@/lib/i18n";
+import axios from 'axios';
 
 export default function ProductsPage() {
   const { t, language } = useTranslation();
@@ -66,6 +67,12 @@ export default function ProductsPage() {
   const [isImporting, setIsImporting] = useState(false);
   const [importStatus, setImportStatus] = useState<"idle" | "success" | "error">("idle");
   const [importedProductsPreview, setImportedProductsPreview] = useState<any[]>([]);
+
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [isBulkImporting, setIsBulkImporting] = useState(false);
+  const [bulkImportStatus, setBulkImportStatus] = useState<"idle" | "success" | "error">(
+    "idle"
+  );
 
   const handleAddNew = () => {
     setSelectedProduct(null);
@@ -83,6 +90,12 @@ export default function ProductsPage() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCsvFile(e.target.files?.[0] ?? null);
+  };
+
+  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setImageFiles(Array.from(e.target.files));
+    }
   };
 
   const handleImport = () => {
@@ -117,6 +130,42 @@ export default function ProductsPage() {
         });
       },
     });
+  };
+
+  const handleBulkImport = async () => {
+    if (imageFiles.length === 0) return;
+
+    setIsBulkImporting(true);
+    setBulkImportStatus("idle");
+
+    const formData = new FormData();
+    imageFiles.forEach((file) => {
+      formData.append("files", file);
+    });
+
+    try {
+      const response = await axios.post("/api/products/bulk", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      setBulkImportStatus("success");
+      toast({
+        title: t("admin_products.toast_bulk_import_success_title"),
+        description: response.data.message,
+      });
+    } catch (error) { 
+      setBulkImportStatus("error");
+      toast({
+        variant: "destructive",
+        title: t("admin_products.toast_bulk_import_error_title"),
+        description: t("admin_products.toast_bulk_import_error_desc"),
+      });
+    } finally {
+      setIsBulkImporting(false);
+      setImageFiles([]);
+    }
   };
 
   return (
@@ -177,6 +226,52 @@ export default function ProductsPage() {
               </CardFooter>
             )}
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("admin_products.bulk_import_title")}</CardTitle>
+              <CardDescription>
+                {t("admin_products.bulk_import_desc")}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Label>PNG Images</Label>
+              <div className="flex gap-2">
+                <Input type="file" accept=".png" multiple onChange={handleImageFileChange} />
+                <Button onClick={handleBulkImport} disabled={isBulkImporting || imageFiles.length === 0}>
+                  {isBulkImporting ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Upload className="mr-2 h-4 w-4" />
+                  )}
+                  {t("admin_products.import_button")}
+                </Button>
+              </div>
+            </CardContent>
+            {bulkImportStatus === "success" && (
+              <CardFooter>
+                <Alert>
+                  <CheckCircle className="h-4 w-4" />
+                  <AlertTitle>Success</AlertTitle>
+                  <AlertDescription>
+                    {t("admin_products.bulk_import_success_desc")}
+                  </AlertDescription>
+                </Alert>
+              </CardFooter>
+            )}
+            {bulkImportStatus === "error" && (
+              <CardFooter>
+                <Alert variant="destructive">
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertTitle>Error</AlertTitle>
+                  <AlertDescription>
+                    {t("admin_products.bulk_import_error_desc")}
+                  </AlertDescription>
+                </Alert>
+              </CardFooter>
+            )}
+          </Card>
+
         </div>
 
         {/* TABLE */}
