@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { collection, doc, writeBatch } from "firebase/firestore";
 import {
@@ -37,6 +37,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type DriveImportResponse = {
   imageUrls: string[];
@@ -57,6 +58,7 @@ const DEFAULT_CATEGORY = {
 type ImportProductDraft = {
   id: string;
   imageUrl: string;
+  imageUrls?: string[];
   name: string;
   category: string;
   style: "Modern" | "Classic";
@@ -78,6 +80,13 @@ export default function DriveLinkImporterCard({ onProductImported }: DriveLinkIm
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [productsToImport, setProductsToImport] = useState<ImportProductDraft[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  const selectedCount = selectedIds.size;
+  const selectedLabel = useMemo(
+    () => t("admin_products.merge_selected_count", { count: selectedCount }),
+    [selectedCount, t]
+  );
 
   const handleLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLink(e.target.value);
@@ -118,6 +127,7 @@ export default function DriveLinkImporterCard({ onProductImported }: DriveLinkIm
       const drafts: ImportProductDraft[] = newUrls.map((url, index) => ({
         id: uuidv4(),
         imageUrl: url,
+        imageUrls: [url],
         name: `${baseName} ${index + 1}`,
         category: "",
         style: "Modern",
@@ -154,6 +164,48 @@ export default function DriveLinkImporterCard({ onProductImported }: DriveLinkIm
     );
   };
 
+  const toggleSelected = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
+  const handleMergeSelected = () => {
+    if (selectedIds.size < 2) return;
+
+    setProductsToImport((prev) => {
+      const selected = prev.filter((product) => selectedIds.has(product.id));
+      if (selected.length < 2) return prev;
+
+      const allUrls: string[] = [];
+      selected.forEach((product) => {
+        const urls = product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls : [product.imageUrl];
+        urls.forEach((url) => {
+          if (!allUrls.includes(url)) allUrls.push(url);
+        });
+      });
+
+      const base = selected[0];
+      const merged: ImportProductDraft = {
+        ...base,
+        id: uuidv4(),
+        imageUrl: allUrls[0],
+        imageUrls: allUrls,
+      };
+
+      const remaining = prev.filter((product) => !selectedIds.has(product.id));
+      return [merged, ...remaining];
+    });
+
+    setSelectedIds(new Set());
+  };
+
   const handleSaveProducts = async () => {
     if (productsToImport.length === 0) return;
     setIsSaving(true);
@@ -172,6 +224,10 @@ export default function DriveLinkImporterCard({ onProductImported }: DriveLinkIm
         const resolvedPrice = Number(product.price);
         const resolvedStock = Number(product.stock);
 
+        const resolvedImages = product.imageUrls && product.imageUrls.length > 0
+          ? product.imageUrls
+          : [product.imageUrl];
+
         const productData = {
           id: product.id,
           name: localizedName,
@@ -189,8 +245,8 @@ export default function DriveLinkImporterCard({ onProductImported }: DriveLinkIm
           },
           price: Number.isFinite(resolvedPrice) ? resolvedPrice : 0,
           stock: Number.isFinite(resolvedStock) ? resolvedStock : 0,
-          imageUrl: product.imageUrl,
-          imageUrls: [product.imageUrl],
+          imageUrl: resolvedImages[0],
+          imageUrls: resolvedImages,
         };
 
         const docRef = doc(productCollection, product.id);
@@ -227,10 +283,21 @@ export default function DriveLinkImporterCard({ onProductImported }: DriveLinkIm
             <DialogTitle>{t("admin_products.drive_import_editor_title")}</DialogTitle>
             <DialogDescription>{t("admin_products.drive_import_editor_desc")}</DialogDescription>
           </DialogHeader>
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-sm text-muted-foreground">{selectedLabel}</span>
+            <Button
+              variant="outline"
+              onClick={handleMergeSelected}
+              disabled={selectedCount < 2}
+            >
+              {t("admin_products.merge_selected_button", { count: selectedCount })}
+            </Button>
+          </div>
           <div className="flex-grow overflow-y-auto p-1">
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-[70px]">{t("admin_products.merge_select_label")}</TableHead>
                   <TableHead className="w-[90px]">{t("admin_products.table_header_image")}</TableHead>
                   <TableHead>{t("admin_products.table_header_name")}</TableHead>
                   <TableHead className="w-[140px]">{t("admin_products.drive_import_category_label")}</TableHead>
@@ -244,11 +311,32 @@ export default function DriveLinkImporterCard({ onProductImported }: DriveLinkIm
                 {productsToImport.map((product) => (
                   <TableRow key={product.id}>
                     <TableCell>
-                      <img
-                        src={product.imageUrl}
-                        alt={product.name}
-                        className="h-16 w-16 rounded-md object-cover"
+                      <Checkbox
+                        checked={selectedIds.has(product.id)}
+                        onCheckedChange={() => toggleSelected(product.id)}
+                        aria-label={t("admin_products.merge_select_label")}
                       />
+                    </TableCell>
+                    <TableCell>
+                      <div className="space-y-2">
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          className="h-24 w-24 rounded-md object-cover"
+                        />
+                        {product.imageUrls && product.imageUrls.length > 1 && (
+                          <div className="flex flex-wrap gap-1">
+                            {product.imageUrls.slice(0, 4).map((url, index) => (
+                              <img
+                                key={`${product.id}-thumb-${index}`}
+                                src={url}
+                                alt={`${product.name} ${index + 1}`}
+                                className="h-10 w-10 rounded-sm object-cover"
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell>
                       <Input
