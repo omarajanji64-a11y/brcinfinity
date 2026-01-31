@@ -7,12 +7,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/hooks/use-toast';
 import { Progress } from "@/components/ui/progress";
 
+// Define the Product interface
+interface Product {
+  name: string;
+  price: number;
+  quantity: number;
+  collection: string;
+  image_url: string;
+}
+
 export default function ImageImporterPage() {
     const [googleDriveLink, setGoogleDriveLink] = useState('');
     const [isImporting, setIsImporting] = useState(false);
     const [imageUrls, setImageUrls] = useState<string[]>([]);
     const { toast } = useToast();
     const [progress, setProgress] = useState(0);
+    const [products, setProducts] = useState<Product[]>([]);
 
     const handleImport = async () => {
         if (!googleDriveLink) {
@@ -27,6 +37,7 @@ export default function ImageImporterPage() {
         setIsImporting(true);
         setProgress(0);
         setImageUrls([]);
+        setProducts([]);
 
         try {
             toast({ title: 'Importing...', description: 'Connecting to the server.' });
@@ -48,11 +59,22 @@ export default function ImageImporterPage() {
 
             const data = await response.json();
             setImageUrls(data.imageUrls);
+            
+            // Initialize products with default values
+            const initialProducts: Product[] = data.imageUrls.map((url: string) => ({
+              name: "BRC INFINITY",
+              price: 0,
+              quantity: 1,
+              collection: "modern",
+              image_url: url,
+            }));
+            setProducts(initialProducts);
+
             setProgress(100);
 
             toast({
                 title: 'Import Successful',
-                description: 'Images have been imported and are ready.',
+                description: 'Images have been imported and are ready for editing.',
             });
 
         } catch (error) {
@@ -68,27 +90,39 @@ export default function ImageImporterPage() {
         }
     };
 
-    const handleExportCsv = () => {
-        if (imageUrls.length === 0) {
+    const handleProductChange = (index: number, field: keyof Product, value: string | number) => {
+      const updatedProducts = [...products];
+      updatedProducts[index] = { ...updatedProducts[index], [field]: value };
+      setProducts(updatedProducts);
+    };
+
+    const handleAddProducts = async () => {
+        try {
+            const response = await fetch('/api/products/bulk', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ products }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to add products.');
+            }
+
+            toast({
+                title: 'Success',
+                description: 'All products have been added successfully.',
+            });
+            setProducts([]); // Clear products after adding
+        } catch (error) {
+            console.error(error);
             toast({
                 variant: 'destructive',
                 title: 'Error',
-                description: 'No image URLs to export.',
+                description: (error as Error).message || 'An unexpected error occurred.',
             });
-            return;
         }
-
-        const csvContent = "data:text/csv;charset=utf-8,"
-            + "image_url\n"
-            + imageUrls.join("\n");
-
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "product_images.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
     };
 
     return (
@@ -116,21 +150,49 @@ export default function ImageImporterPage() {
                 </CardContent>
             </Card>
 
-            {imageUrls.length > 0 && (
+            {products.length > 0 && (
                 <Card>
                     <CardHeader>
-                        <CardTitle>Cloudinary Image URLs</CardTitle>
+                        <CardTitle>Bulk Product Editor</CardTitle>
                         <CardDescription>
-                            Here are the Cloudinary URLs for the imported images. You can edit them here or export them as a CSV.
+                            Edit the products below and click "Add All Products" to save them.
                         </CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        <textarea
-                            className="w-full h-40 p-2 border rounded"
-                            value={imageUrls.join('\n')}
-                            onChange={(e) => setImageUrls(e.target.value.split('\n'))}
-                        />
-                        <Button onClick={handleExportCsv}>Export as CSV</Button>
+                    <CardContent>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {products.map((product, index) => (
+                                <Card key={index}>
+                                    <CardHeader>
+                                        <img src={product.image_url} alt={`Product ${index + 1}`} className="w-full h-32 object-cover" />
+                                    </CardHeader>
+                                    <CardContent className="space-y-2">
+                                        <Input
+                                            value={product.name}
+                                            onChange={(e) => handleProductChange(index, 'name', e.target.value)}
+                                            placeholder="Product Name"
+                                        />
+                                        <Input
+                                            type="number"
+                                            value={product.price}
+                                            onChange={(e) => handleProductChange(index, 'price', Number(e.target.value))}
+                                            placeholder="Price"
+                                        />
+                                        <Input
+                                            type="number"
+                                            value={product.quantity}
+                                            onChange={(e) => handleProductChange(index, 'quantity', Number(e.target.value))}
+                                            placeholder="Quantity"
+                                        />
+                                        <Input
+                                            value={product.collection}
+                                            onChange={(e) => handleProductChange(index, 'collection', e.target.value)}
+                                            placeholder="Collection"
+                                        />
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                        <Button onClick={handleAddProducts} className="mt-4">Add All Products</Button>
                     </CardContent>
                 </Card>
             )}
