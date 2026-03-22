@@ -10,6 +10,7 @@ import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useProducts } from '@/hooks/use-products';
+import { canUseNextImage } from '@/lib/image-utils';
 import { useTranslation } from '@/lib/i18n';
 import {
   getLocalizedText,
@@ -111,6 +112,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
 
   const currentImage = images[currentImageIndex];
   const transformedImage = currentImage ? transformCloudinaryUrl(currentImage) : '';
+  const canRenderWithNextImage = transformedImage ? canUseNextImage(transformedImage) : false;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -121,14 +123,24 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
             {images.length > 0 ? (
               <>
                 <div className="relative flex h-[clamp(320px,60vh,720px)] items-center justify-center overflow-hidden rounded-lg border bg-secondary/30 p-4 shadow-lg">
-                  <Image
-                    src={transformedImage}
-                    alt={productName}
-                    fill
-                    priority
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="h-full w-full object-contain"
-                  />
+                  {canRenderWithNextImage ? (
+                    <Image
+                      src={transformedImage}
+                      alt={productName}
+                      fill
+                      priority
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="h-full w-full object-contain"
+                    />
+                  ) : (
+                    <img
+                      src={transformedImage}
+                      alt={productName}
+                      className="h-full w-full object-contain"
+                      loading="eager"
+                      decoding="async"
+                    />
+                  )}
                   {images.length > 1 && (
                     <>
                       <Button

@@ -3,6 +3,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+
+import { canUseNextImage } from '@/lib/image-utils';
 import { useTranslation } from '@/lib/i18n';
 
 const BACKGROUND_IMAGE_URL =
@@ -12,13 +14,23 @@ export default function CustomRequest() {
   const { t } = useTranslation();
   return (
     <div className="relative py-24">
-      <Image
-        src={BACKGROUND_IMAGE_URL}
-        alt=""
-        fill
-        sizes="100vw"
-        className="object-cover"
-      />
+      {canUseNextImage(BACKGROUND_IMAGE_URL) ? (
+        <Image
+          src={BACKGROUND_IMAGE_URL}
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover"
+        />
+      ) : (
+        <img
+          src={BACKGROUND_IMAGE_URL}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+          loading="lazy"
+          decoding="async"
+        />
+      )}
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
       <div className="relative container mx-auto px-4 text-center text-white">
         <h2 className="font-headline text-4xl font-bold">{t('home.custom_request_title')}</h2>

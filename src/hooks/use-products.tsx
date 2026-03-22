@@ -14,10 +14,18 @@ type UseProductsOptions = {
   realtime?: boolean;
 };
 
+const getProductsSnapshot = () => {
+  try {
+    return getStoredProducts();
+  } catch {
+    return DEFAULT_PRODUCTS;
+  }
+};
+
 export function useProducts(_options?: UseProductsOptions) {
   const products = useSyncExternalStore<Product[]>(
     subscribeToProducts,
-    getStoredProducts,
+    getProductsSnapshot,
     () => DEFAULT_PRODUCTS
   );
 

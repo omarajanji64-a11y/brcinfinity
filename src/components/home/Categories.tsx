@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { Card } from '@/components/ui/card';
+import { canUseNextImage } from '@/lib/image-utils';
 import { useTranslation } from '@/lib/i18n';
 import { CATEGORY_SHOWCASE_IMAGES } from '@/lib/site-config';
 
@@ -32,13 +33,23 @@ export default function Categories() {
             <Link key={category.id} href="/products">
               <Card className="group relative overflow-hidden rounded-lg border-none shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-accent/10">
                 <div className="relative aspect-w-1 aspect-h-1 h-80 w-full overflow-hidden">
-                  <Image
-                    src={transformCloudinaryUrl(category.imageUrl)}
-                    alt={category.displayName}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
+                  {canUseNextImage(transformCloudinaryUrl(category.imageUrl)) ? (
+                    <Image
+                      src={transformCloudinaryUrl(category.imageUrl)}
+                      alt={category.displayName}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <img
+                      src={transformCloudinaryUrl(category.imageUrl)}
+                      alt={category.displayName}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  )}
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                 <div className="absolute bottom-0 left-0 p-6">

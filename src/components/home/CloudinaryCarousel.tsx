@@ -14,6 +14,7 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import { Button } from '@/components/ui/button';
+import { canUseNextImage } from '@/lib/image-utils';
 import { HERO_CAROUSEL_IMAGES } from '@/lib/site-config';
 
 const transformCloudinaryUrl = (url: string) => {
@@ -53,14 +54,24 @@ export default function CloudinaryCarousel() {
           {validImages.map((url, index) => (
             <CarouselItem key={`${url}-${index}`} className="h-full">
               <div className="relative h-full w-full">
-                <Image
-                  src={transformCloudinaryUrl(url)}
-                  alt={`Slideshow image ${index + 1}`}
-                  fill
-                  priority={index === 0}
-                  sizes="100vw"
-                  className="h-full w-full object-cover animate-scale-in"
-                />
+                {canUseNextImage(transformCloudinaryUrl(url)) ? (
+                  <Image
+                    src={transformCloudinaryUrl(url)}
+                    alt={`Slideshow image ${index + 1}`}
+                    fill
+                    priority={index === 0}
+                    sizes="100vw"
+                    className="h-full w-full object-cover animate-scale-in"
+                  />
+                ) : (
+                  <img
+                    src={transformCloudinaryUrl(url)}
+                    alt={`Slideshow image ${index + 1}`}
+                    className="h-full w-full object-cover animate-scale-in"
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    decoding="async"
+                  />
+                )}
                 <div className="absolute inset-0 bg-black/50" />
               </div>
             </CarouselItem>

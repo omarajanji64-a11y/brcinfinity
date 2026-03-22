@@ -17,6 +17,18 @@ const PRODUCTS_STORAGE_KEY = 'brc-infinity-products';
 const PRODUCTS_UPDATED_EVENT = 'brc-infinity-products-updated';
 const placeholderImages = placeholderImagesData.placeholderImages as PlaceholderImage[];
 
+const getStorage = () => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  try {
+    return window.localStorage;
+  } catch {
+    return null;
+  }
+};
+
 const getProductImageUrl = (id: string, fallbackUrl: string) =>
   placeholderImages.find((image) => image.id === id)?.imageUrl ?? fallbackUrl;
 
@@ -104,7 +116,7 @@ export const DEFAULT_PRODUCTS: Product[] = [
   }),
 ];
 
-const canUseStorage = () => typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+const canUseStorage = () => getStorage() !== null;
 
 const sanitizeProducts = (value: unknown): Product[] => {
   if (!Array.isArray(value)) {
@@ -126,20 +138,35 @@ const emitProductsUpdated = () => {
 };
 
 const seedDefaultProducts = () => {
-  if (!canUseStorage()) {
+  const storage = getStorage();
+
+  if (!storage) {
     return DEFAULT_PRODUCTS;
   }
 
-  window.localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(DEFAULT_PRODUCTS));
+  try {
+    storage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(DEFAULT_PRODUCTS));
+  } catch {
+    return DEFAULT_PRODUCTS;
+  }
+
   return DEFAULT_PRODUCTS;
 };
 
 export const getStoredProducts = (): Product[] => {
-  if (!canUseStorage()) {
+  const storage = getStorage();
+
+  if (!storage) {
     return DEFAULT_PRODUCTS;
   }
 
-  const rawProducts = window.localStorage.getItem(PRODUCTS_STORAGE_KEY);
+  let rawProducts: string | null = null;
+
+  try {
+    rawProducts = storage.getItem(PRODUCTS_STORAGE_KEY);
+  } catch {
+    return DEFAULT_PRODUCTS;
+  }
 
   if (!rawProducts) {
     return seedDefaultProducts();
@@ -159,12 +186,20 @@ export const getStoredProducts = (): Product[] => {
 };
 
 export const saveStoredProducts = (products: Product[]) => {
-  if (!canUseStorage()) {
+  const storage = getStorage();
+
+  if (!storage) {
     return products;
   }
 
   const sanitizedProducts = sanitizeProducts(products);
-  window.localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(sanitizedProducts));
+
+  try {
+    storage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(sanitizedProducts));
+  } catch {
+    return sanitizedProducts;
+  }
+
   emitProductsUpdated();
   return sanitizedProducts;
 };

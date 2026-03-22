@@ -3,23 +3,36 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Crown } from 'lucide-react';
+
 import { FALLBACK_LOGO_URL } from '@/lib/site-config';
+import { canUseNextImage } from '@/lib/image-utils';
 
 export default function Logo() {
   const logoUrl = FALLBACK_LOGO_URL;
+  const canRenderWithNextImage = logoUrl ? canUseNextImage(logoUrl) : false;
 
   return (
     <Link href="/" className="flex items-center gap-2 group">
       {logoUrl ? (
         <div className="relative h-32 w-80">
-          <Image
-            src={logoUrl}
-            alt="BRC INFINITY Logo"
-            fill
-            priority
-            sizes="(max-width: 768px) 220px, 320px"
-            className="h-full w-full object-contain"
-          />
+          {canRenderWithNextImage ? (
+            <Image
+              src={logoUrl}
+              alt="BRC INFINITY Logo"
+              fill
+              priority
+              sizes="(max-width: 768px) 220px, 320px"
+              className="h-full w-full object-contain"
+            />
+          ) : (
+            <img
+              src={logoUrl}
+              alt="BRC INFINITY Logo"
+              className="h-full w-full object-contain"
+              loading="eager"
+              decoding="async"
+            />
+          )}
         </div>
       ) : (
         <>

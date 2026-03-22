@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { memo, useState } from 'react';
 import { ChevronLeft, ChevronRight, MessageCircle } from 'lucide-react';
 
+import { canUseNextImage } from '@/lib/image-utils';
 import { getProductName, type Product } from '@/lib/products';
 import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -35,6 +36,7 @@ function ProductCard({ product }: ProductCardProps) {
   const currentImage = images[currentImageIndex] || '';
   const isValidUrl = typeof currentImage === 'string' && currentImage.startsWith('https://');
   const transformedUrl = isValidUrl ? transformCloudinaryUrl(currentImage) : '';
+  const canRenderWithNextImage = transformedUrl ? canUseNextImage(transformedUrl) : false;
   const message = t('whatsapp.order_message', {
     productName,
     productImage: currentImage || product.imageUrl || '',
@@ -63,13 +65,23 @@ function ProductCard({ product }: ProductCardProps) {
         <div className="aspect-square relative overflow-hidden group/image">
           {isValidUrl ? (
             <Link href={`/products/${product.id}`} className="relative block h-full group/product-card">
-              <Image
-                src={transformedUrl}
-                alt={productName}
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
-              />
+              {canRenderWithNextImage ? (
+                <Image
+                  src={transformedUrl}
+                  alt={productName}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+                />
+              ) : (
+                <img
+                  src={transformedUrl}
+                  alt={productName}
+                  className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
+                  decoding="async"
+                />
+              )}
             </Link>
           ) : (
             <div className="w-full h-full bg-secondary flex items-center justify-center">
