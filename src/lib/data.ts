@@ -18,8 +18,7 @@ export type Product = {
   imageUrls?: string[]; // New field for multiple images
 };
 
-// This data is now used as a fallback or for initial seeding, 
-// but the primary source of truth is Firestore.
+// This data is kept only as a local fallback seed.
 const allProducts: Product[] = [
   {
     id: '1',

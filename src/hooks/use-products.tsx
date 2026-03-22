@@ -1,31 +1,31 @@
-
 "use client";
 
-import { useMemo } from "react";
-import { collection, deleteDoc, doc } from "firebase/firestore";
+import { useCallback, useEffect, useState } from 'react';
 
-import { useCollection, useFirestore, useMemoFirebase } from "@/firebase/client-provider";
-import { normalizeProduct, type Product } from "@/lib/products";
+import { deleteStoredProduct, getStoredProducts, subscribeToProducts } from '@/lib/product-storage';
+import type { Product } from '@/lib/products';
 
 type UseProductsOptions = {
   realtime?: boolean;
 };
 
-export function useProducts(options?: UseProductsOptions) {
-  const firestore = useFirestore();
-  const productsCollection = useMemoFirebase(() => collection(firestore, "products"), [firestore]);
-  const { data, isLoading, error } = useCollection<Record<string, unknown>>(productsCollection, {
-    realtime: options?.realtime,
-  });
+export function useProducts(_options?: UseProductsOptions) {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error] = useState<Error | null>(null);
 
-  const products = useMemo<Product[]>(
-    () => (data ?? []).map((product) => normalizeProduct(product)),
-    [data]
-  );
+  const refreshProducts = useCallback(() => {
+    setProducts(getStoredProducts());
+    setIsLoading(false);
+  }, []);
+
+  useEffect(() => {
+    refreshProducts();
+    return subscribeToProducts(refreshProducts);
+  }, [refreshProducts]);
 
   const deleteProduct = async (id: string) => {
-    const productDoc = doc(firestore, "products", id);
-    await deleteDoc(productDoc);
+    deleteStoredProduct(id);
   };
 
   return { products, isLoading, error, deleteProduct };

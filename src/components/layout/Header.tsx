@@ -1,127 +1,66 @@
 'use client';
 
 import Link from 'next/link';
-import { Download, Menu, X } from 'lucide-react';
-import { doc } from 'firebase/firestore';
+import { Menu, X } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
 import Logo from '@/components/shared/Logo';
+import DownloadCatalogButton from '@/components/shared/DownloadCatalogButton';
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetTrigger,
-  SheetClose,
-} from "@/components/ui/sheet";
-import { useDoc, useFirestore, useMemoFirebase } from '@/firebase/client-provider';
-import { Skeleton } from '../ui/skeleton';
+} from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/lib/i18n';
 import LanguageSwitcher from '../shared/LanguageSwitcher';
-import packageJson from '../../../package.json';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
-
-type Catalog = {
-  id: string;
-  name: string;
-  url: string;
-};
-
-type CatalogConfig = {
-  catalogs: Catalog[];
-};
-
-function DownloadCatalogButton() {
-    const { t } = useTranslation();
-    const firestore = useFirestore();
-    const catalogConfigRef = useMemoFirebase(() => {
-        if (!firestore) return null;
-        return doc(firestore, 'config/catalog');
-    }, [firestore]);
-
-    const { data: catalogConfig, isLoading } = useDoc<CatalogConfig>(catalogConfigRef, { realtime: false });
-
-    if (isLoading) {
-        return <Skeleton className="h-10 w-44" />;
-    }
-
-    const catalogs = catalogConfig?.catalogs?.filter(c => c.url && c.name) || [];
-
-    if (catalogs.length === 0) {
-        return (
-             <Button variant="outline" disabled className="text-white">
-                <Download className="mr-2 h-4 w-4" />
-                {t('header.download_catalog')}
-            </Button>
-        );
-    }
-    
-    if (catalogs.length === 1) {
-       return (
-        <Button variant="outline" onClick={() => window.open(catalogs[0].url, '_blank')} className="text-white transition-transform duration-300 hover:scale-105">
-            <Download className="mr-2 h-4 w-4" />
-            {catalogs[0].name || t('header.download_catalog')}
-        </Button>
-       )
-    }
-
-    return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="text-white transition-transform duration-300 hover:scale-105">
-                    <Download className="mr-2 h-4 w-4" />
-                    {t('header.download_catalog')}
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                {catalogs.map((catalog) => (
-                    <DropdownMenuItem key={catalog.id} onClick={() => window.open(catalog.url, '_blank')}>
-                        {catalog.name}
-                    </DropdownMenuItem>
-                ))}
-            </DropdownMenuContent>
-        </DropdownMenu>
-    );
-}
-
 
 export default function Header() {
   const { t } = useTranslation();
   const navLinksLeft = [
     { href: '/', label: t('header.home') },
     { href: '/products', label: t('header.products') },
-    { href: '/about-us', label: 'Hakkımızda' },
+    { href: '/about-us', label: 'Hakkimizda' },
   ];
-  const navLinksRight = [
-    { href: '/contact', label: t('header.contact') },
-  ];
-
-  const version = packageJson.version;
+  const navLinksRight = [{ href: '/contact', label: t('header.contact') }];
 
   return (
-    <header className="sticky top-0 z-50 bg-background/50 backdrop-blur-sm border-b border-white/10">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-background/50 backdrop-blur-sm">
       <div className="container mx-auto grid h-40 grid-cols-2 items-center px-4 md:grid-cols-3">
-        <nav className="hidden md:flex items-center gap-6">
-          {navLinksLeft.map(link => (
-            <Link key={link.href} href={link.href} className="text-white hover:text-white/80 transition-colors font-medium">
+        <nav className="hidden items-center gap-6 md:flex">
+          {navLinksLeft.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="font-medium text-white transition-colors hover:text-white/80"
+            >
               {link.label}
             </Link>
           ))}
         </nav>
-        
-        <div className="flex items-center justify-start md:justify-center col-start-1 md:col-start-2">
-            <Logo />
+
+        <div className="col-start-1 flex items-center justify-start md:col-start-2 md:justify-center">
+          <Logo />
         </div>
-        
-        <div className="hidden md:flex items-center justify-end gap-2">
-          {navLinksRight.map(link => (
-            <Link key={link.href} href={link.href} className="text-white hover:text-white/80 transition-colors font-medium">
+
+        <div className="hidden items-center justify-end gap-2 md:flex">
+          {navLinksRight.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="font-medium text-white transition-colors hover:text-white/80"
+            >
               {link.label}
             </Link>
           ))}
-          <DownloadCatalogButton />
+          <DownloadCatalogButton
+            variant="outline"
+            className="text-white transition-transform duration-300 hover:scale-105"
+          />
           <LanguageSwitcher />
         </div>
 
-        <div className="md:hidden flex items-center justify-end col-start-2">
+        <div className="col-start-2 flex items-center justify-end md:hidden">
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -130,27 +69,33 @@ export default function Header() {
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] sm:w-[400px]">
               <div className="p-4">
-                <div className="flex justify-between items-center mb-8">
+                <div className="mb-8 flex items-center justify-between">
                   <div className="flex items-center justify-center">
                     <Logo />
                   </div>
                   <SheetClose asChild>
-                     <Button variant="ghost" size="icon">
-                        <X className="h-6 w-6" />
-                     </Button>
+                    <Button variant="ghost" size="icon">
+                      <X className="h-6 w-6" />
+                    </Button>
                   </SheetClose>
                 </div>
                 <nav className="flex flex-col gap-6 text-lg">
-                  {[...navLinksLeft, ...navLinksRight].map(link => (
+                  {[...navLinksLeft, ...navLinksRight].map((link) => (
                     <SheetClose asChild key={link.href}>
-                      <Link href={link.href} className="text-foreground/80 hover:text-foreground transition-colors font-medium">
+                      <Link
+                        href={link.href}
+                        className="font-medium text-foreground/80 transition-colors hover:text-foreground"
+                      >
                         {link.label}
                       </Link>
                     </SheetClose>
                   ))}
                 </nav>
                 <div className="mt-8 flex flex-col gap-4">
-                  <DownloadCatalogButton />
+                  <DownloadCatalogButton
+                    variant="outline"
+                    className="transition-transform duration-300 hover:scale-105"
+                  />
                   <LanguageSwitcher />
                 </div>
               </div>

@@ -1,27 +1,33 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { doc } from 'firebase/firestore';
-import { MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MessageCircle } from 'lucide-react';
 
-import { useTranslation } from '@/lib/i18n';
-import { useMemoFirebase, useDoc, useFirestore } from '@/firebase/client-provider';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Button } from '@/components/ui/button';
-import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import Header from '@/components/layout/Header';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useProducts } from '@/hooks/use-products';
+import { useTranslation } from '@/lib/i18n';
 import {
   getLocalizedText,
   getProductCategoryLabel,
   getProductName,
-  normalizeProduct,
 } from '@/lib/products';
+
+const CURRENCY_FORMATTER = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0,
+});
 
 const transformCloudinaryUrl = (url: string) => {
   if (!url || !url.includes('/upload/')) {
     return url;
   }
+
   const parts = url.split('/upload/');
   const transformations = 'w_1400,h_1400,c_fit,f_auto,q_auto';
   return `${parts[0]}/upload/${transformations}/${parts[1]}`;
@@ -29,21 +35,37 @@ const transformCloudinaryUrl = (url: string) => {
 
 export default function ProductDetailPage({ params }: { params: { id: string } }) {
   const { t, language } = useTranslation();
-  const firestore = useFirestore();
-  const productRef = useMemoFirebase(() => {
-    if (!firestore) return null;
-    return doc(firestore, 'products', params.id);
-  }, [firestore, params.id]);
-
-  const { data: rawProduct, isLoading, error } = useDoc<Record<string, unknown>>(productRef, { realtime: false });
+  const { products, isLoading } = useProducts({ realtime: false });
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const product = useMemo(() => (rawProduct ? normalizeProduct(rawProduct) : null), [rawProduct]);
+
+  const product = useMemo(
+    () => products.find((item) => item.id === params.id) ?? null,
+    [params.id, products]
+  );
+
+  const images = useMemo(() => {
+    if (!product) {
+      return [];
+    }
+
+    return product.imageUrls.length > 0 ? product.imageUrls : product.imageUrl ? [product.imageUrl] : [];
+  }, [product]);
+
+  useEffect(() => {
+    setCurrentImageIndex((currentIndex) => {
+      if (images.length === 0) {
+        return 0;
+      }
+
+      return currentIndex >= images.length ? 0 : currentIndex;
+    });
+  }, [images.length]);
 
   if (isLoading) {
     return (
-      <div className="flex flex-col min-h-screen">
+      <div className="flex min-h-screen flex-col">
         <Header />
-        <main className="flex-grow container mx-auto px-4 py-12">
+        <main className="container mx-auto flex-grow px-4 py-12">
           <Skeleton className="h-[60vh] w-full" />
         </main>
         <Footer />
@@ -51,11 +73,11 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     );
   }
 
-  if (error || !product) {
+  if (!product) {
     return (
-      <div className="flex flex-col min-h-screen">
+      <div className="flex min-h-screen flex-col">
         <Header />
-        <main className="flex-grow container mx-auto px-4 py-12">
+        <main className="container mx-auto flex-grow px-4 py-12">
           <div className="rounded-lg border bg-card p-8 text-center">
             <h1 className="font-headline text-3xl font-bold">Urun bulunamadi</h1>
             <p className="mt-3 text-muted-foreground">
@@ -71,25 +93,26 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     );
   }
 
-  const images = product.imageUrls.length > 0 ? product.imageUrls : product.imageUrl ? [product.imageUrl] : [];
   const productName = getProductName(product, language);
   const categoryLabel = getProductCategoryLabel(product, language, t);
-  const formattedPrice = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(product.price);
+  const formattedPrice = CURRENCY_FORMATTER.format(product.price);
   const phoneNumber = '905467898968';
   const message = t('whatsapp.order_message', { productName, productImage: images[0] || '' });
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
   const nextImage = () => {
-    if (images.length === 0) return;
+    if (images.length === 0) {
+      return;
+    }
+
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
   };
+
   const prevImage = () => {
-    if (images.length === 0) return;
+    if (images.length === 0) {
+      return;
+    }
+
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
@@ -97,10 +120,10 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
   const transformedImage = currentImage ? transformCloudinaryUrl(currentImage) : '';
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-grow container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+      <main className="container mx-auto flex-grow px-4 py-12">
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
           <div className="relative">
             {images.length > 0 ? (
               <>
@@ -136,25 +159,32 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                     </>
                   )}
                 </div>
-                <div className="flex gap-2 justify-center mt-4">
+                <div className="mt-4 flex justify-center gap-2">
                   {images.map((_, idx) => (
-                    <div key={idx} className={`h-2 w-2 rounded-full ${idx === currentImageIndex ? 'bg-accent' : 'bg-muted-foreground'}`} />
+                    <div
+                      key={idx}
+                      className={`h-2 w-2 rounded-full ${
+                        idx === currentImageIndex ? 'bg-accent' : 'bg-muted-foreground'
+                      }`}
+                    />
                   ))}
                 </div>
               </>
             ) : (
-              <Skeleton className="w-full h-[clamp(320px,60vh,720px)] rounded-lg" />
+              <Skeleton className="h-[clamp(320px,60vh,720px)] w-full rounded-lg" />
             )}
           </div>
           <div>
-            <h1 className="font-headline text-3xl md:text-4xl font-bold mb-4">{productName}</h1>
-            <div className="text-lg text-muted-foreground mb-2">{categoryLabel}</div>
-            {product.price > 0 && <div className="text-xl font-bold text-accent mb-6">{formattedPrice.replace('$', '$ ')}</div>}
+            <h1 className="mb-4 font-headline text-3xl font-bold md:text-4xl">{productName}</h1>
+            <div className="mb-2 text-lg text-muted-foreground">{categoryLabel}</div>
+            {product.price > 0 && (
+              <div className="mb-6 text-xl font-bold text-accent">{formattedPrice.replace('$', '$ ')}</div>
+            )}
             <div className="mb-6">
-              <div className="font-semibold mb-1">{t('product_form.long_desc_label')}</div>
+              <div className="mb-1 font-semibold">{t('product_form.long_desc_label')}</div>
               <div>{getLocalizedText(product.description, language)}</div>
             </div>
-            <Button asChild className="w-full mt-4">
+            <Button asChild className="mt-4 w-full">
               <Link href={whatsappUrl} target="_blank" rel="noopener noreferrer">
                 <MessageCircle className="mr-2 h-4 w-4" />
                 {t('common.order_whatsapp')}
