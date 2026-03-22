@@ -53,19 +53,14 @@ export default function WhyUs() {
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           {features.map((feature, index) => (
-            <Card
-              key={index}
-              className="group rounded-[1rem] px-2 pb-2 text-center transition-colors duration-500 hover:border-[rgba(193,148,79,0.34)]"
-            >
-              <CardHeader className="items-center pb-4">
-                <div className="mb-5 inline-flex h-20 w-20 items-center justify-center rounded-[0.7rem] border border-[rgba(193,148,79,0.24)] bg-[rgba(74,49,31,0.76)] transition-transform duration-500 group-hover:scale-105">
+            <Card key={index} className="rounded-[1.4rem] px-6 py-7 text-left">
+              <CardHeader className="items-start px-0 pb-4 pt-0">
+                <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/[0.04]">
                   {feature.icon}
                 </div>
-                <span className="text-[0.72rem] uppercase tracking-[0.22em] text-accent/76">0{index + 1}</span>
                 <CardTitle className="font-headline text-2xl text-primary">{feature.title}</CardTitle>
-                <div className="classic-divider mt-4 max-w-[6rem]" />
               </CardHeader>
-              <CardContent>
+              <CardContent className="px-0 pb-0 pt-0">
                 <p className="leading-7 text-primary/66">{feature.description}</p>
               </CardContent>
             </Card>

@@ -61,9 +61,9 @@ function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <Card className="group flex h-full flex-col overflow-hidden rounded-[1rem] p-4 transition-colors duration-500 hover:border-[rgba(193,148,79,0.34)]">
+    <Card className="group flex h-full flex-col overflow-hidden rounded-[1.4rem] p-0 transition-colors duration-500 hover:border-white/14">
       <CardHeader className="p-0">
-        <div className="group/image relative overflow-hidden rounded-[0.75rem] border border-[rgba(193,148,79,0.18)]">
+        <div className="group/image relative overflow-hidden rounded-t-[1.4rem] border-b border-white/8">
           {isValidUrl ? (
             <Link href={`/products/${product.id}`} className="relative block h-full group/product-card">
               {canRenderWithNextImage ? (
@@ -74,13 +74,13 @@ function ProductCard({ product }: ProductCardProps) {
                   height={610}
                   unoptimized
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  className="aspect-[4/4.35] h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                  className="aspect-[4/4.3] h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                 />
               ) : (
                 <img
                   src={transformedUrl}
                   alt={productName}
-                  className="aspect-[4/4.35] h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                  className="aspect-[4/4.3] h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                   loading="lazy"
                   decoding="async"
                 />
@@ -91,22 +91,14 @@ function ProductCard({ product }: ProductCardProps) {
               <Skeleton className="h-full w-full" />
             </div>
           )}
-          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(20,12,8,0.06),rgba(20,12,8,0.18)_55%,rgba(20,12,8,0.58)_100%)]" />
-          <div className="absolute left-4 top-4 flex flex-wrap gap-2">
-            <span className="rounded-[0.4rem] border border-[rgba(193,148,79,0.18)] bg-[rgba(45,29,18,0.86)] px-3 py-1 text-[0.66rem] uppercase tracking-[0.18em] text-primary/84">
-              {productCategory}
-            </span>
-            <span className="rounded-[0.4rem] border border-accent/20 bg-accent/10 px-3 py-1 text-[0.66rem] uppercase tracking-[0.18em] text-accent">
-              {product.style}
-            </span>
-          </div>
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(5,5,6,0.02),rgba(5,5,6,0.08)_50%,rgba(5,5,6,0.28)_100%)]" />
           {isValidUrl && images.length > 1 && (
             <>
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="absolute left-3 top-1/2 -translate-y-1/2 rounded-[0.45rem] border border-[rgba(193,148,79,0.18)] bg-[rgba(45,29,18,0.86)] text-primary opacity-0 transition-all duration-300 hover:bg-[rgba(67,42,26,0.94)] hover:text-primary group-hover/image:opacity-100"
+                className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-white/10 bg-black/35 text-primary opacity-0 transition-all duration-300 hover:bg-black/55 hover:text-primary group-hover/image:opacity-100"
                 onClick={prevImage}
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -115,7 +107,7 @@ function ProductCard({ product }: ProductCardProps) {
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-[0.45rem] border border-[rgba(193,148,79,0.18)] bg-[rgba(45,29,18,0.86)] text-primary opacity-0 transition-all duration-300 hover:bg-[rgba(67,42,26,0.94)] hover:text-primary group-hover/image:opacity-100"
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-white/10 bg-black/35 text-primary opacity-0 transition-all duration-300 hover:bg-black/55 hover:text-primary group-hover/image:opacity-100"
                 onClick={nextImage}
               >
                 <ChevronRight className="h-4 w-4" />
@@ -135,23 +127,20 @@ function ProductCard({ product }: ProductCardProps) {
         </div>
       </CardHeader>
       <Link href={`/products/${product.id}`} className="flex flex-1 flex-col">
-        <CardContent className="flex flex-grow flex-col gap-4 px-2 pb-0 pt-5 text-center">
-          <div className="inline-flex w-fit self-center rounded-[0.4rem] border border-[rgba(193,148,79,0.18)] bg-[rgba(72,47,29,0.76)] px-3 py-1 text-[0.66rem] uppercase tracking-[0.18em] text-primary/72">
-            BRC Infinity Collection
-          </div>
-          <CardTitle className="mt-1 font-headline text-2xl leading-tight text-primary">{productName}</CardTitle>
-          <div className="classic-divider mx-auto max-w-[6rem]" />
+        <CardContent className="flex flex-grow flex-col gap-3 p-5 text-left">
+          <p className="text-[0.72rem] uppercase tracking-[0.16em] text-primary/42">{productCategory}</p>
+          <CardTitle className="font-headline text-2xl leading-tight text-primary">{productName}</CardTitle>
           <div className="flex-grow" />
-          <div className="inline-flex items-center justify-center gap-2 text-sm uppercase tracking-[0.18em] text-accent/84">
+          <div className="inline-flex items-center gap-2 text-sm text-primary/54">
             {detailLabel}
             <ArrowUpRight className="h-4 w-4" />
           </div>
         </CardContent>
       </Link>
-      <CardFooter className="grid gap-3 px-2 pb-2 pt-5 sm:grid-cols-[1fr_auto]">
+      <CardFooter className="grid gap-3 p-5 pt-0 sm:grid-cols-[1fr_auto]">
         <Button
           asChild
-          className="h-12 text-[0.74rem] tracking-[0.16em]"
+          className="h-10 rounded-full text-[0.78rem]"
         >
           <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
             <MessageCircle className="h-4 w-4" />
@@ -161,7 +150,7 @@ function ProductCard({ product }: ProductCardProps) {
         <Button
           asChild
           variant="outline"
-          className="h-12 px-5 text-[0.72rem] tracking-[0.16em]"
+          className="h-10 rounded-full px-5 text-[0.78rem]"
         >
           <Link href={`/products/${product.id}`}>{detailLabel}</Link>
         </Button>

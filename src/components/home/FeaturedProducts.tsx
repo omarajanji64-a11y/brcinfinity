@@ -33,13 +33,11 @@ export default function FeaturedProducts() {
 
   return (
     <section className="theme-surface-soft relative overflow-hidden bg-secondary/20">
-      <div className="absolute inset-x-0 top-0 h-44 bg-[radial-gradient(circle_at_center,rgba(214,176,102,0.12),transparent_55%)]" />
       <div className="container relative mx-auto px-4 py-20 md:py-24">
         <div className="mx-auto mb-12 max-w-3xl text-center">
           <p className="section-kicker justify-center">{sectionCopy.kicker}</p>
           <h2 className="section-title mt-5">{t('home.featured_products')}</h2>
           <p className="section-copy mt-5">{sectionCopy.description}</p>
-          <div className="classic-divider mx-auto mt-7 max-w-[10rem]" />
         </div>
 
         <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -50,7 +48,7 @@ export default function FeaturedProducts() {
                 className="animate-fade-in-up"
                 style={{ animationDelay: `${i * 0.1}s`, animationFillMode: 'backwards' }}
               >
-                <Card className="h-full overflow-hidden rounded-[1rem] shadow-none">
+                <Card className="h-full overflow-hidden rounded-[1.4rem] shadow-none">
                   <CardHeader className="p-0">
                     <Skeleton className="aspect-[4/4.35] w-full" />
                   </CardHeader>

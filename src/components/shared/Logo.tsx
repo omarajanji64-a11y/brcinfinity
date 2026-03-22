@@ -14,21 +14,21 @@ export default function Logo() {
   return (
     <Link href="/" className="group inline-flex items-center gap-3">
       {logoUrl ? (
-        <div className="theme-panel classic-shell relative flex h-[72px] w-[185px] items-center justify-center overflow-hidden rounded-[0.8rem] px-4 py-3 transition-colors duration-300 group-hover:border-[rgba(193,148,79,0.34)] md:h-[84px] md:w-[235px]">
+        <div className="relative flex h-[60px] w-[160px] items-center justify-center overflow-hidden md:h-[72px] md:w-[210px]">
           {canRenderWithNextImage ? (
             <Image
               src={logoUrl}
               alt="BRC INFINITY Logo"
               fill
               priority
-              sizes="(max-width: 768px) 185px, 235px"
-              className="object-contain p-2"
+              sizes="(max-width: 768px) 160px, 210px"
+              className="object-contain"
             />
           ) : (
             <img
               src={logoUrl}
               alt="BRC INFINITY Logo"
-              className="h-full w-full object-contain p-2"
+              className="h-full w-full object-contain"
               loading="eager"
               decoding="async"
             />
