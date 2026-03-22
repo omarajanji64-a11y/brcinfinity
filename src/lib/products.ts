@@ -19,28 +19,28 @@ export type Product = {
 
 type TranslationFn = (key: string) => string;
 
+export const FIXED_CATEGORY_OPTIONS = [
+  { key: 'living-room', translationKey: 'categories.living_room', adminLabel: 'Oturma Odasi' },
+  { key: 'dining-room', translationKey: 'categories.dining_room', adminLabel: 'Yemek Odasi' },
+  { key: 'bedroom', translationKey: 'categories.bedroom', adminLabel: 'Yatak Odasi' },
+] as const;
+
 const KNOWN_CATEGORY_LABELS: Record<string, string> = {
+  'living-room': 'categories.living_room',
   bedroom: 'categories.bedroom',
   'dining-room': 'categories.dining_room',
-  'sofa-set': 'categories.sofa_set',
 };
 
 const KNOWN_CATEGORY_TERMS: Record<string, string[]> = {
+  'living-room': ['living room', 'oturma odasi', 'salon'],
   bedroom: ['bedroom', 'yatak odasi'],
   'dining-room': ['dining room', 'yemek odasi', 'yemek'],
-  'sofa-set': [
-    'sofa set',
-    'sofa sets',
-    'koltuk takimi',
-    'koltuk takimlari',
-    'koltuk takim',
-    'koltuk',
-    'sofa',
-    'living room',
-    'oturma odasi',
-    'salon',
-  ],
 };
+
+const FIXED_CATEGORY_ADMIN_LABELS = FIXED_CATEGORY_OPTIONS.reduce<Record<string, string>>((result, option) => {
+  result[option.key] = option.adminLabel;
+  return result;
+}, {});
 
 const DEFAULT_LOCALIZED_TEXT: LocalizedText = {
   tr: '',
@@ -200,43 +200,17 @@ export const getProductCategoryLabel = (
 export const getProductName = (product: Pick<Product, 'name'>, language: Language) =>
   getLocalizedText(product.name, language, 'BRC Infinity');
 
-export const buildCategoryOptions = (
-  products: Product[],
-  language: Language,
-  t: TranslationFn
-) => {
-  const categoryMap = new Map<string, string>(
-    Object.entries(KNOWN_CATEGORY_LABELS).map(([key, translationKey]) => [key, t(translationKey)])
-  );
-
-  products.forEach((product) => {
-    if (!product.categoryKey) {
-      return;
-    }
-
-    categoryMap.set(product.categoryKey, getProductCategoryLabel(product, language, t));
-  });
-
-  const options = Array.from(categoryMap.entries()).map(([key, label]) => ({ key, label }));
-
-  options.sort((a, b) => {
-    const knownA = Object.keys(KNOWN_CATEGORY_LABELS).indexOf(a.key);
-    const knownB = Object.keys(KNOWN_CATEGORY_LABELS).indexOf(b.key);
-
-    if (knownA !== -1 && knownB !== -1) {
-      return knownA - knownB;
-    }
-
-    if (knownA !== -1) {
-      return -1;
-    }
-
-    if (knownB !== -1) {
-      return 1;
-    }
-
-    return a.label.localeCompare(b.label, 'tr');
-  });
-
-  return options;
+export const getFixedCategoryAdminLabel = (value: string) => {
+  const normalizedCategory = normalizeCategoryKey(value);
+  return FIXED_CATEGORY_ADMIN_LABELS[normalizedCategory] ?? '';
 };
+
+export const buildCategoryOptions = (
+  _products: Product[],
+  _language: Language,
+  t: TranslationFn
+) =>
+  FIXED_CATEGORY_OPTIONS.map((option) => ({
+    key: option.key,
+    label: t(option.translationKey),
+  }));

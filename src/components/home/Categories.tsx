@@ -24,10 +24,10 @@ type HomepageConfig = {
 
 const defaultCategoryImages: CategoryImage[] = [
   {
-    id: 'cat-bedroom',
-    name: { en: 'Bedroom', fr: 'Chambre', tr: 'Yatak Odas\u0131' },
-    imageUrl: 'https://picsum.photos/seed/cat-bedroom/600/600',
-    imageHint: 'bedroom furniture',
+    id: 'cat-living-room',
+    name: { en: 'Living Room', fr: 'Salon', tr: 'Oturma Odas\u0131' },
+    imageUrl: 'https://picsum.photos/seed/cat-living/600/600',
+    imageHint: 'living room',
   },
   {
     id: 'cat-dining-room',
@@ -36,10 +36,10 @@ const defaultCategoryImages: CategoryImage[] = [
     imageHint: 'dining room',
   },
   {
-    id: 'cat-sofa-set',
-    name: { en: 'Sofa Set', fr: 'Ensemble de canap\u00e9s', tr: 'Koltuk Tak\u0131m\u0131' },
-    imageUrl: 'https://picsum.photos/seed/cat-sofa/600/600',
-    imageHint: 'sofa set',
+    id: 'cat-bedroom',
+    name: { en: 'Bedroom', fr: 'Chambre', tr: 'Yatak Odas\u0131' },
+    imageUrl: 'https://picsum.photos/seed/cat-bedroom/600/600',
+    imageHint: 'bedroom furniture',
   },
 ];
 

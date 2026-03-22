@@ -19,7 +19,9 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useFirestore } from '@/firebase/client-provider';
 import {
+  FIXED_CATEGORY_OPTIONS,
   createLocalizedText,
+  getFixedCategoryAdminLabel,
   getLocalizedText,
   normalizeCategoryKey,
   type Product,
@@ -63,7 +65,9 @@ const buildFormState = (product?: Product | null): ProductFormState => {
   return {
     id: product.id,
     name: getLocalizedText(product.name, 'tr') || getLocalizedText(product.name, 'en'),
-    category: getLocalizedText(product.category, 'tr') || getLocalizedText(product.category, 'en'),
+    category:
+      getFixedCategoryAdminLabel(product.categoryKey) ||
+      getFixedCategoryAdminLabel(getLocalizedText(product.category, 'tr') || getLocalizedText(product.category, 'en')),
     style: product.style,
     shortDescription:
       getLocalizedText(product.shortDescription, 'tr') || getLocalizedText(product.shortDescription, 'en'),
@@ -277,12 +281,18 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
 
         <div className="space-y-2">
           <Label htmlFor="product-category">Kategori</Label>
-          <Input
-            id="product-category"
-            value={form.category}
-            onChange={(event) => updateField('category', event.target.value)}
-            placeholder="Ornek: Koltuk Takimi"
-          />
+          <Select value={form.category || undefined} onValueChange={(value) => updateField('category', value)}>
+            <SelectTrigger id="product-category">
+              <SelectValue placeholder="Kategori sec" />
+            </SelectTrigger>
+            <SelectContent>
+              {FIXED_CATEGORY_OPTIONS.map((option) => (
+                <SelectItem key={option.key} value={option.adminLabel}>
+                  {option.adminLabel}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-2">
