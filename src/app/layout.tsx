@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Playfair_Display, Raleway } from 'next/font/google';
+import { Cormorant_Garamond, Manrope } from 'next/font/google';
 
 import ThemeLoader from '@/components/ThemeLoader';
 import WhatsAppButton from '@/components/shared/WhatsAppButton';
@@ -10,16 +10,16 @@ import { cn } from '@/lib/utils';
 import ClientProviders from './client-providers';
 import './globals.css';
 
-const playfairDisplay = Playfair_Display({
+const cormorantGaramond = Cormorant_Garamond({
   subsets: ['latin'],
-  weight: '700',
-  variable: '--font-playfair-display',
+  weight: ['500', '600', '700'],
+  variable: '--font-cormorant-garamond',
 });
 
-const raleway = Raleway({
+const manrope = Manrope({
   subsets: ['latin'],
-  weight: ['400', '600'],
-  variable: '--font-raleway',
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-manrope',
 });
 
 export const metadata: Metadata = {
@@ -46,8 +46,8 @@ export default function RootLayout({
       <body
         className={cn(
           'font-body antialiased min-h-screen bg-background',
-          playfairDisplay.variable,
-          raleway.variable
+          cormorantGaramond.variable,
+          manrope.variable
         )}
       >
         <LanguageProvider>

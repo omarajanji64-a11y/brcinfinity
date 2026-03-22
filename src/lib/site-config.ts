@@ -44,9 +44,9 @@ const getPlaceholderHint = (id: string, fallbackHint: string) =>
   placeholderImages.find((image) => image.id === id)?.imageHint ?? fallbackHint;
 
 export const DEFAULT_THEME: ThemeConfig = {
-  background: { h: 10, s: 10, l: 8 },
-  primary: { h: 0, s: 0, l: 98 },
-  accent: { h: 38, s: 82, l: 62 },
+  background: { h: 24, s: 18, l: 9 },
+  primary: { h: 38, s: 36, l: 94 },
+  accent: { h: 38, s: 64, l: 67 },
 };
 
 export const HEADER_LOGO_URL =

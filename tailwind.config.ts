@@ -13,8 +13,8 @@ export default {
         'conic-gradient': 'conic-gradient(var(--tw-gradient-stops))',
       },
       fontFamily: {
-        body: ['var(--font-raleway)', 'sans-serif'],
-        headline: ['var(--font-playfair-display)', 'serif'],
+        body: ['var(--font-manrope)', 'sans-serif'],
+        headline: ['var(--font-cormorant-garamond)', 'serif'],
         code: ['monospace'],
       },
       colors: {
