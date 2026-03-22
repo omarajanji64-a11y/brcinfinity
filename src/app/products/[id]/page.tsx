@@ -23,7 +23,7 @@ const transformCloudinaryUrl = (url: string) => {
     return url;
   }
   const parts = url.split('/upload/');
-  const transformations = 'w_1200,h_900,c_fill,g_auto';
+  const transformations = 'w_1400,h_1400,c_fit,f_auto,q_auto';
   return `${parts[0]}/upload/${transformations}/${parts[1]}`;
 };
 
@@ -104,36 +104,38 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
           <div className="relative">
             {images.length > 0 ? (
               <>
-                <img
-                  src={transformedImage}
-                  alt={productName}
-                  className="w-full h-[400px] object-cover rounded-lg shadow-lg"
-                  loading="eager"
-                  decoding="async"
-                  fetchPriority="high"
-                />
-                {images.length > 1 && (
-                  <>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white"
-                      onClick={prevImage}
-                    >
-                      <ChevronLeft className="h-5 w-5" />
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white"
-                      onClick={nextImage}
-                    >
-                      <ChevronRight className="h-5 w-5" />
-                    </Button>
-                  </>
-                )}
+                <div className="relative flex h-[clamp(320px,60vh,720px)] items-center justify-center overflow-hidden rounded-lg border bg-secondary/30 p-4 shadow-lg">
+                  <img
+                    src={transformedImage}
+                    alt={productName}
+                    className="h-full w-full object-contain"
+                    loading="eager"
+                    decoding="async"
+                    fetchPriority="high"
+                  />
+                  {images.length > 1 && (
+                    <>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white"
+                        onClick={prevImage}
+                      >
+                        <ChevronLeft className="h-5 w-5" />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white"
+                        onClick={nextImage}
+                      >
+                        <ChevronRight className="h-5 w-5" />
+                      </Button>
+                    </>
+                  )}
+                </div>
                 <div className="flex gap-2 justify-center mt-4">
                   {images.map((_, idx) => (
                     <div key={idx} className={`h-2 w-2 rounded-full ${idx === currentImageIndex ? 'bg-accent' : 'bg-muted-foreground'}`} />
@@ -141,7 +143,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                 </div>
               </>
             ) : (
-              <Skeleton className="w-full h-[400px]" />
+              <Skeleton className="w-full h-[clamp(320px,60vh,720px)] rounded-lg" />
             )}
           </div>
           <div>
