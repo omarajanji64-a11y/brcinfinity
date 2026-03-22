@@ -20,7 +20,7 @@ export default function LanguageSwitcher() {
         <Button
           variant="ghost"
           size="icon"
-          className="rounded-full text-primary/78 transition-colors hover:bg-white/[0.08] hover:text-primary"
+          className="rounded-[0.45rem] text-primary/78 transition-colors hover:bg-[rgba(255,245,221,0.06)] hover:text-primary"
         >
           <Languages className="h-[1.2rem] w-[1.2rem]" />
           <span className="sr-only">Change language</span>
@@ -28,7 +28,7 @@ export default function LanguageSwitcher() {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="min-w-[9rem] rounded-2xl border border-white/10 bg-[#1a120d]/95 text-primary backdrop-blur-xl"
+        className="min-w-[9rem] rounded-[0.8rem] border border-[rgba(193,148,79,0.22)] bg-[rgba(35,22,14,0.98)] text-primary"
       >
         <DropdownMenuItem
           onClick={() => setLanguage('en')}

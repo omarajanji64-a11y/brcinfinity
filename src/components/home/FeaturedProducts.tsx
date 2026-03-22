@@ -17,41 +17,29 @@ export default function FeaturedProducts() {
   const sectionCopy =
     language === 'tr'
       ? {
-          kicker: 'One cikan secimler',
+          kicker: 'Seckin urunler',
           description:
-            'BRC Infinity dunyasini ilk bakista hissettiren ozel seckiyi burada gorun.',
+            'Klasik mobilya anlayisimizi en iyi yansitan secili takimlari burada kesfedin.',
         }
       : language === 'fr'
         ? {
-            kicker: 'Selection en vedette',
-            description: 'Decouvrez une selection qui resume instantanement l univers BRC Infinity.',
+            kicker: 'Pieces choisies',
+            description: 'Decouvrez des ensembles qui expriment pleinement notre vision du mobilier classique.',
           }
         : {
-            kicker: 'Featured selection',
-            description: 'Explore a curated edit that captures the BRC Infinity world at a glance.',
+            kicker: 'Selected pieces',
+            description: 'Explore pieces that best represent our interpretation of classical furniture.',
           };
 
   return (
     <section className="theme-surface-soft relative overflow-hidden bg-secondary/20">
       <div className="absolute inset-x-0 top-0 h-44 bg-[radial-gradient(circle_at_center,rgba(214,176,102,0.12),transparent_55%)]" />
       <div className="container relative mx-auto px-4 py-20 md:py-24">
-        <div className="mb-12 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-3xl">
-            <p className="section-kicker">{sectionCopy.kicker}</p>
-            <h2 className="section-title mt-5">{t('home.featured_products')}</h2>
-            <p className="section-copy mt-5 max-w-2xl">{sectionCopy.description}</p>
-          </div>
-          <Button
-            asChild
-            variant="outline"
-            size="lg"
-            className="h-12 rounded-full border-white/14 bg-white/[0.04] px-6 text-[0.74rem] uppercase tracking-[0.26em] text-primary transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/[0.08]"
-          >
-            <Link href="/products">
-              {t('home.view_all_products')}
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Button>
+        <div className="mx-auto mb-12 max-w-3xl text-center">
+          <p className="section-kicker justify-center">{sectionCopy.kicker}</p>
+          <h2 className="section-title mt-5">{t('home.featured_products')}</h2>
+          <p className="section-copy mt-5">{sectionCopy.description}</p>
+          <div className="classic-divider mx-auto mt-7 max-w-[10rem]" />
         </div>
 
         <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -62,7 +50,7 @@ export default function FeaturedProducts() {
                 className="animate-fade-in-up"
                 style={{ animationDelay: `${i * 0.1}s`, animationFillMode: 'backwards' }}
               >
-                <Card className="h-full overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#130d09]/65 shadow-none">
+                <Card className="h-full overflow-hidden rounded-[1rem] shadow-none">
                   <CardHeader className="p-0">
                     <Skeleton className="aspect-[4/4.35] w-full" />
                   </CardHeader>
@@ -82,6 +70,15 @@ export default function FeaturedProducts() {
               </div>
             ))
           )}
+        </div>
+
+        <div className="mt-12 text-center">
+          <Button asChild variant="outline" size="lg" className="h-12 px-7 text-[0.74rem] tracking-[0.16em]">
+            <Link href="/products">
+              {t('home.view_all_products')}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Button>
         </div>
       </div>
     </section>

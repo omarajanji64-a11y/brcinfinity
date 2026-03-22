@@ -26,20 +26,20 @@ export default function WhyUs() {
   const sectionCopy =
     language === 'tr'
       ? {
-          kicker: 'Neden BRC Infinity',
+          kicker: 'Klasik ustalik',
           description:
-            'Her urun, estetik etkisi kadar uygulama kalitesi ve uzun omurlu deneyimiyle de fark yaratir.',
+            'Her takim, geleneksel ihtisami korurken uzun omurlu kullanim ve rafine detay anlayisiyla tamamlanir.',
         }
       : language === 'fr'
         ? {
-            kicker: 'Pourquoi BRC Infinity',
+            kicker: 'Savoir-faire classique',
             description:
-              'Chaque piece se distingue autant par sa presence visuelle que par la qualite de son execution.',
+              'Chaque ensemble preserve la grandeur classique tout en offrant une execution durable et raffinee.',
           }
         : {
-            kicker: 'Why BRC Infinity',
+            kicker: 'Classical craftsmanship',
             description:
-              'Every piece stands out not only visually, but also through its execution quality and lasting presence.',
+              'Each set preserves classical grandeur while delivering durable execution and refined detailing.',
           };
 
   return (
@@ -55,14 +55,15 @@ export default function WhyUs() {
           {features.map((feature, index) => (
             <Card
               key={index}
-              className="group rounded-[1.8rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02))] text-center transition-all duration-500 hover:-translate-y-1.5 hover:border-accent/35 hover:shadow-[0_24px_60px_rgba(0,0,0,0.24)]"
+              className="group rounded-[1rem] px-2 pb-2 text-center transition-colors duration-500 hover:border-[rgba(193,148,79,0.34)]"
             >
               <CardHeader className="items-center pb-4">
-                <div className="mb-5 inline-flex h-20 w-20 items-center justify-center rounded-full border border-accent/20 bg-accent/10 transition-transform duration-500 group-hover:scale-105">
+                <div className="mb-5 inline-flex h-20 w-20 items-center justify-center rounded-[0.7rem] border border-[rgba(193,148,79,0.24)] bg-[rgba(74,49,31,0.76)] transition-transform duration-500 group-hover:scale-105">
                   {feature.icon}
                 </div>
-                <span className="text-[0.72rem] uppercase tracking-[0.3em] text-accent/76">0{index + 1}</span>
+                <span className="text-[0.72rem] uppercase tracking-[0.22em] text-accent/76">0{index + 1}</span>
                 <CardTitle className="font-headline text-2xl text-primary">{feature.title}</CardTitle>
+                <div className="classic-divider mt-4 max-w-[6rem]" />
               </CardHeader>
               <CardContent>
                 <p className="leading-7 text-primary/66">{feature.description}</p>

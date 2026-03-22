@@ -14,7 +14,7 @@ export default function Logo() {
   return (
     <Link href="/" className="group inline-flex items-center gap-3">
       {logoUrl ? (
-        <div className="relative flex h-[72px] w-[185px] items-center justify-center overflow-hidden rounded-[1.35rem] border border-white/10 bg-white/[0.04] px-4 py-3 shadow-[0_18px_34px_rgba(0,0,0,0.14)] transition-all duration-300 group-hover:-translate-y-0.5 group-hover:border-accent/30 md:h-[84px] md:w-[235px]">
+        <div className="theme-panel classic-shell relative flex h-[72px] w-[185px] items-center justify-center overflow-hidden rounded-[0.8rem] px-4 py-3 transition-colors duration-300 group-hover:border-[rgba(193,148,79,0.34)] md:h-[84px] md:w-[235px]">
           {canRenderWithNextImage ? (
             <Image
               src={logoUrl}

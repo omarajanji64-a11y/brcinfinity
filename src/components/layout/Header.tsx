@@ -24,13 +24,13 @@ export default function Header() {
   ];
   const navLinksRight = [{ href: '/contact', label: t('header.contact') }];
   const navLinkClass =
-    'relative text-[0.74rem] font-medium uppercase tracking-[0.28em] text-primary/78 transition-colors duration-300 hover:text-primary';
+    'relative font-headline text-[0.95rem] tracking-[0.08em] text-primary/84 transition-colors duration-300 hover:text-accent';
 
   return (
     <header className="sticky top-0 z-50 px-3 pt-3 md:px-4">
       <div className="container mx-auto px-0">
-        <div className="theme-panel relative overflow-hidden rounded-[1.85rem] border border-white/10 px-4 py-3 shadow-[0_18px_60px_rgba(0,0,0,0.28)] backdrop-blur-xl md:px-6">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(214,176,102,0.12),transparent_42%)]" />
+        <div className="theme-panel classic-shell relative overflow-hidden rounded-[1rem] px-4 py-4 shadow-[0_16px_44px_rgba(0,0,0,0.2)] md:px-6">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(193,148,79,0.12),transparent_42%)]" />
           <div className="relative grid min-h-[92px] grid-cols-[auto_1fr_auto] items-center gap-3 md:grid-cols-[1fr_auto_1fr] md:gap-6">
             <nav className="hidden items-center gap-7 md:flex">
               {navLinksLeft.map((link) => (
@@ -52,9 +52,9 @@ export default function Header() {
               ))}
               <DownloadCatalogButton
                 variant="outline"
-                className="h-11 rounded-full border-white/14 bg-white/[0.04] px-5 text-[0.72rem] uppercase tracking-[0.26em] text-primary transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/[0.09]"
+                className="h-11 px-5 text-[0.72rem] tracking-[0.16em]"
               />
-              <div className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-1">
+              <div className="rounded-[0.55rem] border border-[rgba(193,148,79,0.2)] bg-[rgba(66,42,27,0.84)] px-2 py-1">
                 <LanguageSwitcher />
               </div>
             </div>
@@ -65,14 +65,14 @@ export default function Header() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="rounded-full border border-white/10 bg-white/[0.05] text-primary hover:bg-white/[0.1] hover:text-primary"
+                    className="rounded-[0.55rem] border border-[rgba(193,148,79,0.2)] bg-[rgba(66,42,27,0.84)] text-primary hover:bg-[rgba(90,58,37,0.94)] hover:text-primary"
                   >
                     <Menu className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
                 <SheetContent
                   side="right"
-                  className="w-[320px] border-l border-white/10 bg-[#120d09]/95 text-primary backdrop-blur-2xl sm:w-[380px]"
+                  className="w-[320px] border-l border-[rgba(193,148,79,0.2)] bg-[rgba(34,22,14,0.98)] text-primary sm:w-[380px]"
                 >
                   <div className="flex h-full flex-col p-4">
                     <div className="mb-8 flex items-center justify-between">
@@ -81,21 +81,21 @@ export default function Header() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="rounded-full border border-white/10 bg-white/[0.05] text-primary hover:bg-white/[0.1] hover:text-primary"
+                          className="rounded-[0.55rem] border border-[rgba(193,148,79,0.2)] bg-[rgba(66,42,27,0.84)] text-primary hover:bg-[rgba(90,58,37,0.94)] hover:text-primary"
                         >
                           <X className="h-5 w-5" />
                         </Button>
                       </SheetClose>
                     </div>
 
-                    <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-5">
-                      <p className="text-[0.7rem] uppercase tracking-[0.32em] text-accent/80">Navigation</p>
+                    <div className="theme-panel classic-shell rounded-[0.9rem] p-5">
+                      <p className="text-[0.7rem] uppercase tracking-[0.26em] text-accent/84">Navigation</p>
                       <nav className="mt-6 flex flex-col gap-5">
                         {[...navLinksLeft, ...navLinksRight].map((link) => (
                           <SheetClose asChild key={link.href}>
                             <Link
                               href={link.href}
-                              className="font-headline text-2xl text-primary/90 transition-colors hover:text-primary"
+                              className="font-headline text-2xl text-primary/90 transition-colors hover:text-accent"
                             >
                               {link.label}
                             </Link>
@@ -107,9 +107,9 @@ export default function Header() {
                     <div className="mt-6 flex flex-col gap-4">
                       <DownloadCatalogButton
                         variant="outline"
-                        className="h-12 rounded-full border-white/14 bg-white/[0.04] text-[0.72rem] uppercase tracking-[0.26em] text-primary hover:bg-white/[0.09]"
+                        className="h-12 text-[0.72rem] tracking-[0.16em]"
                       />
-                      <div className="rounded-full border border-white/10 bg-white/[0.04] p-2">
+                      <div className="rounded-[0.55rem] border border-[rgba(193,148,79,0.2)] bg-[rgba(66,42,27,0.84)] p-2">
                         <LanguageSwitcher />
                       </div>
                     </div>

@@ -21,23 +21,23 @@ export default function CustomRequest() {
   const sideCopy =
     language === 'tr'
       ? {
-          kicker: 'Ozel proje destegi',
-          title: 'Yalniz urun degil, butun mekan duygusunu birlikte kuralim.',
+          kicker: 'Klasik mekan danismanligi',
+          title: 'Yalniz urun degil, butun mekanin klasik dengesini birlikte kuralim.',
           description:
-            'Ekibimiz ihtiyacinizi anlayip mekaniniza uygun kombinasyonu, oranlari ve detaylari birlikte netlestirir.',
+            'Ekibimiz mekaninizin olculerine, renk dengesine ve klasik mobilya ihtiyamina gore en dogru kompozisyonu birlikte belirler.',
         }
       : language === 'fr'
         ? {
-            kicker: 'Accompagnement sur mesure',
-            title: 'Construisons ensemble une ambiance complete, pas seulement un produit.',
+            kicker: 'Conseil classique',
+            title: 'Construisons l equilibre classique de votre espace, pas seulement un produit.',
             description:
-              'Notre equipe vous aide a definir la bonne composition, les proportions et les details pour votre interieur.',
+              'Notre equipe definit avec vous la bonne composition, les proportions et les details pour un interieur classique coherent.',
           }
         : {
-            kicker: 'Tailored project support',
-            title: 'Let us shape the full atmosphere of the room, not just the product.',
+            kicker: 'Classical design guidance',
+            title: 'Let us shape the classical balance of the room, not just the product.',
             description:
-              'Our team helps define the right composition, proportions, and finishing details for your interior.',
+              'Our team helps define the right composition, proportions, and detailing for a coherent classical interior.',
           };
 
   return (
@@ -54,21 +54,22 @@ export default function CustomRequest() {
       <div className="absolute inset-0 -z-10 bg-[linear-gradient(100deg,rgba(8,6,4,0.86)_18%,rgba(8,6,4,0.68)_48%,rgba(8,6,4,0.82)_100%)]" />
 
       <div className="container relative mx-auto px-0">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-center">
-          <div className="rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(20,13,9,0.8),rgba(20,13,9,0.56))] p-7 shadow-[0_24px_70px_rgba(0,0,0,0.24)] backdrop-blur-md sm:p-10 lg:p-12">
-            <p className="section-kicker">{sideCopy.kicker}</p>
-            <h2 className="mt-6 font-headline text-4xl font-semibold leading-tight text-primary md:text-5xl">
+        <div className="mx-auto max-w-5xl">
+          <div className="theme-panel classic-shell rounded-[1rem] p-7 sm:p-10 lg:p-12">
+            <p className="section-kicker justify-center">{sideCopy.kicker}</p>
+            <h2 className="mt-6 text-center font-headline text-4xl font-semibold leading-tight text-primary md:text-5xl">
               {t('home.custom_request_title')}
             </h2>
-            <p className="mt-5 max-w-2xl text-lg leading-8 text-primary/70">{t('home.custom_request_desc')}</p>
+            <p className="mx-auto mt-5 max-w-3xl text-center text-lg leading-8 text-primary/70">{t('home.custom_request_desc')}</p>
+            <div className="classic-divider mx-auto mt-7 max-w-[10rem]" />
 
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               {bulletPoints.map((item) => (
                 <div
                   key={item}
-                  className="rounded-[1.35rem] border border-white/10 bg-white/[0.04] px-4 py-4 text-sm leading-6 text-primary/72"
+                  className="rounded-[0.8rem] border border-[rgba(193,148,79,0.18)] bg-[rgba(72,47,29,0.76)] px-4 py-4 text-sm leading-6 text-primary/72"
                 >
-                  <div className="mb-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-accent/12 text-accent">
+                  <div className="mb-3 inline-flex h-8 w-8 items-center justify-center rounded-[0.45rem] bg-accent/12 text-accent">
                     <Check className="h-4 w-4" />
                   </div>
                   <p>{item}</p>
@@ -79,19 +80,17 @@ export default function CustomRequest() {
             <Button
               asChild
               size="lg"
-              className="mt-8 h-12 rounded-full bg-accent px-7 text-[0.78rem] uppercase tracking-[0.26em] text-[#1d130b] transition-all duration-300 hover:-translate-y-0.5 hover:bg-accent/90"
+              className="mx-auto mt-8 h-12 px-7 text-[0.78rem] tracking-[0.18em]"
             >
               <Link href="/contact">
                 {t('home.custom_request_button')}
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
-          </div>
-
-          <div className="hidden rounded-[1.9rem] border border-white/10 bg-white/[0.05] p-7 backdrop-blur-md lg:block">
-            <p className="text-[0.72rem] uppercase tracking-[0.32em] text-accent/82">{sideCopy.kicker}</p>
-            <h3 className="mt-5 font-headline text-3xl font-semibold text-primary">{sideCopy.title}</h3>
-            <p className="mt-4 text-base leading-7 text-primary/68">{sideCopy.description}</p>
+            <div className="mx-auto mt-8 max-w-3xl text-center">
+              <h3 className="font-headline text-3xl font-semibold text-primary">{sideCopy.title}</h3>
+              <p className="mt-4 text-base leading-7 text-primary/68">{sideCopy.description}</p>
+            </div>
           </div>
         </div>
       </div>

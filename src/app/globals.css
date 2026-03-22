@@ -6,73 +6,73 @@
 @layer base {
   :root {
     --theme-background-image: url('/brc-theme-bg.jpg');
-    --background: 24 18% 9%;
-    --foreground: 38 31% 95%;
+    --background: 28 26% 14%;
+    --foreground: 40 42% 92%;
 
-    --card: 24 20% 12%;
-    --card-foreground: 38 31% 95%;
+    --card: 26 28% 18%;
+    --card-foreground: 40 42% 92%;
 
-    --popover: 24 20% 12%;
-    --popover-foreground: 38 31% 95%;
+    --popover: 26 28% 18%;
+    --popover-foreground: 40 42% 92%;
 
-    --primary: 38 36% 94%;
-    --primary-foreground: 24 18% 10%;
+    --primary: 41 42% 92%;
+    --primary-foreground: 24 24% 16%;
 
-    --secondary: 24 18% 16%;
-    --secondary-foreground: 38 31% 95%;
+    --secondary: 27 27% 21%;
+    --secondary-foreground: 40 42% 92%;
 
-    --muted: 24 16% 17%;
-    --muted-foreground: 35 15% 72%;
+    --muted: 28 18% 24%;
+    --muted-foreground: 38 20% 72%;
     
-    --accent: 38 64% 67%;
-    --accent-foreground: 24 18% 10%;
+    --accent: 38 48% 58%;
+    --accent-foreground: 24 24% 16%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 35 22% 22%;
-    --input: 24 17% 18%;
-    --ring: 38 64% 67%;
+    --border: 34 24% 30%;
+    --input: 28 22% 20%;
+    --ring: 38 48% 58%;
     
     --chart-1: 217.2 91.2% 59.8%;
-    --chart-2: 38 64% 67%;
+    --chart-2: 38 48% 58%;
     --chart-3: 217.2 32.6% 17.5%;
     --chart-4: 210 40% 98%;
     --chart-5: 215 20.2% 65.1%;
-    --radius: 1.15rem;
+    --radius: 0.95rem;
   }
 
   .dark {
-    --background: 24 18% 9%;
-    --foreground: 38 31% 95%;
+    --background: 28 26% 14%;
+    --foreground: 40 42% 92%;
 
-    --card: 24 20% 12%;
-    --card-foreground: 38 31% 95%;
+    --card: 26 28% 18%;
+    --card-foreground: 40 42% 92%;
 
-    --popover: 24 20% 12%;
-    --popover-foreground: 38 31% 95%;
+    --popover: 26 28% 18%;
+    --popover-foreground: 40 42% 92%;
 
-    --primary: 38 36% 94%;
-    --primary-foreground: 24 18% 10%;
+    --primary: 41 42% 92%;
+    --primary-foreground: 24 24% 16%;
 
-    --secondary: 24 18% 16%;
-    --secondary-foreground: 38 31% 95%;
+    --secondary: 27 27% 21%;
+    --secondary-foreground: 40 42% 92%;
 
-    --muted: 24 16% 17%;
-    --muted-foreground: 35 15% 72%;
+    --muted: 28 18% 24%;
+    --muted-foreground: 38 20% 72%;
 
-    --accent: 38 64% 67%;
-    --accent-foreground: 24 18% 10%;
+    --accent: 38 48% 58%;
+    --accent-foreground: 24 24% 16%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 35 22% 22%;
-    --input: 24 17% 18%;
-    --ring: 38 64% 67%;
+    --border: 34 24% 30%;
+    --input: 28 22% 20%;
+    --ring: 38 48% 58%;
     
     --chart-1: 217.2 91.2% 59.8%;
-    --chart-2: 38 64% 67%;
+    --chart-2: 38 48% 58%;
     --chart-3: 217.2 32.6% 17.5%;
     --chart-4: 210 40% 98%;
     --chart-5: 215 20.2% 65.1%;
@@ -86,13 +86,20 @@
   body {
     @apply bg-background text-foreground;
     background-image:
-      radial-gradient(circle at top left, rgba(223, 190, 124, 0.22), transparent 30%),
-      radial-gradient(circle at 85% 12%, rgba(112, 72, 44, 0.18), transparent 22%),
-      linear-gradient(180deg, rgba(9, 7, 5, 0.78), rgba(18, 13, 9, 0.94)),
+      radial-gradient(circle at top left, rgba(193, 148, 79, 0.22), transparent 28%),
+      radial-gradient(circle at 88% 14%, rgba(95, 54, 28, 0.2), transparent 24%),
+      linear-gradient(180deg, rgba(29, 18, 12, 0.78), rgba(40, 25, 16, 0.94)),
+      repeating-linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.016) 0,
+        rgba(255, 255, 255, 0.016) 1px,
+        transparent 1px,
+        transparent 84px
+      ),
       var(--theme-background-image);
-    background-position: top left, top right, center, center top;
-    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-    background-size: auto, auto, cover, cover;
+    background-position: top left, top right, center, center, center top;
+    background-repeat: no-repeat, no-repeat, no-repeat, repeat, no-repeat;
+    background-size: auto, auto, cover, auto, cover;
     letter-spacing: 0.01em;
   }
 
@@ -109,18 +116,25 @@
 @layer components {
   .theme-surface {
     background-image:
-      linear-gradient(180deg, rgba(18, 11, 7, 0.9), rgba(24, 16, 11, 0.78)),
-      radial-gradient(circle at top, rgba(214, 175, 104, 0.12), transparent 36%),
+      linear-gradient(180deg, rgba(32, 20, 13, 0.94), rgba(46, 28, 18, 0.82)),
+      radial-gradient(circle at top, rgba(193, 148, 79, 0.12), transparent 40%),
+      repeating-linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.012) 0,
+        rgba(255, 255, 255, 0.012) 1px,
+        transparent 1px,
+        transparent 100px
+      ),
       var(--theme-background-image);
-    background-position: center, top center, center;
-    background-repeat: no-repeat, no-repeat, no-repeat;
-    background-size: cover, auto, cover;
+    background-position: center, top center, center, center;
+    background-repeat: no-repeat, no-repeat, repeat, no-repeat;
+    background-size: cover, auto, auto, cover;
   }
 
   .theme-surface-soft {
     background-image:
-      linear-gradient(180deg, rgba(17, 11, 7, 0.78), rgba(22, 14, 10, 0.66)),
-      radial-gradient(circle at 90% 0%, rgba(214, 175, 104, 0.09), transparent 26%),
+      linear-gradient(180deg, rgba(35, 22, 14, 0.82), rgba(49, 31, 20, 0.68)),
+      radial-gradient(circle at 90% 0%, rgba(193, 148, 79, 0.12), transparent 28%),
       var(--theme-background-image);
     background-position: center, top right, center;
     background-repeat: no-repeat, no-repeat, no-repeat;
@@ -128,19 +142,38 @@
   }
 
   .theme-panel {
-    background-color: rgba(21, 14, 10, 0.78);
+    background-color: rgba(42, 27, 17, 0.94);
     background-image:
-      linear-gradient(180deg, rgba(20, 13, 8, 0.9), rgba(28, 18, 13, 0.8)),
-      radial-gradient(circle at top right, rgba(214, 175, 104, 0.18), transparent 38%),
-      linear-gradient(135deg, rgba(255, 255, 255, 0.04), transparent 48%);
+      linear-gradient(180deg, rgba(44, 28, 17, 0.96), rgba(63, 40, 25, 0.9)),
+      radial-gradient(circle at top right, rgba(193, 148, 79, 0.18), transparent 42%),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.025), transparent 50%, rgba(255, 255, 255, 0.025));
     background-position: center, top right, center;
     background-repeat: no-repeat, no-repeat, no-repeat;
     background-size: cover, auto, cover;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(192, 155, 96, 0.24);
     box-shadow:
-      0 24px 70px rgba(0, 0, 0, 0.28),
-      inset 0 1px 0 rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(18px);
+      0 22px 60px rgba(0, 0, 0, 0.22),
+      inset 0 1px 0 rgba(255, 247, 227, 0.04),
+      inset 0 0 0 1px rgba(88, 57, 32, 0.58);
+  }
+
+  .classic-shell {
+    position: relative;
+  }
+
+  .classic-shell::after {
+    content: '';
+    position: absolute;
+    inset: 10px;
+    border: 1px solid rgba(201, 168, 108, 0.28);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  .classic-divider {
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(90deg, transparent, rgba(201, 168, 108, 0.82), transparent);
   }
 
   .section-kicker {
@@ -149,7 +182,7 @@
     gap: 0.9rem;
     font-size: 0.72rem;
     font-weight: 600;
-    letter-spacing: 0.35em;
+    letter-spacing: 0.28em;
     text-transform: uppercase;
     color: hsl(var(--accent));
   }
