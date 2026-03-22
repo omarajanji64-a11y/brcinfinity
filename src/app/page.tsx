@@ -4,7 +4,7 @@ import Categories from '@/components/home/Categories';
 import FeaturedProducts from '@/components/home/FeaturedProducts';
 import WhyUs from '@/components/home/WhyUs';
 import CustomRequest from '@/components/home/CustomRequest';
-import CloudinaryCarousel from '@/components/home/CloudinaryCarousel';
+import HeroCarousel from '@/components/home/HeroCarousel';
 
 const deferredSectionStyle = {
   contentVisibility: 'auto',
@@ -16,7 +16,7 @@ export default function Home() {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-grow">
-        <CloudinaryCarousel />
+        <HeroCarousel />
         <div style={deferredSectionStyle}>
           <Categories />
         </div>
