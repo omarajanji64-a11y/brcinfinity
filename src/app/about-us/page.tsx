@@ -129,12 +129,6 @@ export default function AboutUsPage() {
     t('categories.bedroom'),
   ];
 
-  const styles = [
-    t('product_page.style_all'),
-    t('product_page.style_modern'),
-    t('product_page.style_classic'),
-  ];
-
   const contactFields = [
     t('contact_page.form.name'),
     t('contact_page.form.email'),
@@ -214,13 +208,6 @@ export default function AboutUsPage() {
                   {categories.map((category) => (
                     <span key={category} className="rounded-full border border-accent/30 px-4 py-1 text-sm text-foreground">
                       {category}
-                    </span>
-                  ))}
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {styles.map((style) => (
-                    <span key={style} className="rounded-full bg-secondary px-4 py-1 text-sm text-muted-foreground">
-                      {style}
                     </span>
                   ))}
                 </div>

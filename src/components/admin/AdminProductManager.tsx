@@ -156,8 +156,6 @@ export default function AdminProductManager() {
                   <TableHead className="w-[96px]">Gorsel</TableHead>
                   <TableHead>Urun</TableHead>
                   <TableHead>Kategori</TableHead>
-                  <TableHead>Stil</TableHead>
-                  <TableHead>Fiyat</TableHead>
                   <TableHead>Stok</TableHead>
                   <TableHead className="w-[70px]" />
                 </TableRow>
@@ -166,14 +164,14 @@ export default function AdminProductManager() {
                 {isLoading ? (
                   Array.from({ length: 4 }).map((_, index) => (
                     <TableRow key={`product-skeleton-${index}`}>
-                      <TableCell colSpan={7}>
+                      <TableCell colSpan={5}>
                         <Skeleton className="h-12 w-full" />
                       </TableCell>
                     </TableRow>
                   ))
                 ) : sortedProducts.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
+                    <TableCell colSpan={5} className="py-10 text-center text-muted-foreground">
                       Henuz urun yok. Ilk urunu eklemek icin yukaridaki butonu kullan.
                     </TableCell>
                   </TableRow>
@@ -202,8 +200,6 @@ export default function AdminProductManager() {
                           </div>
                         </TableCell>
                         <TableCell>{categoryLabel}</TableCell>
-                        <TableCell>{product.style === 'Classic' ? 'Klasik' : 'Modern'}</TableCell>
-                        <TableCell>${product.price}</TableCell>
                         <TableCell>{product.stock}</TableCell>
                         <TableCell>
                           <DropdownMenu>

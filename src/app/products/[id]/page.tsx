@@ -17,13 +17,6 @@ import {
   getProductName,
 } from '@/lib/products';
 
-const CURRENCY_FORMATTER = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 0,
-});
-
 const transformCloudinaryUrl = (url: string) => {
   if (!url || !url.includes('/upload/')) {
     return url;
@@ -96,7 +89,6 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
 
   const productName = getProductName(product, language);
   const categoryLabel = getProductCategoryLabel(product, language, t);
-  const formattedPrice = CURRENCY_FORMATTER.format(product.price);
   const phoneNumber = '905467898968';
   const message = t('whatsapp.order_message', { productName, productImage: images[0] || '' });
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
@@ -178,9 +170,6 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
           <div>
             <h1 className="mb-4 font-headline text-3xl font-bold md:text-4xl">{productName}</h1>
             <div className="mb-2 text-lg text-muted-foreground">{categoryLabel}</div>
-            {product.price > 0 && (
-              <div className="mb-6 text-xl font-bold text-accent">{formattedPrice.replace('$', '$ ')}</div>
-            )}
             <div className="mb-6">
               <div className="mb-1 font-semibold">{t('product_form.long_desc_label')}</div>
               <div>{getLocalizedText(product.description, language)}</div>

@@ -23,7 +23,6 @@ import {
   getLocalizedText,
   normalizeCategoryKey,
   type Product,
-  type ProductStyle,
 } from '@/lib/products';
 import { upsertStoredProduct } from '@/lib/product-storage';
 
@@ -36,10 +35,8 @@ type ProductFormState = {
   id: string;
   name: string;
   category: string;
-  style: ProductStyle;
   shortDescription: string;
   description: string;
-  price: string;
   stock: string;
   imageUrls: string[];
 };
@@ -48,10 +45,8 @@ const emptyFormState = (): ProductFormState => ({
   id: uuidv4(),
   name: '',
   category: '',
-  style: 'Modern',
   shortDescription: '',
   description: '',
-  price: '0',
   stock: '0',
   imageUrls: [''],
 });
@@ -67,11 +62,9 @@ const buildFormState = (product?: Product | null): ProductFormState => {
     category:
       getFixedCategoryAdminLabel(product.categoryKey) ||
       getFixedCategoryAdminLabel(getLocalizedText(product.category, 'tr') || getLocalizedText(product.category, 'en')),
-    style: product.style,
     shortDescription:
       getLocalizedText(product.shortDescription, 'tr') || getLocalizedText(product.shortDescription, 'en'),
     description: getLocalizedText(product.description, 'tr') || getLocalizedText(product.description, 'en'),
-    price: String(product.price ?? 0),
     stock: String(product.stock ?? 0),
     imageUrls: product.imageUrls.length > 0 ? product.imageUrls : product.imageUrl ? [product.imageUrl] : [''],
   };
@@ -194,7 +187,6 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
     const trimmedCategory = form.category.trim();
     const trimmedShortDescription = form.shortDescription.trim();
     const trimmedDescription = form.description.trim();
-    const resolvedPrice = Number(form.price);
     const resolvedStock = Number(form.stock);
 
     if (!trimmedName) {
@@ -232,10 +224,10 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
         name: createLocalizedText(trimmedName),
         category: createLocalizedText(trimmedCategory),
         categoryKey: normalizeCategoryKey(trimmedCategory),
-        style: form.style,
+        style: product?.style ?? 'Modern',
         shortDescription: createLocalizedText(trimmedShortDescription),
         description: createLocalizedText(trimmedDescription),
-        price: Number.isFinite(resolvedPrice) ? resolvedPrice : 0,
+        price: product?.price ?? 0,
         stock: Number.isFinite(resolvedStock) ? resolvedStock : 0,
         imageUrl: validImageUrls[0],
         imageUrls: validImageUrls,
@@ -291,30 +283,6 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
               ))}
             </SelectContent>
           </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="product-style">Stil</Label>
-          <Select value={form.style} onValueChange={(value) => updateField('style', value as ProductStyle)}>
-            <SelectTrigger id="product-style">
-              <SelectValue placeholder="Stil sec" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Modern">Modern</SelectItem>
-              <SelectItem value="Classic">Klasik</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="product-price">Fiyat</Label>
-          <Input
-            id="product-price"
-            type="number"
-            min="0"
-            value={form.price}
-            onChange={(event) => updateField('price', event.target.value)}
-          />
         </div>
 
         <div className="space-y-2">

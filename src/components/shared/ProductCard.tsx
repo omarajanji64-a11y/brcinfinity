@@ -7,20 +7,13 @@ import { ChevronLeft, ChevronRight, MessageCircle } from 'lucide-react';
 
 import { getProductName, type Product } from '@/lib/products';
 import { useTranslation } from '@/lib/i18n';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '../ui/button';
 import { Skeleton } from '../ui/skeleton';
 
 interface ProductCardProps {
   product: Product;
 }
-
-const CURRENCY_FORMATTER = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 0,
-});
 
 const transformCloudinaryUrl = (url: string) => {
   if (!url || !url.includes('/upload/')) {
@@ -36,7 +29,6 @@ function ProductCard({ product }: ProductCardProps) {
   const { t, language } = useTranslation();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const formattedPrice = CURRENCY_FORMATTER.format(product.price);
   const productName = getProductName(product, language);
   const phoneNumber = '905467898968';
   const images = product.imageUrls.length > 0 ? product.imageUrls : product.imageUrl ? [product.imageUrl] : [];
@@ -120,11 +112,6 @@ function ProductCard({ product }: ProductCardProps) {
         <CardContent className="p-4 flex-grow flex flex-col text-center">
           <CardTitle className="font-headline text-lg mt-2">{productName}</CardTitle>
           <div className="flex-grow" />
-          {product.price > 0 && (
-            <CardDescription className="mt-2 text-base text-accent font-bold">
-              {formattedPrice.replace('$', '$ ')}
-            </CardDescription>
-          )}
         </CardContent>
       </Link>
       <CardFooter className="p-4 pt-0 flex flex-col gap-2">

@@ -13,15 +13,12 @@ import { useProducts } from '@/hooks/use-products';
 import { useTranslation } from '@/lib/i18n';
 import { buildCategoryOptions, type Product } from '@/lib/products';
 
-type StyleFilter = 'all' | 'Modern' | 'Classic';
-
 export default function ProductsPage() {
   const { t, language } = useTranslation();
   const { products, isLoading: isLoadingProducts } = useProducts({ realtime: false });
   const [isClient, setIsClient] = useState(false);
   const categoryOptions = useMemo(() => buildCategoryOptions(products, language, t), [language, products, t]);
   const [activeCategory, setActiveCategory] = useState<string>('all');
-  const [styleFilter, setStyleFilter] = useState<StyleFilter>('all');
 
   useEffect(() => {
     setIsClient(true);
@@ -40,12 +37,8 @@ export default function ProductsPage() {
 
   const filteredProducts = useMemo(
     () =>
-      products.filter((product) => {
-        const categoryMatch = activeCategory === 'all' || product.categoryKey === activeCategory;
-        const styleMatch = styleFilter === 'all' || product.style === styleFilter;
-        return categoryMatch && styleMatch;
-      }),
-    [activeCategory, products, styleFilter]
+      products.filter((product) => activeCategory === 'all' || product.categoryKey === activeCategory),
+    [activeCategory, products]
   );
 
   const renderProductGrid = (productsToRender: Product[]) => {
@@ -65,7 +58,6 @@ export default function ProductsPage() {
                 <CardContent className="flex flex-grow flex-col p-4 text-center">
                   <Skeleton className="mx-auto mt-2 h-6 w-3/4" />
                   <div className="flex-grow" />
-                  <Skeleton className="mx-auto mt-2 h-6 w-1/2" />
                 </CardContent>
               </Card>
             </div>
@@ -151,35 +143,6 @@ export default function ProductsPage() {
                     <Skeleton className="h-9 w-24 rounded-md" />
                   </>
                 )}
-              </TabsList>
-            </Tabs>
-
-            <div className="hidden h-6 w-px bg-border md:block" />
-
-            <Tabs
-              value={styleFilter}
-              onValueChange={(value) => startTransition(() => setStyleFilter(value as StyleFilter))}
-              className="w-full md:w-auto"
-            >
-              <TabsList className="bg-transparent p-0">
-                <TabsTrigger
-                  value="all"
-                  className="rounded-md text-muted-foreground transition-none hover:text-foreground data-[state=active]:bg-background/80 data-[state=active]:text-foreground"
-                >
-                  {t('product_page.style_all')}
-                </TabsTrigger>
-                <TabsTrigger
-                  value="Modern"
-                  className="rounded-md text-muted-foreground transition-none hover:text-foreground data-[state=active]:bg-background/80 data-[state=active]:text-foreground"
-                >
-                  {t('product_page.style_modern')}
-                </TabsTrigger>
-                <TabsTrigger
-                  value="Classic"
-                  className="rounded-md text-muted-foreground transition-none hover:text-foreground data-[state=active]:bg-background/80 data-[state=active]:text-foreground"
-                >
-                  {t('product_page.style_classic')}
-                </TabsTrigger>
               </TabsList>
             </Tabs>
           </div>
