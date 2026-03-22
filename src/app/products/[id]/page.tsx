@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight, MessageCircle } from 'lucide-react';
 
@@ -128,13 +129,13 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
             {images.length > 0 ? (
               <>
                 <div className="relative flex h-[clamp(320px,60vh,720px)] items-center justify-center overflow-hidden rounded-lg border bg-secondary/30 p-4 shadow-lg">
-                  <img
+                  <Image
                     src={transformedImage}
                     alt={productName}
+                    fill
+                    priority
+                    sizes="(max-width: 768px) 100vw, 50vw"
                     className="h-full w-full object-contain"
-                    loading="eager"
-                    decoding="async"
-                    fetchPriority="high"
                   />
                   {images.length > 1 && (
                     <>

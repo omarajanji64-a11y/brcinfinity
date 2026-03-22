@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { memo, useState } from 'react';
 import { ChevronLeft, ChevronRight, MessageCircle } from 'lucide-react';
@@ -69,13 +70,13 @@ function ProductCard({ product }: ProductCardProps) {
       <CardHeader className="p-0">
         <div className="aspect-square relative overflow-hidden group/image">
           {isValidUrl ? (
-            <Link href={`/products/${product.id}`} className="block h-full group/product-card">
-              <img
+            <Link href={`/products/${product.id}`} className="relative block h-full group/product-card">
+              <Image
                 src={transformedUrl}
                 alt={productName}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
-                loading="lazy"
-                decoding="async"
               />
             </Link>
           ) : (

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { Crown } from 'lucide-react';
 import { FALLBACK_LOGO_URL } from '@/lib/site-config';
@@ -11,13 +12,14 @@ export default function Logo() {
     <Link href="/" className="flex items-center gap-2 group">
       {logoUrl ? (
         <div className="relative h-32 w-80">
-            <img 
-                src={logoUrl}
-                alt="BRC INFINITY Logo"
-                className="object-contain w-full h-full"
-                loading="eager"
-                decoding="async"
-            />
+          <Image
+            src={logoUrl}
+            alt="BRC INFINITY Logo"
+            fill
+            priority
+            sizes="(max-width: 768px) 220px, 320px"
+            className="h-full w-full object-contain"
+          />
         </div>
       ) : (
         <>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import Autoplay from 'embla-carousel-autoplay';
 
@@ -52,13 +53,13 @@ export default function CloudinaryCarousel() {
           {validImages.map((url, index) => (
             <CarouselItem key={`${url}-${index}`} className="h-full">
               <div className="relative h-full w-full">
-                <img
+                <Image
                   src={transformCloudinaryUrl(url)}
                   alt={`Slideshow image ${index + 1}`}
+                  fill
+                  priority={index === 0}
+                  sizes="100vw"
                   className="h-full w-full object-cover animate-scale-in"
-                  loading={index === 0 ? 'eager' : 'lazy'}
-                  decoding="async"
-                  fetchPriority={index === 0 ? 'high' : 'auto'}
                 />
                 <div className="absolute inset-0 bg-black/50" />
               </div>

@@ -1,16 +1,24 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/lib/i18n';
 
+const BACKGROUND_IMAGE_URL =
+  'https://images.unsplash.com/photo-1598928373322-6175657d425c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxNXx8d29vZHdvcmtpbmd8ZW58MHx8fHwxNzY3NTg5OTU5fDA&ixlib=rb-4.1.0&q=80&w=1080';
+
 export default function CustomRequest() {
   const { t } = useTranslation();
   return (
-    <div
-      className="relative bg-cover bg-center bg-no-repeat py-24"
-      style={{ backgroundImage: "url('https://images.unsplash.com/photo-1598928373322-6175657d425c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxNXx8d29vZHdvcmtpbmd8ZW58MHx8fHwxNzY3NTg5OTU5fDA&ixlib=rb-4.1.0&q=80&w=1080')" }}
-    >
+    <div className="relative py-24">
+      <Image
+        src={BACKGROUND_IMAGE_URL}
+        alt=""
+        fill
+        sizes="100vw"
+        className="object-cover"
+      />
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
       <div className="relative container mx-auto px-4 text-center text-white">
         <h2 className="font-headline text-4xl font-bold">{t('home.custom_request_title')}</h2>

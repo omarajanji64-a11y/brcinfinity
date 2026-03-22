@@ -1,8 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 
-import { deleteStoredProduct, getStoredProducts, subscribeToProducts } from '@/lib/product-storage';
+import {
+  DEFAULT_PRODUCTS,
+  deleteStoredProduct,
+  getStoredProducts,
+  subscribeToProducts,
+} from '@/lib/product-storage';
 import type { Product } from '@/lib/products';
 
 type UseProductsOptions = {
@@ -10,23 +15,15 @@ type UseProductsOptions = {
 };
 
 export function useProducts(_options?: UseProductsOptions) {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error] = useState<Error | null>(null);
-
-  const refreshProducts = useCallback(() => {
-    setProducts(getStoredProducts());
-    setIsLoading(false);
-  }, []);
-
-  useEffect(() => {
-    refreshProducts();
-    return subscribeToProducts(refreshProducts);
-  }, [refreshProducts]);
+  const products = useSyncExternalStore<Product[]>(
+    subscribeToProducts,
+    getStoredProducts,
+    () => DEFAULT_PRODUCTS
+  );
 
   const deleteProduct = async (id: string) => {
     deleteStoredProduct(id);
   };
 
-  return { products, isLoading, error, deleteProduct };
+  return { products, isLoading: false, error: null, deleteProduct };
 }
