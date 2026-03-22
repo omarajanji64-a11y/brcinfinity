@@ -281,7 +281,7 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
             id="product-category"
             value={form.category}
             onChange={(event) => updateField('category', event.target.value)}
-            placeholder="Ornek: Oturma Odasi"
+            placeholder="Ornek: Koltuk Takimi"
           />
         </div>
 

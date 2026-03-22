@@ -124,7 +124,6 @@ export default function AboutUsPage() {
   ];
 
   const categories = [
-    t('categories.living_room'),
     t('categories.bedroom'),
     t('categories.dining_room'),
     t('categories.sofa_set'),

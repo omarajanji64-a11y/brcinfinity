@@ -31,9 +31,9 @@ export default function Footer() {
           <div>
             <h3 className="font-headline font-semibold text-white">{t('footer.categories')}</h3>
             <ul className="mt-4 space-y-2">
-              <li><Link href="/products" className="text-sm text-muted-foreground hover:text-white transition-colors">{t('categories.living_room')}</Link></li>
               <li><Link href="/products" className="text-sm text-muted-foreground hover:text-white transition-colors">{t('categories.bedroom')}</Link></li>
               <li><Link href="/products" className="text-sm text-muted-foreground hover:text-white transition-colors">{t('categories.dining_room')}</Link></li>
+              <li><Link href="/products" className="text-sm text-muted-foreground hover:text-white transition-colors">{t('categories.sofa_set')}</Link></li>
             </ul>
           </div>
           <div>

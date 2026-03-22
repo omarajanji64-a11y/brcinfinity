@@ -20,17 +20,26 @@ export type Product = {
 type TranslationFn = (key: string) => string;
 
 const KNOWN_CATEGORY_LABELS: Record<string, string> = {
-  'living-room': 'categories.living_room',
   bedroom: 'categories.bedroom',
   'dining-room': 'categories.dining_room',
   'sofa-set': 'categories.sofa_set',
 };
 
 const KNOWN_CATEGORY_TERMS: Record<string, string[]> = {
-  'living-room': ['living room', 'oturma odasi', 'salon'],
   bedroom: ['bedroom', 'yatak odasi'],
   'dining-room': ['dining room', 'yemek odasi', 'yemek'],
-  'sofa-set': ['sofa set', 'koltuk takimi', 'koltuk', 'sofa'],
+  'sofa-set': [
+    'sofa set',
+    'sofa sets',
+    'koltuk takimi',
+    'koltuk takimlari',
+    'koltuk takim',
+    'koltuk',
+    'sofa',
+    'living room',
+    'oturma odasi',
+    'salon',
+  ],
 };
 
 const DEFAULT_LOCALIZED_TEXT: LocalizedText = {
@@ -39,8 +48,37 @@ const DEFAULT_LOCALIZED_TEXT: LocalizedText = {
   fr: '',
 };
 
+const TURKISH_CHARACTER_MAP: Record<string, string> = {
+  '\u0131': 'i',
+  '\u0130': 'i',
+  '\u011f': 'g',
+  '\u011e': 'g',
+  '\u015f': 's',
+  '\u015e': 's',
+  '\u00e7': 'c',
+  '\u00c7': 'c',
+  '\u00f6': 'o',
+  '\u00d6': 'o',
+  '\u00fc': 'u',
+  '\u00dc': 'u',
+};
+
+const replaceTurkishCharacters = (value: string) =>
+  value.replace(/[\u0131\u0130\u011f\u011e\u015f\u015e\u00e7\u00c7\u00f6\u00d6\u00fc\u00dc]/g, (character) =>
+    TURKISH_CHARACTER_MAP[character] ?? character
+  );
+
 const toSlug = (value: string) =>
-  value
+  replaceTurkishCharacters(
+    value
+      .trim()
+      .replace(/&/g, ' and ')
+      .replace(/['\u2019]/g, '')
+      .replace(/\./g, ' ')
+      .replace(/_/g, ' ')
+      .replace(/-/g, ' ')
+      .replace(/\s+/g, ' ')
+  )
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
@@ -167,7 +205,9 @@ export const buildCategoryOptions = (
   language: Language,
   t: TranslationFn
 ) => {
-  const categoryMap = new Map<string, string>();
+  const categoryMap = new Map<string, string>(
+    Object.entries(KNOWN_CATEGORY_LABELS).map(([key, translationKey]) => [key, t(translationKey)])
+  );
 
   products.forEach((product) => {
     if (!product.categoryKey) {
@@ -200,4 +240,3 @@ export const buildCategoryOptions = (
 
   return options;
 };
-
