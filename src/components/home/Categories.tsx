@@ -25,32 +25,35 @@ export default function Categories() {
                 <div className="relative aspect-w-1 aspect-h-1 h-80 w-full overflow-hidden">
                   {canUseNextImage(
                     buildCloudinaryImageUrl(category.imageUrl, {
-                      width: 720,
-                      height: 720,
+                      width: 640,
+                      height: 640,
                       crop: 'fill',
                       gravity: 'auto',
+                      quality: 'auto:eco',
                     })
                   ) ? (
                     <Image
                       src={buildCloudinaryImageUrl(category.imageUrl, {
-                        width: 720,
-                        height: 720,
+                        width: 640,
+                        height: 640,
                         crop: 'fill',
                         gravity: 'auto',
+                        quality: 'auto:eco',
                       })}
                       alt={category.displayName}
                       fill
-                      quality={70}
+                      unoptimized
                       sizes="(max-width: 768px) 100vw, 33vw"
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : (
                     <img
                       src={buildCloudinaryImageUrl(category.imageUrl, {
-                        width: 720,
-                        height: 720,
+                        width: 640,
+                        height: 640,
                         crop: 'fill',
                         gravity: 'auto',
+                        quality: 'auto:eco',
                       })}
                       alt={category.displayName}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"

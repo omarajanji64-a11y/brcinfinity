@@ -27,10 +27,11 @@ function ProductCard({ product }: ProductCardProps) {
   const isValidUrl = typeof currentImage === 'string' && currentImage.startsWith('https://');
   const transformedUrl = isValidUrl
     ? buildCloudinaryImageUrl(currentImage, {
-        width: 640,
-        height: 640,
+        width: 560,
+        height: 560,
         crop: 'fill',
         gravity: 'auto',
+        quality: 'auto:eco',
       })
     : '';
   const canRenderWithNextImage = transformedUrl ? canUseNextImage(transformedUrl) : false;
@@ -67,7 +68,7 @@ function ProductCard({ product }: ProductCardProps) {
                   src={transformedUrl}
                   alt={productName}
                   fill
-                  quality={70}
+                  unoptimized
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
                 />

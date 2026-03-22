@@ -46,33 +46,36 @@ export default function CloudinaryCarousel() {
               <div className="relative h-full w-full">
                 {canUseNextImage(
                   buildCloudinaryImageUrl(url, {
-                    width: 1600,
-                    height: 900,
+                    width: 1440,
+                    height: 810,
                     crop: 'fill',
                     gravity: 'auto',
+                    quality: 'auto:good',
                   })
                 ) ? (
                   <Image
                     src={buildCloudinaryImageUrl(url, {
-                      width: 1600,
-                      height: 900,
+                      width: 1440,
+                      height: 810,
                       crop: 'fill',
                       gravity: 'auto',
+                      quality: 'auto:good',
                     })}
                     alt={`Slideshow image ${index + 1}`}
                     fill
                     priority={index === 0}
-                    quality={75}
+                    unoptimized
                     sizes="100vw"
                     className="h-full w-full object-cover animate-scale-in"
                   />
                 ) : (
                   <img
                     src={buildCloudinaryImageUrl(url, {
-                      width: 1600,
-                      height: 900,
+                      width: 1440,
+                      height: 810,
                       crop: 'fill',
                       gravity: 'auto',
+                      quality: 'auto:good',
                     })}
                     alt={`Slideshow image ${index + 1}`}
                     className="h-full w-full object-cover animate-scale-in"

@@ -36,9 +36,10 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     () =>
       images.map((image) =>
         buildCloudinaryImageUrl(image, {
-          width: 1600,
-          height: 1600,
+          width: 1200,
+          height: 1200,
           crop: 'limit',
+          quality: 'auto:good',
         })
       ),
     [images]
@@ -53,6 +54,30 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
       return currentIndex >= transformedImages.length ? 0 : currentIndex;
     });
   }, [transformedImages.length]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || transformedImages.length < 2) {
+      return;
+    }
+
+    const timerId = window.setTimeout(() => {
+      for (const src of transformedImages) {
+        if (!src || preloadedImagesRef.current.has(src)) {
+          continue;
+        }
+
+        preloadedImagesRef.current.add(src);
+        const image = new window.Image();
+        image.decoding = 'async';
+        image.loading = 'eager';
+        image.src = src;
+      }
+    }, 120);
+
+    return () => {
+      window.clearTimeout(timerId);
+    };
+  }, [transformedImages]);
 
   useEffect(() => {
     if (typeof window === 'undefined' || transformedImages.length < 2) {
@@ -149,7 +174,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                       alt={productName}
                       fill
                       priority={currentImageIndex === 0}
-                      quality={75}
+                      unoptimized
                       sizes="(max-width: 768px) 100vw, 50vw"
                       className="h-full w-full object-contain"
                     />
