@@ -1,12 +1,12 @@
 'use client';
 
-import { useRef } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import Autoplay from 'embla-carousel-autoplay';
 
 import { useTranslation } from '@/lib/i18n';
 import {
+  type CarouselApi,
   Carousel,
   CarouselContent,
   CarouselItem,
@@ -14,12 +14,19 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import { Button } from '@/components/ui/button';
-import { buildCloudinaryImageUrl, canUseNextImage } from '@/lib/image-utils';
+import {
+  buildCloudinaryImageUrl,
+  canUseNextImage,
+  isHttpsImageUrl,
+  isLocalImagePath,
+} from '@/lib/image-utils';
 import { HERO_CAROUSEL_IMAGES } from '@/lib/site-config';
 
 export default function CloudinaryCarousel() {
   const { t } = useTranslation();
-  const plugin = useRef(Autoplay({ delay: 5000, stopOnInteraction: true }));
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
   const fallbackImages = [
     'https://picsum.photos/seed/1/1280/720',
     'https://picsum.photos/seed/2/1280/720',
@@ -27,15 +34,57 @@ export default function CloudinaryCarousel() {
   ];
 
   const validImages = (HERO_CAROUSEL_IMAGES.length > 0 ? HERO_CAROUSEL_IMAGES : fallbackImages)
-    .filter((url) => typeof url === 'string' && url.startsWith('https://'));
+    .filter((url) => typeof url === 'string' && (isLocalImagePath(url) || isHttpsImageUrl(url)));
+
+  useEffect(() => {
+    if (!carouselApi) {
+      return;
+    }
+
+    const handleSelect = () => {
+      setActiveIndex(carouselApi.selectedScrollSnap());
+    };
+
+    handleSelect();
+    carouselApi.on('select', handleSelect);
+    carouselApi.on('reInit', handleSelect);
+
+    return () => {
+      carouselApi.off('select', handleSelect);
+      carouselApi.off('reInit', handleSelect);
+    };
+  }, [carouselApi]);
+
+  useEffect(() => {
+    if (!carouselApi || isPaused || validImages.length < 2) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      const currentIndex = carouselApi.selectedScrollSnap();
+      let nextIndex = currentIndex;
+
+      while (nextIndex === currentIndex) {
+        nextIndex = Math.floor(Math.random() * validImages.length);
+      }
+
+      carouselApi.scrollTo(nextIndex);
+    }, 5000);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [activeIndex, carouselApi, isPaused, validImages.length]);
 
   return (
     <div className="relative h-[calc(100vh-160px)] w-full overflow-hidden">
       <Carousel
-        plugins={[plugin.current]}
+        setApi={(api) => {
+          setCarouselApi(api);
+        }}
         className="h-full w-full"
-        onMouseEnter={plugin.current.stop}
-        onMouseLeave={plugin.current.reset}
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
         opts={{
           loop: true,
         }}

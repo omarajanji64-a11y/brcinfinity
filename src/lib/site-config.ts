@@ -36,6 +36,14 @@ export type CategoryImage = {
 };
 
 const placeholderImages = placeholderImagesData.placeholderImages as PlaceholderImage[];
+const curatedHeroCarouselImages = [
+  '/hero-slider/hero-11.jpg',
+  '/hero-slider/hero-12.jpg',
+  '/hero-slider/hero-13.jpg',
+  '/hero-slider/hero-14.jpg',
+  '/hero-slider/hero-15.jpg',
+  '/hero-slider/hero-16.jpg',
+];
 
 const getPlaceholderImage = (id: string, fallbackUrl: string) =>
   placeholderImages.find((image) => image.id === id)?.imageUrl ?? fallbackUrl;
@@ -56,9 +64,12 @@ export const FALLBACK_LOGO_URL = '/brc-infinity-logo.png';
 
 export const SITE_CATALOGS: Catalog[] = [];
 
-export const HERO_CAROUSEL_IMAGES = placeholderImages
-  .filter((image) => image.id.startsWith('hero-') && image.imageUrl.startsWith('https://'))
-  .map((image) => image.imageUrl);
+export const HERO_CAROUSEL_IMAGES =
+  curatedHeroCarouselImages.length > 0
+    ? [...curatedHeroCarouselImages]
+    : placeholderImages
+        .filter((image) => image.id.startsWith('hero-') && image.imageUrl.startsWith('https://'))
+        .map((image) => image.imageUrl);
 
 export const CATEGORY_SHOWCASE_IMAGES: CategoryImage[] = [
   {
