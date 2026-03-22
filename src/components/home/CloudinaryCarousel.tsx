@@ -14,18 +14,8 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import { Button } from '@/components/ui/button';
-import { canUseNextImage } from '@/lib/image-utils';
+import { buildCloudinaryImageUrl, canUseNextImage } from '@/lib/image-utils';
 import { HERO_CAROUSEL_IMAGES } from '@/lib/site-config';
-
-const transformCloudinaryUrl = (url: string) => {
-  if (!url.includes('/upload/')) {
-    return url;
-  }
-
-  const parts = url.split('/upload/');
-  const transformations = 'w_1280,h_720,c_fill,g_auto';
-  return `${parts[0]}/upload/${transformations}/${parts[1]}`;
-};
 
 export default function CloudinaryCarousel() {
   const { t } = useTranslation();
@@ -54,18 +44,36 @@ export default function CloudinaryCarousel() {
           {validImages.map((url, index) => (
             <CarouselItem key={`${url}-${index}`} className="h-full">
               <div className="relative h-full w-full">
-                {canUseNextImage(transformCloudinaryUrl(url)) ? (
+                {canUseNextImage(
+                  buildCloudinaryImageUrl(url, {
+                    width: 1600,
+                    height: 900,
+                    crop: 'fill',
+                    gravity: 'auto',
+                  })
+                ) ? (
                   <Image
-                    src={transformCloudinaryUrl(url)}
+                    src={buildCloudinaryImageUrl(url, {
+                      width: 1600,
+                      height: 900,
+                      crop: 'fill',
+                      gravity: 'auto',
+                    })}
                     alt={`Slideshow image ${index + 1}`}
                     fill
                     priority={index === 0}
+                    quality={75}
                     sizes="100vw"
                     className="h-full w-full object-cover animate-scale-in"
                   />
                 ) : (
                   <img
-                    src={transformCloudinaryUrl(url)}
+                    src={buildCloudinaryImageUrl(url, {
+                      width: 1600,
+                      height: 900,
+                      crop: 'fill',
+                      gravity: 'auto',
+                    })}
                     alt={`Slideshow image ${index + 1}`}
                     className="h-full w-full object-cover animate-scale-in"
                     loading={index === 0 ? 'eager' : 'lazy'}

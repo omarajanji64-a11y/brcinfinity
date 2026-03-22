@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight, MessageCircle } from 'lucide-react';
@@ -9,8 +9,8 @@ import Footer from '@/components/layout/Footer';
 import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useProducts } from '@/hooks/use-products';
-import { canUseNextImage } from '@/lib/image-utils';
+import { useProduct } from '@/hooks/use-product';
+import { buildCloudinaryImageUrl, canUseNextImage } from '@/lib/image-utils';
 import { useTranslation } from '@/lib/i18n';
 import {
   getLocalizedText,
@@ -18,25 +18,11 @@ import {
   getProductName,
 } from '@/lib/products';
 
-const transformCloudinaryUrl = (url: string) => {
-  if (!url || !url.includes('/upload/')) {
-    return url;
-  }
-
-  const parts = url.split('/upload/');
-  const transformations = 'w_1400,h_1400,c_fit,f_auto,q_auto';
-  return `${parts[0]}/upload/${transformations}/${parts[1]}`;
-};
-
 export default function ProductDetailPage({ params }: { params: { id: string } }) {
   const { t, language } = useTranslation();
-  const { products, isLoading } = useProducts({ realtime: false });
+  const { product, isLoading } = useProduct(params.id, { realtime: false });
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  const product = useMemo(
-    () => products.find((item) => item.id === params.id) ?? null,
-    [params.id, products]
-  );
+  const preloadedImagesRef = useRef<Set<string>>(new Set());
 
   const images = useMemo(() => {
     if (!product) {
@@ -46,15 +32,50 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     return product.imageUrls.length > 0 ? product.imageUrls : product.imageUrl ? [product.imageUrl] : [];
   }, [product]);
 
+  const transformedImages = useMemo(
+    () =>
+      images.map((image) =>
+        buildCloudinaryImageUrl(image, {
+          width: 1600,
+          height: 1600,
+          crop: 'limit',
+        })
+      ),
+    [images]
+  );
+
   useEffect(() => {
     setCurrentImageIndex((currentIndex) => {
-      if (images.length === 0) {
+      if (transformedImages.length === 0) {
         return 0;
       }
 
-      return currentIndex >= images.length ? 0 : currentIndex;
+      return currentIndex >= transformedImages.length ? 0 : currentIndex;
     });
-  }, [images.length]);
+  }, [transformedImages.length]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || transformedImages.length < 2) {
+      return;
+    }
+
+    const indexesToPreload = [
+      (currentImageIndex + 1) % transformedImages.length,
+      (currentImageIndex + transformedImages.length - 1) % transformedImages.length,
+    ];
+
+    for (const index of indexesToPreload) {
+      const src = transformedImages[index];
+      if (!src || preloadedImagesRef.current.has(src)) {
+        continue;
+      }
+
+      preloadedImagesRef.current.add(src);
+      const image = new window.Image();
+      image.decoding = 'async';
+      image.src = src;
+    }
+  }, [currentImageIndex, transformedImages]);
 
   if (isLoading) {
     return (
@@ -110,8 +131,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
-  const currentImage = images[currentImageIndex];
-  const transformedImage = currentImage ? transformCloudinaryUrl(currentImage) : '';
+  const transformedImage = transformedImages[currentImageIndex] ?? '';
   const canRenderWithNextImage = transformedImage ? canUseNextImage(transformedImage) : false;
 
   return (
@@ -128,7 +148,8 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                       src={transformedImage}
                       alt={productName}
                       fill
-                      priority
+                      priority={currentImageIndex === 0}
+                      quality={75}
                       sizes="(max-width: 768px) 100vw, 50vw"
                       className="h-full w-full object-contain"
                     />

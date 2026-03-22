@@ -114,10 +114,11 @@
   }
 
   .theme-panel {
+    background-color: rgba(12, 12, 12, 0.88);
     background-image:
-      linear-gradient(180deg, rgba(8, 8, 8, 0.9), rgba(16, 16, 16, 0.78)),
-      var(--theme-background-image);
-    background-position: center;
+      linear-gradient(180deg, rgba(8, 8, 8, 0.92), rgba(16, 16, 16, 0.82)),
+      radial-gradient(circle at top right, rgba(214, 175, 104, 0.14), transparent 42%);
+    background-position: center, top right;
     background-repeat: no-repeat;
     background-size: cover;
   }

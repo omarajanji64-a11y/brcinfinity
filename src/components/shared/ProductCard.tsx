@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { memo, useState } from 'react';
 import { ChevronLeft, ChevronRight, MessageCircle } from 'lucide-react';
 
-import { canUseNextImage } from '@/lib/image-utils';
+import { buildCloudinaryImageUrl, canUseNextImage } from '@/lib/image-utils';
 import { getProductName, type Product } from '@/lib/products';
 import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,16 +16,6 @@ interface ProductCardProps {
   product: Product;
 }
 
-const transformCloudinaryUrl = (url: string) => {
-  if (!url || !url.includes('/upload/')) {
-    return url;
-  }
-
-  const parts = url.split('/upload/');
-  const transformations = 'w_600,h_600,c_fill,g_auto';
-  return `${parts[0]}/upload/${transformations}/${parts[1]}`;
-};
-
 function ProductCard({ product }: ProductCardProps) {
   const { t, language } = useTranslation();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -35,7 +25,14 @@ function ProductCard({ product }: ProductCardProps) {
   const images = product.imageUrls.length > 0 ? product.imageUrls : product.imageUrl ? [product.imageUrl] : [];
   const currentImage = images[currentImageIndex] || '';
   const isValidUrl = typeof currentImage === 'string' && currentImage.startsWith('https://');
-  const transformedUrl = isValidUrl ? transformCloudinaryUrl(currentImage) : '';
+  const transformedUrl = isValidUrl
+    ? buildCloudinaryImageUrl(currentImage, {
+        width: 640,
+        height: 640,
+        crop: 'fill',
+        gravity: 'auto',
+      })
+    : '';
   const canRenderWithNextImage = transformedUrl ? canUseNextImage(transformedUrl) : false;
   const message = t('whatsapp.order_message', {
     productName,
@@ -70,6 +67,7 @@ function ProductCard({ product }: ProductCardProps) {
                   src={transformedUrl}
                   alt={productName}
                   fill
+                  quality={70}
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
                 />
