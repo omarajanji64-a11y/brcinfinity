@@ -140,7 +140,7 @@ export default function AboutUsPage() {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-grow">
-        <section className="relative overflow-hidden bg-gradient-to-b from-secondary/60 to-background">
+        <section className="theme-surface relative overflow-hidden bg-gradient-to-b from-secondary/60 to-background">
           <div className="absolute inset-0 opacity-20">
             <div className="absolute -top-12 left-10 h-72 w-72 rounded-full bg-accent blur-3xl" />
             <div className="absolute bottom-0 right-10 h-80 w-80 rounded-full bg-accent blur-[140px]" />

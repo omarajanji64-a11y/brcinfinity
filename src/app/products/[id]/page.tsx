@@ -73,7 +73,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
       <div className="flex min-h-screen flex-col">
         <Header />
         <main className="container mx-auto flex-grow px-4 py-12">
-          <div className="rounded-lg border bg-card p-8 text-center">
+          <div className="theme-panel rounded-lg border bg-card p-8 text-center">
             <h1 className="font-headline text-3xl font-bold">Urun bulunamadi</h1>
             <p className="mt-3 text-muted-foreground">
               Bu urun silinmis olabilir veya baglanti hatali olabilir.
@@ -122,7 +122,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
           <div className="relative">
             {images.length > 0 ? (
               <>
-                <div className="relative flex h-[clamp(320px,60vh,720px)] items-center justify-center overflow-hidden rounded-lg border bg-secondary/30 p-4 shadow-lg">
+                <div className="theme-panel relative flex h-[clamp(320px,60vh,720px)] items-center justify-center overflow-hidden rounded-lg border bg-secondary/30 p-4 shadow-lg">
                   {canRenderWithNextImage ? (
                     <Image
                       src={transformedImage}

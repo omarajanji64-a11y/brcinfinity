@@ -26,7 +26,7 @@ export default function Categories() {
   }));
 
   return (
-    <div className="bg-background">
+    <div className="theme-surface-soft bg-background">
       <div className="container mx-auto px-4 py-20">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           {categoriesToRender.map((category) => (

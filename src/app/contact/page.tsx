@@ -65,7 +65,7 @@ export default function ContactPage() {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-grow">
-        <div className="bg-secondary">
+        <div className="theme-surface bg-secondary">
           <div className="container mx-auto px-4 py-12 text-center">
             <h1 className="font-headline text-4xl md:text-5xl font-bold">{t('contact_page.title')}</h1>
             <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">

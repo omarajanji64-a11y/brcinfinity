@@ -60,7 +60,7 @@ function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <Card className="overflow-hidden transition-all duration-500 group h-full flex flex-col border-0 shadow-lg hover:shadow-xl hover:shadow-accent/10 hover:-translate-y-2 bg-secondary/30">
+    <Card className="theme-panel overflow-hidden transition-all duration-500 group h-full flex flex-col border-0 shadow-lg hover:shadow-xl hover:shadow-accent/10 hover:-translate-y-2 bg-secondary/30">
       <CardHeader className="p-0">
         <div className="aspect-square relative overflow-hidden group/image">
           {isValidUrl ? (
@@ -84,7 +84,7 @@ function ProductCard({ product }: ProductCardProps) {
               )}
             </Link>
           ) : (
-            <div className="w-full h-full bg-secondary flex items-center justify-center">
+            <div className="theme-surface-soft w-full h-full bg-secondary flex items-center justify-center">
               <Skeleton className="w-full h-full" />
             </div>
           )}

@@ -8,7 +8,7 @@ import StaticLogo from '@/components/shared/StaticLogo';
 
 export default function Loading() {
   return (
-    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-background">
+    <div className="theme-surface fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-background">
       <div className="mb-8">
         <StaticLogo />
       </div>

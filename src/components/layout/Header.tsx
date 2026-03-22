@@ -25,7 +25,7 @@ export default function Header() {
   const navLinksRight = [{ href: '/contact', label: t('header.contact') }];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-background/50 backdrop-blur-sm">
+    <header className="theme-panel sticky top-0 z-50 border-b border-white/10 bg-background/50 backdrop-blur-sm">
       <div className="container mx-auto grid h-40 grid-cols-2 items-center px-4 md:grid-cols-3">
         <nav className="hidden items-center gap-6 md:flex">
           {navLinksLeft.map((link) => (

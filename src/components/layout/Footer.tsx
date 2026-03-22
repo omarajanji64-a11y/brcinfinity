@@ -9,7 +9,7 @@ import { useTranslation } from '@/lib/i18n';
 export default function Footer() {
   const { t } = useTranslation();
   return (
-    <footer className="bg-secondary/50 border-t border-white/10">
+    <footer className="theme-panel bg-secondary/50 border-t border-white/10">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1">
