@@ -3,7 +3,7 @@
 import React, { DependencyList, createContext, useContext, ReactNode, useMemo, useState, useEffect } from 'react';
 import { FirebaseApp } from 'firebase/app';
 import { Firestore } from 'firebase/firestore';
-import { Auth, User, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
+import { Auth, User, onAuthStateChanged } from 'firebase/auth';
 import { FirebaseStorage } from 'firebase/storage';
 import { initializeFirebase } from '@/firebase'; // Import the core initializer
 import { useCollection as useCollectionHook } from '@/firebase/firestore/use-collection';
@@ -84,11 +84,7 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
         if (firebaseUser) {
           setUserAuthState({ user: firebaseUser, isUserLoading: false, userError: null });
         } else {
-          // If no user, sign in anonymously
-          signInAnonymously(auth).catch((error) => {
-            console.error("FirebaseProvider: Anonymous sign-in error:", error);
-            setUserAuthState({ user: null, isUserLoading: false, userError: error });
-          });
+          setUserAuthState({ user: null, isUserLoading: false, userError: null });
         }
       },
       (error) => { 

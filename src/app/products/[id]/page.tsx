@@ -35,7 +35,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     return doc(firestore, 'products', params.id);
   }, [firestore, params.id]);
 
-  const { data: rawProduct, isLoading, error } = useDoc<Record<string, unknown>>(productRef);
+  const { data: rawProduct, isLoading, error } = useDoc<Record<string, unknown>>(productRef, { realtime: false });
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const product = useMemo(() => (rawProduct ? normalizeProduct(rawProduct) : null), [rawProduct]);
 
@@ -108,6 +108,9 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                   src={transformedImage}
                   alt={productName}
                   className="w-full h-[400px] object-cover rounded-lg shadow-lg"
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
                 />
                 {images.length > 1 && (
                   <>

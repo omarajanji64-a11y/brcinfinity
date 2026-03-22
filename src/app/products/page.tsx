@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { startTransition, useEffect, useMemo, useState } from 'react';
 import { doc } from 'firebase/firestore';
 import { Download } from 'lucide-react';
 
@@ -35,7 +35,7 @@ function DownloadCatalogButton() {
         return doc(firestore, 'config/catalog');
     }, [firestore]);
 
-    const { data: catalogConfig, isLoading } = useDoc<CatalogConfig>(catalogConfigRef);
+    const { data: catalogConfig, isLoading } = useDoc<CatalogConfig>(catalogConfigRef, { realtime: false });
 
     if (isLoading) {
         return <Skeleton className="h-10 w-44" />;
@@ -84,7 +84,7 @@ type StyleFilter = 'all' | 'Modern' | 'Classic';
 
 export default function ProductsPage() {
   const { t, language } = useTranslation();
-  const { products, isLoading: isLoadingProducts } = useProducts();
+  const { products, isLoading: isLoadingProducts } = useProducts({ realtime: false });
   const [isClient, setIsClient] = useState(false);
   const categoryOptions = useMemo(() => buildCategoryOptions(products, language, t), [language, products, t]);
   const [activeCategory, setActiveCategory] = useState<string>('all');
@@ -142,7 +142,7 @@ export default function ProductsPage() {
       return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {productsToRender.map((product, i) => (
-              <div key={`${activeCategory}-${styleFilter}-${product.id}`} className="animate-fade-in-up" style={{animationDelay: `${i * 0.1}s`, animationFillMode: 'backwards'}}>
+              <div key={product.id} className="animate-fade-in-up" style={{animationDelay: `${i * 0.1}s`, animationFillMode: 'backwards'}}>
                 <ProductCard product={product} />
               </div>
             ))}
@@ -167,7 +167,7 @@ export default function ProductsPage() {
         </div>
         <div className="container mx-auto px-4 py-16">
             <div className="mb-12 p-2 rounded-lg bg-secondary flex flex-col md:flex-row items-center justify-between gap-4">
-              <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full md:w-auto">
+              <Tabs value={activeCategory} onValueChange={(value) => startTransition(() => setActiveCategory(value))} className="w-full md:w-auto">
                   <TabsList className="flex-wrap h-auto bg-transparent p-0">
                       {isClient && (
                         <>
@@ -195,7 +195,7 @@ export default function ProductsPage() {
               
                <div className="hidden md:block h-6 w-px bg-border" />
 
-               <Tabs value={styleFilter} onValueChange={(value) => setStyleFilter(value as StyleFilter)} className="w-full md:w-auto">
+               <Tabs value={styleFilter} onValueChange={(value) => startTransition(() => setStyleFilter(value as StyleFilter))} className="w-full md:w-auto">
                     <TabsList className="bg-transparent p-0">
                         <TabsTrigger value="all" className="data-[state=active]:bg-background/80 data-[state=active]:text-foreground text-muted-foreground hover:text-foreground transition-none rounded-md">{t('product_page.style_all')}</TabsTrigger>
                         <TabsTrigger value="Modern" className="data-[state=active]:bg-background/80 data-[state=active]:text-foreground text-muted-foreground hover:text-foreground transition-none rounded-md">{t('product_page.style_modern')}</TabsTrigger>

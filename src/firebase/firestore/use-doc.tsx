@@ -8,6 +8,7 @@ import {
   DocumentData,
   FirestoreError,
   DocumentSnapshot,
+  getDoc,
 } from 'firebase/firestore';
 
 /** Utility type to add an 'id' field to a given type T. */
@@ -22,6 +23,15 @@ export interface UseDocResult<T> {
   isLoading: boolean;       // True if loading.
   error: FirestoreError | Error | null; // Error object, or null.
 }
+
+type UseDocOptions = {
+  realtime?: boolean;
+};
+
+const docCache = new Map<string, unknown>();
+const docPendingRequests = new Map<string, Promise<unknown>>();
+
+const getDocCacheKey = (docRef: DocumentReference<DocumentData>) => docRef.path;
 
 /**
  * React hook to subscribe to a single Firestore document in real-time.
@@ -39,11 +49,18 @@ export interface UseDocResult<T> {
  */
 export function useDoc<T = any>(
   memoizedDocRef: (DocumentReference<DocumentData> & {__memo?: boolean}) | null | undefined,
+  options?: UseDocOptions,
 ): UseDocResult<T> {
   type StateDataType = WithId<T> | null;
+  const realtime = options?.realtime ?? true;
+  const cacheKey = memoizedDocRef ? getDocCacheKey(memoizedDocRef) : null;
 
-  const [data, setData] = useState<StateDataType>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(() => !!memoizedDocRef);
+  const [data, setData] = useState<StateDataType>(() =>
+    !realtime && cacheKey && docCache.has(cacheKey) ? (docCache.get(cacheKey) as StateDataType) : null
+  );
+  const [isLoading, setIsLoading] = useState<boolean>(() =>
+    !!memoizedDocRef && !( !realtime && cacheKey && docCache.has(cacheKey))
+  );
   const [error, setError] = useState<FirestoreError | Error | null>(null);
 
   useEffect(() => {
@@ -52,6 +69,65 @@ export function useDoc<T = any>(
       setIsLoading(false);
       setError(null);
       return;
+    }
+
+    if (!realtime) {
+      if (cacheKey && docCache.has(cacheKey)) {
+        setData(docCache.get(cacheKey) as StateDataType);
+        setIsLoading(false);
+        setError(null);
+        return;
+      }
+
+      setIsLoading(true);
+      setError(null);
+
+      let pendingRequest = cacheKey ? (docPendingRequests.get(cacheKey) as Promise<StateDataType> | undefined) : undefined;
+
+      if (!pendingRequest) {
+        pendingRequest = getDoc(memoizedDocRef).then((snapshot) =>
+          snapshot.exists() ? ({ ...(snapshot.data() as T), id: snapshot.id } as StateDataType) : null
+        );
+
+        if (cacheKey) {
+          docPendingRequests.set(cacheKey, pendingRequest);
+        }
+      }
+
+      let isCancelled = false;
+
+      pendingRequest
+        .then((result) => {
+          if (cacheKey) {
+            docCache.set(cacheKey, result);
+            docPendingRequests.delete(cacheKey);
+          }
+
+          if (isCancelled) {
+            return;
+          }
+
+          setData(result);
+          setError(null);
+          setIsLoading(false);
+        })
+        .catch((requestError) => {
+          if (cacheKey) {
+            docPendingRequests.delete(cacheKey);
+          }
+
+          if (isCancelled) {
+            return;
+          }
+
+          setError(requestError instanceof Error ? requestError : new Error('Dokuman yuklenemedi.'));
+          setData(null);
+          setIsLoading(false);
+        });
+
+      return () => {
+        isCancelled = true;
+      };
     }
 
     setIsLoading(true);
@@ -78,7 +154,7 @@ export function useDoc<T = any>(
     );
 
     return () => unsubscribe();
-  }, [memoizedDocRef]); // Re-run if the memoizedDocRef changes.
+  }, [cacheKey, memoizedDocRef, realtime]); // Re-run if the memoizedDocRef changes.
 
   if(memoizedDocRef && !memoizedDocRef.__memo) {
     throw new Error('useDoc doc ref was not properly memoized using useMemoFirebase');

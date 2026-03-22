@@ -37,7 +37,7 @@ function DownloadCatalogButton() {
         return doc(firestore, 'config/catalog');
     }, [firestore]);
 
-    const { data: catalogConfig, isLoading } = useDoc<CatalogConfig>(catalogConfigRef);
+    const { data: catalogConfig, isLoading } = useDoc<CatalogConfig>(catalogConfigRef, { realtime: false });
 
     if (isLoading) {
         return <Skeleton className="h-10 w-44" />;

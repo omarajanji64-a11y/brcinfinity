@@ -69,7 +69,7 @@ export default function Categories() {
     return doc(firestore, 'config/homepage');
   }, [firestore]);
 
-  const { data: homepageConfig, isLoading } = useDoc<HomepageConfig>(homepageConfigRef);
+  const { data: homepageConfig, isLoading } = useDoc<HomepageConfig>(homepageConfigRef, { realtime: false });
 
   const configuredCategoryMap = new Map<string, CategoryImage>();
 
@@ -121,6 +121,8 @@ export default function Categories() {
                     alt={category.displayName}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     data-ai-hint={category.imageHint}
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />

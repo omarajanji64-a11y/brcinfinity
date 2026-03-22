@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader } from '../ui/card';
 
 export default function FeaturedProducts() {
   const { t } = useTranslation();
-  const { products, isLoading: isLoadingProducts } = useProducts();
+  const { products, isLoading: isLoadingProducts } = useProducts({ realtime: false });
   
   const featuredProducts = products.slice(0, 3);
 

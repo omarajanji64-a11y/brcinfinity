@@ -31,7 +31,7 @@ export default function ThemeLoader() {
     return doc(firestore, 'config/theme');
   }, [firestore]);
 
-  const { data: themeConfig } = useDoc<ThemeConfig>(themeConfigRef);
+  const { data: themeConfig } = useDoc<ThemeConfig>(themeConfigRef, { realtime: false });
 
   useEffect(() => {
     const theme = themeConfig || defaultTheme;

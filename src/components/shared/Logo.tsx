@@ -20,7 +20,7 @@ export default function Logo() {
     return doc(firestore, 'config/branding');
   }, [firestore]);
 
-  const { data: brandingConfig, isLoading } = useDoc<BrandingConfig>(brandingConfigRef);
+  const { data: brandingConfig, isLoading } = useDoc<BrandingConfig>(brandingConfigRef, { realtime: false });
 
   if (isLoading) {
     return (
@@ -40,6 +40,8 @@ export default function Logo() {
                 src={logoUrl}
                 alt="BRC INFINITY Logo"
                 className="object-contain w-full h-full"
+                loading="eager"
+                decoding="async"
             />
         </div>
       ) : (

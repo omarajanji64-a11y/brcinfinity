@@ -9,6 +9,7 @@ import {
   FirestoreError,
   QuerySnapshot,
   CollectionReference,
+  getDocs,
 } from 'firebase/firestore';
 
 /** Utility type to add an 'id' field to a given type T. */
@@ -24,6 +25,10 @@ export interface UseCollectionResult<T> {
   error: FirestoreError | Error | null; // Error object, or null.
 }
 
+type UseCollectionOptions = {
+  realtime?: boolean;
+};
+
 /* Internal implementation of Query:
   https://github.com/firebase/firebase-js-sdk/blob/c5f08a9bc5da0d2b0207802c972d53724ccef055/packages/firestore/src/lite-api/reference.ts#L143
 */
@@ -35,6 +40,19 @@ export interface InternalQuery extends Query<DocumentData> {
     }
   }
 }
+
+const collectionCache = new Map<string, unknown>();
+const collectionPendingRequests = new Map<string, Promise<unknown>>();
+
+const getCollectionCacheKey = (
+  targetRefOrQuery: CollectionReference<DocumentData> | Query<DocumentData>
+) => {
+  if ('path' in targetRefOrQuery && typeof targetRefOrQuery.path === 'string') {
+    return targetRefOrQuery.path;
+  }
+
+  return (targetRefOrQuery as InternalQuery)._query.path.canonicalString();
+};
 
 /**
  * React hook to subscribe to a Firestore collection or query in real-time.
@@ -52,12 +70,21 @@ export interface InternalQuery extends Query<DocumentData> {
  */
 export function useCollection<T = any>(
     memoizedTargetRefOrQuery: ((CollectionReference<DocumentData> | Query<DocumentData>) & {__memo?: boolean})  | null | undefined,
+    options?: UseCollectionOptions,
 ): UseCollectionResult<T> {
   type ResultItemType = WithId<T>;
   type StateDataType = ResultItemType[] | null;
+  const realtime = options?.realtime ?? true;
+  const cacheKey = memoizedTargetRefOrQuery ? getCollectionCacheKey(memoizedTargetRefOrQuery) : null;
 
-  const [data, setData] = useState<StateDataType>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [data, setData] = useState<StateDataType>(() =>
+    !realtime && cacheKey && collectionCache.has(cacheKey)
+      ? (collectionCache.get(cacheKey) as StateDataType)
+      : null
+  );
+  const [isLoading, setIsLoading] = useState<boolean>(() =>
+    !!memoizedTargetRefOrQuery && !(!realtime && cacheKey && collectionCache.has(cacheKey))
+  );
   const [error, setError] = useState<FirestoreError | Error | null>(null);
 
   useEffect(() => {
@@ -66,6 +93,67 @@ export function useCollection<T = any>(
       setIsLoading(false);
       setError(null);
       return;
+    }
+
+    if (!realtime) {
+      if (cacheKey && collectionCache.has(cacheKey)) {
+        setData(collectionCache.get(cacheKey) as StateDataType);
+        setIsLoading(false);
+        setError(null);
+        return;
+      }
+
+      setIsLoading(true);
+      setError(null);
+
+      let pendingRequest = cacheKey
+        ? (collectionPendingRequests.get(cacheKey) as Promise<StateDataType> | undefined)
+        : undefined;
+
+      if (!pendingRequest) {
+        pendingRequest = getDocs(memoizedTargetRefOrQuery).then((snapshot) =>
+          snapshot.docs.map((doc) => ({ ...(doc.data() as T), id: doc.id } as ResultItemType))
+        );
+
+        if (cacheKey) {
+          collectionPendingRequests.set(cacheKey, pendingRequest);
+        }
+      }
+
+      let isCancelled = false;
+
+      pendingRequest
+        .then((results) => {
+          if (cacheKey) {
+            collectionCache.set(cacheKey, results);
+            collectionPendingRequests.delete(cacheKey);
+          }
+
+          if (isCancelled) {
+            return;
+          }
+
+          setData(results);
+          setError(null);
+          setIsLoading(false);
+        })
+        .catch((requestError) => {
+          if (cacheKey) {
+            collectionPendingRequests.delete(cacheKey);
+          }
+
+          if (isCancelled) {
+            return;
+          }
+
+          setError(requestError instanceof Error ? requestError : new Error('Koleksiyon yuklenemedi.'));
+          setData(null);
+          setIsLoading(false);
+        });
+
+      return () => {
+        isCancelled = true;
+      };
     }
 
     setIsLoading(true);
@@ -92,7 +180,7 @@ export function useCollection<T = any>(
     );
 
     return () => unsubscribe();
-  }, [memoizedTargetRefOrQuery]); // Re-run if the target query/reference changes.
+  }, [cacheKey, memoizedTargetRefOrQuery, realtime]); // Re-run if the target query/reference changes.
   if(memoizedTargetRefOrQuery && !memoizedTargetRefOrQuery.__memo) {
     throw new Error('useCollection query was not properly memoized using useMemoFirebase');
   }

@@ -44,7 +44,7 @@ export default function CloudinaryCarousel() {
     return doc(firestore, 'carousel', 'main');
   }, [firestore]);
 
-  const { data, isLoading, error } = useDoc<CarouselDoc>(carouselRef);
+  const { data, isLoading, error } = useDoc<CarouselDoc>(carouselRef, { realtime: false });
 
   const fallbackImages = [
     'https://picsum.photos/seed/1/1280/720',
@@ -90,6 +90,9 @@ export default function CloudinaryCarousel() {
                   src={transformCloudinaryUrl(url)}
                   alt={`Slideshow image ${index + 1}`}
                   className="object-cover w-full h-full animate-scale-in"
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                  decoding="async"
+                  fetchPriority={index === 0 ? 'high' : 'auto'}
                 />
                 <div className="absolute inset-0 bg-black/50" />
               </div>
