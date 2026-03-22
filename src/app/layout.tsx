@@ -1,12 +1,14 @@
 import type { Metadata } from 'next';
 import { Playfair_Display, Raleway } from 'next/font/google';
-import { Toaster } from '@/components/ui/toaster';
-import './globals.css';
-import { cn } from '@/lib/utils';
-import { LanguageProvider } from '@/lib/i18n';
+
 import ThemeLoader from '@/components/ThemeLoader';
 import WhatsAppButton from '@/components/shared/WhatsAppButton';
+import { Toaster } from '@/components/ui/toaster';
+import { LanguageProvider } from '@/lib/i18n';
+import { cn } from '@/lib/utils';
+
 import ClientProviders from './client-providers';
+import './globals.css';
 
 const playfairDisplay = Playfair_Display({
   subsets: ['latin'],
@@ -22,7 +24,12 @@ const raleway = Raleway({
 
 export const metadata: Metadata = {
   title: 'BRC INFINITY',
-  description: 'Lüks, royal ve klasik mobilyalar.',
+  description: 'Luks, royal ve klasik mobilyalar.',
+  icons: {
+    icon: [{ url: '/brc-infinity-logo.png', type: 'image/png' }],
+    shortcut: '/brc-infinity-logo.png',
+    apple: '/brc-infinity-logo.png',
+  },
 };
 
 export default function RootLayout({
