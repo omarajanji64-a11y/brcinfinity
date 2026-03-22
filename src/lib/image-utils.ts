@@ -5,6 +5,8 @@ const NEXT_IMAGE_ALLOWED_HOSTNAMES = new Set([
   'res.cloudinary.com',
 ]);
 
+export const isLocalImagePath = (value: string) => value.startsWith('/');
+
 export const isHttpsImageUrl = (value: string) => {
   if (!value) {
     return false;
@@ -19,6 +21,10 @@ export const isHttpsImageUrl = (value: string) => {
 };
 
 export const canUseNextImage = (value: string) => {
+  if (isLocalImagePath(value)) {
+    return true;
+  }
+
   if (!isHttpsImageUrl(value)) {
     return false;
   }

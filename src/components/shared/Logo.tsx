@@ -12,16 +12,16 @@ export default function Logo() {
   const canRenderWithNextImage = logoUrl ? canUseNextImage(logoUrl) : false;
 
   return (
-    <Link href="/" className="flex items-center gap-2 group">
+    <Link href="/" className="flex items-center justify-center group">
       {logoUrl ? (
-        <div className="relative h-32 w-80">
+        <div className="relative h-24 w-24 sm:h-28 sm:w-28">
           {canRenderWithNextImage ? (
             <Image
               src={logoUrl}
               alt="BRC INFINITY Logo"
               fill
               priority
-              sizes="(max-width: 768px) 220px, 320px"
+              sizes="(max-width: 768px) 96px, 112px"
               className="h-full w-full object-contain"
             />
           ) : (
@@ -36,10 +36,8 @@ export default function Logo() {
         </div>
       ) : (
         <>
-            <Crown className="h-7 w-7 text-accent group-hover:animate-pulse" />
-            <span className="font-headline text-2xl font-bold tracking-tight">
-                BRC INFINITY
-            </span>
+          <Crown className="h-7 w-7 text-accent group-hover:animate-pulse" />
+          <span className="font-headline text-2xl font-bold tracking-tight">BRC INFINITY</span>
         </>
       )}
     </Link>
