@@ -1,37 +1,29 @@
 "use client";
 
-import { useSyncExternalStore } from 'react';
+import { useMemo } from 'react';
+import { collection, deleteDoc, doc } from 'firebase/firestore';
 
-import {
-  DEFAULT_PRODUCTS,
-  deleteStoredProduct,
-  getStoredProducts,
-  subscribeToProducts,
-} from '@/lib/product-storage';
-import type { Product } from '@/lib/products';
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase/client-provider';
+import { normalizeProduct, type Product } from '@/lib/products';
 
 type UseProductsOptions = {
   realtime?: boolean;
 };
 
-const getProductsSnapshot = () => {
-  try {
-    return getStoredProducts();
-  } catch {
-    return DEFAULT_PRODUCTS;
-  }
-};
-
 export function useProducts(_options?: UseProductsOptions) {
-  const products = useSyncExternalStore<Product[]>(
-    subscribeToProducts,
-    getProductsSnapshot,
-    () => DEFAULT_PRODUCTS
+  const firestore = useFirestore();
+  const productsCollection = useMemoFirebase(() => collection(firestore, 'products'), [firestore]);
+  const { data, isLoading, error } = useCollection<Record<string, unknown>>(productsCollection);
+
+  const products = useMemo<Product[]>(
+    () => (data ?? []).map((product) => normalizeProduct(product)),
+    [data]
   );
 
   const deleteProduct = async (id: string) => {
-    deleteStoredProduct(id);
+    const productDoc = doc(firestore, 'products', id);
+    await deleteDoc(productDoc);
   };
 
-  return { products, isLoading: false, error: null, deleteProduct };
+  return { products, isLoading, error, deleteProduct };
 }

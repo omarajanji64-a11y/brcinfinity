@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { doc, setDoc } from 'firebase/firestore';
 import { Loader2, Plus, Trash2, Upload } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { useFirestore } from '@/firebase/client-provider';
 import {
   FIXED_CATEGORY_OPTIONS,
   createLocalizedText,
@@ -24,7 +26,6 @@ import {
   normalizeCategoryKey,
   type Product,
 } from '@/lib/products';
-import { upsertStoredProduct } from '@/lib/product-storage';
 
 type ProductFormProps = {
   product?: Product | null;
@@ -71,6 +72,7 @@ const buildFormState = (product?: Product | null): ProductFormState => {
 };
 
 export default function ProductForm({ product, onSaved }: ProductFormProps) {
+  const firestore = useFirestore();
   const { toast } = useToast();
   const [form, setForm] = useState<ProductFormState>(() => buildFormState(product));
   const [isSaving, setIsSaving] = useState(false);
@@ -233,7 +235,7 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
         imageUrls: validImageUrls,
       };
 
-      upsertStoredProduct(payload);
+      await setDoc(doc(firestore, 'products', form.id), payload, { merge: true });
 
       toast({
         title: 'Urun kaydedildi',

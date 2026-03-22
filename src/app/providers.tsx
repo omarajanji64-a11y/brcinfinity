@@ -1,6 +1,7 @@
 'use client';
 
 import { ThemeProvider } from '@/components/theme-provider';
+import { FirebaseProvider } from '@/firebase/client-provider';
 
 export default function Providers({
   children,
@@ -14,7 +15,7 @@ export default function Providers({
       enableSystem
       disableTransitionOnChange
     >
-      {children}
+      <FirebaseProvider>{children}</FirebaseProvider>
     </ThemeProvider>
   );
 }

@@ -1,0 +1,65 @@
+'use client';
+
+import {
+  addDoc,
+  deleteDoc,
+  setDoc,
+  SetOptions,
+  type CollectionReference,
+  type DocumentReference,
+  updateDoc,
+} from 'firebase/firestore';
+
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
+
+export function setDocumentNonBlocking(docRef: DocumentReference, data: any, options: SetOptions) {
+  setDoc(docRef, data, options).catch(() => {
+    errorEmitter.emit(
+      'permission-error',
+      new FirestorePermissionError({
+        path: docRef.path,
+        operation: 'write',
+        requestResourceData: data,
+      })
+    );
+  });
+}
+
+export function addDocumentNonBlocking(colRef: CollectionReference, data: any) {
+  return addDoc(colRef, data).catch(() => {
+    errorEmitter.emit(
+      'permission-error',
+      new FirestorePermissionError({
+        path: colRef.path,
+        operation: 'create',
+        requestResourceData: data,
+      })
+    );
+  });
+}
+
+export function updateDocumentNonBlocking(docRef: DocumentReference, data: any) {
+  updateDoc(docRef, data).catch(() => {
+    errorEmitter.emit(
+      'permission-error',
+      new FirestorePermissionError({
+        path: docRef.path,
+        operation: 'update',
+        requestResourceData: data,
+      })
+    );
+  });
+}
+
+export function deleteDocumentNonBlocking(docRef: DocumentReference) {
+  deleteDoc(docRef).catch(() => {
+    errorEmitter.emit(
+      'permission-error',
+      new FirestorePermissionError({
+        path: docRef.path,
+        operation: 'delete',
+      })
+    );
+  });
+}
