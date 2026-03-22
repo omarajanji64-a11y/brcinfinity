@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
 import { Readable } from 'stream';
 
+export const runtime = 'nodejs';
+
 // Configure Cloudinary using environment variables
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -13,10 +15,15 @@ cloudinary.config({
 // Reusable function to upload a file stream to Cloudinary
 const uploadStreamToCloudinary = (stream: Readable, fileName: string): Promise<string> => {
   return new Promise((resolve, reject) => {
+    const safeFileName = fileName.replace(/[^\w.-]/g, '_');
+    const fileBaseName = safeFileName.includes('.')
+      ? safeFileName.substring(0, safeFileName.lastIndexOf('.'))
+      : safeFileName;
     const uploadStream = cloudinary.uploader.upload_stream(
       { 
-        folder: 'direct-uploads', // Organize uploads in a specific folder
-        public_id: fileName.substring(0, fileName.lastIndexOf('.')) || fileName // Use filename as public_id
+        folder: 'direct-uploads',
+        public_id: `${fileBaseName}-${Date.now()}`,
+        overwrite: true,
       },
       (error, result) => {
         if (error) {
@@ -54,8 +61,15 @@ export async function POST(req: NextRequest) {
         // 3. Upload each file to Cloudinary in parallel
         const imageUrls = await Promise.all(
             files.map(async (file) => {
-                // Convert the web stream to a Node.js readable stream for Cloudinary's SDK
-                const readableNodeStream = Readable.fromWeb(file.stream() as any);
+                if (!file.type.startsWith('image/')) {
+                    throw new Error(`'${file.name}' bir gorsel dosyasi degil.`);
+                }
+
+                const buffer = Buffer.from(await file.arrayBuffer());
+                const readableNodeStream = new Readable();
+                readableNodeStream.push(buffer);
+                readableNodeStream.push(null);
+
                 return uploadStreamToCloudinary(readableNodeStream, file.name);
             })
         );

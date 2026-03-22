@@ -1,18 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
 import { doc } from 'firebase/firestore';
 import { MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 
 import { useTranslation } from '@/lib/i18n';
 import { useMemoFirebase, useDoc, useFirestore } from '@/firebase/client-provider';
-import type { Product } from '@/lib/data';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import {
+  getLocalizedText,
+  getProductCategoryLabel,
+  getProductName,
+  normalizeProduct,
+} from '@/lib/products';
 
 const transformCloudinaryUrl = (url: string) => {
   if (!url || !url.includes('/upload/')) {
@@ -31,8 +35,9 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     return doc(firestore, 'products', params.id);
   }, [firestore, params.id]);
 
-  const { data: product, isLoading, error } = useDoc<Product>(productRef);
+  const { data: rawProduct, isLoading, error } = useDoc<Record<string, unknown>>(productRef);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const product = useMemo(() => (rawProduct ? normalizeProduct(rawProduct) : null), [rawProduct]);
 
   if (isLoading) {
     return (
@@ -47,13 +52,28 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
   }
 
   if (error || !product) {
-    return notFound();
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-grow container mx-auto px-4 py-12">
+          <div className="rounded-lg border bg-card p-8 text-center">
+            <h1 className="font-headline text-3xl font-bold">Urun bulunamadi</h1>
+            <p className="mt-3 text-muted-foreground">
+              Bu urun silinmis olabilir veya baglanti hatali olabilir.
+            </p>
+            <Button asChild className="mt-6">
+              <Link href="/products">Urunlere don</Link>
+            </Button>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
   }
 
-  const images = product.imageUrls && product.imageUrls.length > 0
-    ? product.imageUrls
-    : (product.imageUrl ? [product.imageUrl] : []);
-  const productName = product.name[language] ?? product.name.en;
+  const images = product.imageUrls.length > 0 ? product.imageUrls : product.imageUrl ? [product.imageUrl] : [];
+  const productName = getProductName(product, language);
+  const categoryLabel = getProductCategoryLabel(product, language, t);
   const formattedPrice = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -123,11 +143,11 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
           </div>
           <div>
             <h1 className="font-headline text-3xl md:text-4xl font-bold mb-4">{productName}</h1>
-            <div className="text-lg text-muted-foreground mb-2">{product.category[language] ?? product.category.en}</div>
+            <div className="text-lg text-muted-foreground mb-2">{categoryLabel}</div>
             {product.price > 0 && <div className="text-xl font-bold text-accent mb-6">{formattedPrice.replace('$', '$ ')}</div>}
             <div className="mb-6">
-              <div className="font-semibold mb-1">{t('product_page.description')}</div>
-              <div>{product.description[language] ?? product.description.en}</div>
+              <div className="font-semibold mb-1">{t('product_form.long_desc_label')}</div>
+              <div>{getLocalizedText(product.description, language)}</div>
             </div>
             <Button asChild className="w-full mt-4">
               <Link href={whatsappUrl} target="_blank" rel="noopener noreferrer">

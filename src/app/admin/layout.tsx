@@ -24,7 +24,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div className="flex-1" />
              <div className="flex items-center gap-2">
                 <Button variant="outline" asChild className="transition-transform duration-300 hover:scale-105">
-                    <a href="/" target="_blank">{t('footer.quick_links')}</a>
+                    <a href="/" target="_blank" rel="noreferrer">{t('header.home')}</a>
                 </Button>
                 <LanguageSwitcher />
             </div>

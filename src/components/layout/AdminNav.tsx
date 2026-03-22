@@ -1,10 +1,9 @@
 
 'use client'
 
-import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Crown, LayoutDashboard, ShoppingCart, BarChart, FileText, Bot, Home, Palette, Paintbrush, Image, BookOpen } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { useTranslation } from '@/lib/i18n';
 import Logo from '../shared/Logo';
@@ -14,15 +13,7 @@ export default function AdminNav() {
   const { t } = useTranslation();
   
   const navItems = [
-    { href: '/admin/dashboard', label: t('admin_nav.dashboard'), icon: LayoutDashboard },
     { href: '/admin/products', label: t('admin_nav.products'), icon: ShoppingCart },
-    { href: '/admin/homepage', label: t('admin_nav.homepage'), icon: Home },
-    { href: '/admin/cloudinary', label: 'Carousel', icon: Image },
-    { href: '/admin/catalogs', label: t('admin_nav.catalogs'), icon: BookOpen },
-    { href: '/admin/theme', label: t('admin_nav.theme'), icon: Palette },
-    { href: '/admin/branding', label: t('admin_nav.branding'), icon: Paintbrush },
-    { href: '/admin/seo', label: t('admin_nav.seo'), icon: Bot },
-    { href: '/admin/importer', label: 'Importer', icon: FileText },
   ];
   
   return (

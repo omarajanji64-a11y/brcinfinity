@@ -1,28 +1,20 @@
 'use client';
 
 import Link from 'next/link';
-import { collection } from 'firebase/firestore';
 import { ArrowRight } from 'lucide-react';
+
 import ProductCard from '@/components/shared/ProductCard';
 import { Button } from '@/components/ui/button';
-import { useCollection, useFirestore, useMemoFirebase } from '@/firebase/client-provider';
-import type { Product } from '@/lib/data';
 import { useTranslation } from '@/lib/i18n';
+import { useProducts } from '@/hooks/use-products';
 import { Skeleton } from '../ui/skeleton';
 import { Card, CardContent, CardHeader } from '../ui/card';
 
 export default function FeaturedProducts() {
   const { t } = useTranslation();
-  const firestore = useFirestore();
-
-  const productsCollectionRef = useMemoFirebase(() => {
-    if (!firestore) return null;
-    return collection(firestore, 'products');
-  }, [firestore]);
-
-  const { data: products, isLoading: isLoadingProducts } = useCollection<Product>(productsCollectionRef);
+  const { products, isLoading: isLoadingProducts } = useProducts();
   
-  const featuredProducts = products?.slice(0, 3) || [];
+  const featuredProducts = products.slice(0, 3);
 
   return (
     <div className="bg-secondary/20">

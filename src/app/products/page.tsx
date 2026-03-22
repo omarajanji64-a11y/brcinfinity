@@ -1,20 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { collection, doc } from 'firebase/firestore';
+import { useEffect, useMemo, useState } from 'react';
+import { doc } from 'firebase/firestore';
 import { Download } from 'lucide-react';
 
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import ProductCard from "@/components/shared/ProductCard";
-import { Product } from "@/lib/data";
-import { useDoc, useFirestore, useMemoFirebase, useCollection } from '@/firebase/client-provider';
+import { useDoc, useFirestore, useMemoFirebase } from '@/firebase/client-provider';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useTranslation, type Language } from '@/lib/i18n';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { useProducts } from '@/hooks/use-products';
+import { buildCategoryOptions, type Product } from '@/lib/products';
 
 type Catalog = {
   id: string;
@@ -83,44 +84,36 @@ type StyleFilter = 'all' | 'Modern' | 'Classic';
 
 export default function ProductsPage() {
   const { t, language } = useTranslation();
-  const firestore = useFirestore();
+  const { products, isLoading: isLoadingProducts } = useProducts();
   const [isClient, setIsClient] = useState(false);
+  const categoryOptions = useMemo(() => buildCategoryOptions(products, language, t), [language, products, t]);
+  const [activeCategory, setActiveCategory] = useState<string>('all');
+  const [styleFilter, setStyleFilter] = useState<StyleFilter>('all');
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  const productsCollectionRef = useMemoFirebase(() => {
-    if (!firestore) return null;
-    return collection(firestore, 'products');
-  }, [firestore]);
+  useEffect(() => {
+    if (activeCategory === 'all') {
+      return;
+    }
 
-  const { data: products, isLoading: isLoadingProducts } = useCollection<Product>(productsCollectionRef);
+    const hasActiveCategory = categoryOptions.some((option) => option.key === activeCategory);
+    if (!hasActiveCategory) {
+      setActiveCategory('all');
+    }
+  }, [activeCategory, categoryOptions]);
 
-  const categories = {
-    'all': t('product_page.all_products'),
-    'dining_room': t('categories.dining_room'),
-    'bedroom': t('categories.bedroom'),
-    'sofa_set': t('categories.sofa_set')
-  };
-  type CategoryKey = keyof typeof categories;
-  
-  const [activeCategory, setActiveCategory] = useState<CategoryKey>('all');
-  const [styleFilter, setStyleFilter] = useState<StyleFilter>('all');
-
-  const getFilteredProducts = () => {
-    if (!products) return [];
-    
-    return products.filter(product => {
-        const productCategoryValue = product.category[language as keyof typeof product.category] || product.category['tr'] || product.category['en'];
-        const targetCategoryValue = activeCategory !== 'all' ? categories[activeCategory] : 'all';
-        
-        const categoryMatch = activeCategory === 'all' || productCategoryValue === targetCategoryValue;
+  const filteredProducts = useMemo(
+    () =>
+      products.filter((product) => {
+        const categoryMatch = activeCategory === 'all' || product.categoryKey === activeCategory;
         const styleMatch = styleFilter === 'all' || product.style === styleFilter;
         return categoryMatch && styleMatch;
-    });
-  }
-  const filteredProducts = getFilteredProducts();
+      }),
+    [activeCategory, products, styleFilter]
+  );
 
   const renderProductGrid = (productsToRender: Product[]) => {
       if (isLoadingProducts) {
@@ -174,13 +167,20 @@ export default function ProductsPage() {
         </div>
         <div className="container mx-auto px-4 py-16">
             <div className="mb-12 p-2 rounded-lg bg-secondary flex flex-col md:flex-row items-center justify-between gap-4">
-              <Tabs value={activeCategory} onValueChange={(value) => setActiveCategory(value as CategoryKey)} className="w-full md:w-auto">
+              <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full md:w-auto">
                   <TabsList className="flex-wrap h-auto bg-transparent p-0">
-                      {isClient && Object.entries(categories).map(([key, value]) => (
-                           <TabsTrigger key={key} value={key} className="data-[state=active]:bg-background/80 data-[state=active]:text-foreground text-muted-foreground hover:text-foreground transition-none rounded-md text-sm md:text-base">
-                            {value}
+                      {isClient && (
+                        <>
+                          <TabsTrigger value="all" className="data-[state=active]:bg-background/80 data-[state=active]:text-foreground text-muted-foreground hover:text-foreground transition-none rounded-md text-sm md:text-base">
+                            {t('product_page.all_products')}
+                          </TabsTrigger>
+                          {categoryOptions.map((option) => (
+                           <TabsTrigger key={option.key} value={option.key} className="data-[state=active]:bg-background/80 data-[state=active]:text-foreground text-muted-foreground hover:text-foreground transition-none rounded-md text-sm md:text-base">
+                            {option.label}
                            </TabsTrigger>
-                      ))}
+                          ))}
+                        </>
+                      )}
                       {!isClient && (
                         // Render skeletons on the server and initial client render
                         <>

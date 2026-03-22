@@ -1,6 +1,8 @@
 
+'use client';
+
 import Link from 'next/link';
-import { Facebook, Instagram, Twitter } from 'lucide-react';
+import { Instagram } from 'lucide-react';
 import Logo from '@/components/shared/Logo';
 import { useTranslation } from '@/lib/i18n';
 
