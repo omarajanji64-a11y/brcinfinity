@@ -28,9 +28,5 @@ service cloud.firestore {
       allow write: if true;
     }
 
-    match /carousel/{docId} {
-      allow read: if true;
-      allow write: if true;
-    }
   }
 }

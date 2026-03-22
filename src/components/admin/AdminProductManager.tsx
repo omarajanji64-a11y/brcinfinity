@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { ArrowLeft, MoreHorizontal, PlusCircle } from 'lucide-react';
 
-import AdminHeroCarouselManager from '@/components/admin/AdminHeroCarouselManager';
 import ProductForm from '@/components/admin/ProductForm';
 import AdminLogoutButton from '@/components/admin/AdminLogoutButton';
 import { Button } from '@/components/ui/button';
@@ -144,8 +143,6 @@ export default function AdminProductManager() {
             </div>
           </CardHeader>
         </Card>
-
-        <AdminHeroCarouselManager />
 
         <Card className="border-white/10 bg-background/95 shadow-2xl shadow-black/30">
           <CardHeader>
