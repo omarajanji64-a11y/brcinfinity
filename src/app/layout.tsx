@@ -26,9 +26,9 @@ export const metadata: Metadata = {
   title: 'BRC INFINITY',
   description: 'Luks, royal ve klasik mobilyalar.',
   icons: {
-    icon: [{ url: '/brc-infinity-logo.png', type: 'image/png' }],
-    shortcut: '/brc-infinity-logo.png',
-    apple: '/brc-infinity-logo.png',
+    icon: [{ url: '/favicon-rounded.png', type: 'image/png' }],
+    shortcut: '/favicon-rounded.png',
+    apple: '/favicon-rounded.png',
   },
 };
 
