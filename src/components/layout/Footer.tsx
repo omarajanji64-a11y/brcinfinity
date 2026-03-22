@@ -44,8 +44,16 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        <div className="mt-8 border-t border-white/10 pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} BRC INFINITY. {t('footer.rights_reserved')}</p>
+        <div className="mt-8 border-t border-white/10 pt-8">
+          <div className="flex flex-col items-center justify-center gap-3 text-center text-sm text-muted-foreground md:flex-row md:justify-between">
+            <p>&copy; {new Date().getFullYear()} BRC INFINITY. {t('footer.rights_reserved')}</p>
+            <Link
+              href="/admin"
+              className="text-xs uppercase tracking-[0.35em] text-muted-foreground transition-colors hover:text-white"
+            >
+              Admin Mode
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
