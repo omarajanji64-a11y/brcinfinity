@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { memo, useState } from 'react';
 import { ArrowUpRight, ChevronLeft, ChevronRight, MessageCircle } from 'lucide-react';
 
-import { buildCloudinaryImageUrl, canUseNextImage, isHttpsImageUrl, isLocalImagePath } from '@/lib/image-utils';
+import { buildCloudinaryImageUrl, canUseNextImage } from '@/lib/image-utils';
 import { buildWhatsAppOrderMessage, getProductCategoryLabel, getProductName, type Product } from '@/lib/products';
 import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,8 +29,7 @@ function ProductCard({ product }: ProductCardProps) {
   const phoneNumber = '905467898968';
   const images = product.imageUrls.length > 0 ? product.imageUrls : product.imageUrl ? [product.imageUrl] : [];
   const currentImage = images[currentImageIndex] || '';
-  const isValidUrl =
-    typeof currentImage === 'string' && (isHttpsImageUrl(currentImage) || isLocalImagePath(currentImage));
+  const isValidUrl = typeof currentImage === 'string' && currentImage.startsWith('https://');
   const transformedUrl = isValidUrl
     ? buildCloudinaryImageUrl(currentImage, {
         width: 560,
