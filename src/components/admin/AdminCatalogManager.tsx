@@ -27,6 +27,7 @@ import {
   type Catalog,
 } from '@/lib/catalogs';
 import { useTranslation } from '@/lib/i18n';
+import { sanitizeUploadFileName } from '@/lib/upload-utils';
 
 type CatalogFormItem = Catalog;
 
@@ -102,8 +103,8 @@ export default function AdminCatalogManager() {
 
     try {
       const formData = new FormData();
-      files.forEach((file) => {
-        formData.append('files', file);
+      files.forEach((file, index) => {
+        formData.append('files', file, sanitizeUploadFileName(file, `katalog-${index + 1}`));
       });
 
       const response = await fetch('/api/upload', {

@@ -11,11 +11,49 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useTranslation } from '@/lib/i18n';
 
+type LanguageCode = 'tr' | 'en' | 'fr';
+
 const LANGUAGE_OPTIONS = [
-  { value: 'tr', label: 'TR', name: 'Turkce', flag: '\uD83C\uDDF9\uD83C\uDDF7' },
-  { value: 'en', label: 'EN', name: 'English', flag: '\uD83C\uDDEC\uD83C\uDDE7' },
-  { value: 'fr', label: 'FR', name: 'Francais', flag: '\uD83C\uDDEB\uD83C\uDDF7' },
+  { value: 'tr', label: 'TR', name: 'Turkce' },
+  { value: 'en', label: 'EN', name: 'English' },
+  { value: 'fr', label: 'FR', name: 'Francais' },
 ] as const;
+
+function LanguageFlag({ language }: { language: LanguageCode }) {
+  if (language === 'tr') {
+    return (
+      <svg viewBox="0 0 24 16" className="h-4 w-5 rounded-[4px] shadow-[0_0_0_1px_rgba(255,255,255,0.08)]" aria-hidden="true">
+        <rect width="24" height="16" rx="2" fill="#E11D48" />
+        <circle cx="10" cy="8" r="4.1" fill="#FFFFFF" />
+        <circle cx="11.3" cy="8" r="3.3" fill="#E11D48" />
+        <path d="M14.7 8l1.4.45-.87-1.18 1.33-.56-1.46-.08-.4-1.4-.39 1.4-1.46.08 1.33.56-.87 1.18L14.7 8Z" fill="#FFFFFF" />
+      </svg>
+    );
+  }
+
+  if (language === 'fr') {
+    return (
+      <svg viewBox="0 0 24 16" className="h-4 w-5 rounded-[4px] shadow-[0_0_0_1px_rgba(255,255,255,0.08)]" aria-hidden="true">
+        <rect width="8" height="16" rx="2" fill="#1D4ED8" />
+        <rect x="8" width="8" height="16" fill="#F8FAFC" />
+        <rect x="16" width="8" height="16" rx="2" fill="#DC2626" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 16" className="h-4 w-5 rounded-[4px] shadow-[0_0_0_1px_rgba(255,255,255,0.08)]" aria-hidden="true">
+      <rect width="24" height="16" rx="2" fill="#1D4ED8" />
+      <path d="M0 1.5 9.2 7.4V16h2.6V7.4L21 1.5V0h-2.3L12 4.2 5.3 0H0v1.5Z" fill="#F8FAFC" />
+      <path d="M24 1.5 14.8 7.4V16h-2.6V7.4L3 1.5V0h2.3L12 4.2 18.7 0H24v1.5Z" fill="#F8FAFC" />
+      <path d="M10 0h4v16h-4z" fill="#F8FAFC" />
+      <path d="M0 6h24v4H0z" fill="#F8FAFC" />
+      <path d="M0 0h1.3L9.6 5.2H7.3L0 0Zm22.7 0H24v.9L16.5 5.2h-2.3L22.7 0ZM24 15.1V16h-1.3l-8.5-5.2h2.3L24 15.1ZM1.3 16H0v-.9l7.5-4.3h2.3L1.3 16Z" fill="#DC2626" />
+      <path d="M10.8 0h2.4v16h-2.4z" fill="#DC2626" />
+      <path d="M0 6.8h24v2.4H0z" fill="#DC2626" />
+    </svg>
+  );
+}
 
 export default function LanguageSwitcher() {
   const { language, setLanguage } = useTranslation();
@@ -27,9 +65,9 @@ export default function LanguageSwitcher() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="h-9 rounded-full px-3 text-primary/78 transition-colors hover:bg-[rgba(255,245,221,0.06)] hover:text-primary"
+          className="h-9 rounded-full px-3 text-primary/82 transition-colors hover:bg-[rgba(255,245,221,0.06)] hover:text-primary"
         >
-          <span className="text-base leading-none">{activeLanguage.flag}</span>
+          <LanguageFlag language={activeLanguage.value} />
           <span className="text-[0.72rem] font-semibold uppercase tracking-[0.16em]">
             {activeLanguage.label}
           </span>
@@ -49,7 +87,7 @@ export default function LanguageSwitcher() {
               language === option.value ? 'bg-white/[0.06] text-primary' : ''
             }`}
           >
-            <span className="text-base leading-none">{option.flag}</span>
+            <LanguageFlag language={option.value} />
             <span className="min-w-[1.9rem] text-[0.72rem] font-semibold uppercase tracking-[0.16em]">
               {option.label}
             </span>

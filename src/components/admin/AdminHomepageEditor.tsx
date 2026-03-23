@@ -29,6 +29,7 @@ import { buildCloudinaryImageUrl } from '@/lib/image-utils';
 import type { Language } from '@/lib/i18n';
 import { useTranslation } from '@/lib/i18n';
 import type { CategoryImage } from '@/lib/site-config';
+import { sanitizeUploadFileName } from '@/lib/upload-utils';
 
 type EditableCategoryImage = CategoryImage;
 
@@ -84,7 +85,7 @@ export default function AdminHomepageEditor() {
 
     try {
       const formData = new FormData();
-      formData.append('files', file);
+      formData.append('files', file, sanitizeUploadFileName(file, `homepage-${id}`));
 
       const response = await fetch('/api/upload', {
         method: 'POST',
