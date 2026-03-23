@@ -17,9 +17,9 @@ export default function FeaturedProducts() {
   const sectionCopy =
     language === 'tr'
       ? {
-          kicker: 'Seckin urunler',
+          kicker: 'Seçkin ürünler',
           description:
-            'Klasik mobilya anlayisimizi en iyi yansitan secili takimlari burada kesfedin.',
+            'Klasik mobilya anlayışımızı en iyi yansıtan seçili takımları burada keşfedin.',
         }
       : language === 'fr'
         ? {

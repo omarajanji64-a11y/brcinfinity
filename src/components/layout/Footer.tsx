@@ -11,7 +11,7 @@ export default function Footer() {
   const { t, language } = useTranslation();
   const showroomCopy =
     language === 'tr'
-      ? 'Masko Mobilyacilar Sitesi 18/B Blok No:35, Istanbul'
+      ? 'Masko Mobilyacılar Sitesi 18/B Blok No:35, İstanbul'
       : language === 'fr'
         ? 'Showroom principal a Masko, Istanbul'
         : 'Main showroom at Masko, Istanbul';
@@ -59,7 +59,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <Link href="/about-us" className="text-sm text-primary/66 transition-colors hover:text-primary">
-                    Hakkimizda
+                    Hakkımızda
                   </Link>
                 </li>
                 <li>

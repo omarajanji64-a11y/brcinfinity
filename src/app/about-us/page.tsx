@@ -74,14 +74,14 @@ export default function AboutUsPage() {
     language === 'tr'
       ? {
           kicker: 'Marka hikayesi',
-          title: 'Klasik ihtisami daha rafine ve guven veren bir dile donusturuyoruz.',
+          title: 'Klasik ihtişamı daha rafine ve güven veren bir dile dönüştürüyoruz.',
           lead:
-            'BRC Infinity, klasik mobilyayi sadece gosteri olarak degil; kalicilik, denge ve mekan karakteri olarak ele alir.',
+            'BRC Infinity, klasik mobilyayı sadece gösteri olarak değil; kalıcılık, denge ve mekan karakteri olarak ele alır.',
           body:
-            'Her koleksiyonda oran, malzeme ve detay uyumunu ayni ciddiyetle ele aliyor; yasam alanlarina zamansiz, guclu ve huzurlu bir atmosfer kazandiriyoruz.',
-          sideTitle: 'Ne uzerine insa ediyoruz?',
+            'Her koleksiyonda oran, malzeme ve detay uyumunu aynı ciddiyetle ele alıyor; yaşam alanlarına zamansız, güçlü ve huzurlu bir atmosfer kazandırıyoruz.',
+          sideTitle: 'Ne üzerine inşa ediyoruz?',
           sideDescription:
-            'Secili koleksiyon, saglam iscilik ve showroom deneyimini tek cizgide birlestiren daha kontrollu bir marka dili.',
+            'Seçili koleksiyon, sağlam işçilik ve showroom deneyimini tek çizgide birleştiren daha kontrollü bir marka dili.',
         }
       : language === 'fr'
         ? {
@@ -121,7 +121,7 @@ export default function AboutUsPage() {
       value: 'Classic',
       label:
         language === 'tr'
-          ? 'Imza koleksiyon hissi'
+          ? 'İmza koleksiyon hissi'
           : language === 'fr'
             ? 'Signature classique'
             : 'Signature classic mood',
@@ -130,7 +130,7 @@ export default function AboutUsPage() {
       value: 'Premium',
       label:
         language === 'tr'
-          ? 'Malzeme ve detay secimi'
+          ? 'Malzeme ve detay seçimi'
           : language === 'fr'
             ? 'Selection des details'
             : 'Material and detail curation',
@@ -147,7 +147,7 @@ export default function AboutUsPage() {
             : 'Classical elegance',
       description:
         language === 'tr'
-          ? 'Oyma, varak ve oran duygusunu daha sakin bir luks anlayisiyla dengeliyoruz.'
+          ? 'Oyma, varak ve oran duygusunu daha sakin bir lüks anlayışıyla dengeliyoruz.'
           : language === 'fr'
             ? 'Nous equilibrons sculpture, dorure et proportions avec une idee du luxe plus calme.'
             : 'We balance carving, gilding, and proportion with a calmer idea of luxury.',
@@ -156,13 +156,13 @@ export default function AboutUsPage() {
     {
       title:
         language === 'tr'
-          ? 'Guven veren dayaniklilik'
+          ? 'Güven veren dayanıklılık'
           : language === 'fr'
             ? 'Durabilite rassurante'
             : 'Assured durability',
       description:
         language === 'tr'
-          ? 'Uzun omurlu kullanim icin malzeme secimini ve iscilik disiplinini birlikte ele aliyoruz.'
+          ? 'Uzun ömürlü kullanım için malzeme seçimini ve işçilik disiplinini birlikte ele alıyoruz.'
           : language === 'fr'
             ? 'Nous associons choix des materiaux et discipline d execution pour une utilisation durable.'
             : 'We pair material selection with disciplined execution for long-term use.',
@@ -171,13 +171,13 @@ export default function AboutUsPage() {
     {
       title:
         language === 'tr'
-          ? 'Sorumlu ustalik'
+          ? 'Sorumlu ustalık'
           : language === 'fr'
             ? 'Savoir-faire responsable'
             : 'Responsible craftsmanship',
       description:
         language === 'tr'
-          ? 'Mekanin degerini koruyan, gereksiz gosteriden uzak ama etkili bir ustalik anlayisi.'
+          ? 'Mekanın değerini koruyan, gereksiz gösteriden uzak ama etkili bir ustalık anlayışı.'
           : language === 'fr'
             ? 'Une maitrise efficace, eloignee de l exces, qui respecte la valeur de l espace.'
             : 'An effective craft language that respects the space without unnecessary excess.',
@@ -187,10 +187,10 @@ export default function AboutUsPage() {
 
   const missionItems = [
     {
-      title: getLocalizedValue({ tr: 'Amacli luks', en: 'Purposeful luxury', fr: 'Luxe intentionnel' }, language),
+      title: getLocalizedValue({ tr: 'Amaçlı lüks', en: 'Purposeful luxury', fr: 'Luxe intentionnel' }, language),
       description: getLocalizedValue(
         {
-          tr: 'Klasik cizgiyi modern konforla bulusturan, kullanildikca deger kazanan mekanlar kurmak.',
+          tr: 'Klasik çizgiyi modern konforla buluşturan, kullanıldıkça değer kazanan mekanlar kurmak.',
           en: 'To shape interiors where classical lines meet modern comfort and gain value over time.',
           fr: 'Creer des interieurs ou les lignes classiques rencontrent le confort moderne et gagnent en valeur.',
         },
@@ -199,10 +199,10 @@ export default function AboutUsPage() {
       Icon: LuxuryIcon,
     },
     {
-      title: getLocalizedValue({ tr: 'Guvenli kalite', en: 'Reliable quality', fr: 'Qualite fiable' }, language),
+      title: getLocalizedValue({ tr: 'Güvenli kalite', en: 'Reliable quality', fr: 'Qualite fiable' }, language),
       description: getLocalizedValue(
         {
-          tr: 'Saglam malzeme, kontrollu iscilik ve dengeli tasarimla uzun omurlu kullanim sunmak.',
+          tr: 'Sağlam malzeme, kontrollü işçilik ve dengeli tasarımla uzun ömürlü kullanım sunmak.',
           en: 'To deliver longevity through solid materials, controlled execution, and balanced design.',
           fr: 'Offrir une longue duree de vie grace a des materiaux solides, une execution maitrisee et un design equilibre.',
         },
@@ -214,7 +214,7 @@ export default function AboutUsPage() {
       title: getLocalizedValue({ tr: 'Mekan uyumu', en: 'Spatial harmony', fr: 'Harmonie de l espace' }, language),
       description: getLocalizedValue(
         {
-          tr: 'Urunu tek basina degil, mekanin genel dili icinde degerlendiren bir secim anlayisi kurmak.',
+          tr: 'Ürünü tek başına değil, mekanın genel dili içinde değerlendiren bir seçim anlayışı kurmak.',
           en: 'To curate products not in isolation, but as part of a complete interior language.',
           fr: 'Choisir les pieces non isolees, mais comme partie d un langage interieur complet.',
         },
@@ -226,10 +226,10 @@ export default function AboutUsPage() {
 
   const visionItems = [
     {
-      title: getLocalizedValue({ tr: 'Zamansiz imza', en: 'Timeless signature', fr: 'Signature intemporelle' }, language),
+      title: getLocalizedValue({ tr: 'Zamansız imza', en: 'Timeless signature', fr: 'Signature intemporelle' }, language),
       description: getLocalizedValue(
         {
-          tr: 'Klasik mobilyada daha rafine, daha secici ve uzun omurlu bir marka izi birakmak.',
+          tr: 'Klasik mobilyada daha rafine, daha seçici ve uzun ömürlü bir marka izi bırakmak.',
           en: 'To leave a more refined, selective, and lasting signature in classical furniture.',
           fr: 'Laisser une signature plus raffinee, selective et durable dans le mobilier classique.',
         },
@@ -238,10 +238,10 @@ export default function AboutUsPage() {
       Icon: TimelessIcon,
     },
     {
-      title: getLocalizedValue({ tr: 'Ustalik mirasi', en: 'Craft legacy', fr: 'Heritage du savoir-faire' }, language),
+      title: getLocalizedValue({ tr: 'Ustalık mirası', en: 'Craft legacy', fr: 'Heritage du savoir-faire' }, language),
       description: getLocalizedValue(
         {
-          tr: 'Nesiller boyunca guvenle anilacak bir kalite standardi insa etmek.',
+          tr: 'Nesiller boyunca güvenle anılacak bir kalite standardı inşa etmek.',
           en: 'To build a quality standard that can be trusted across generations.',
           fr: 'Construire un niveau de qualite reconnu et fiable au fil des generations.',
         },
@@ -250,10 +250,10 @@ export default function AboutUsPage() {
       Icon: LegacyIcon,
     },
     {
-      title: getLocalizedValue({ tr: 'Secili buyume', en: 'Selective growth', fr: 'Croissance choisie' }, language),
+      title: getLocalizedValue({ tr: 'Seçili büyüme', en: 'Selective growth', fr: 'Croissance choisie' }, language),
       description: getLocalizedValue(
         {
-          tr: 'Her yeni adimda marka tonunu ve koleksiyon kalitesini koruyan kontrollu bir genisleme.',
+          tr: 'Her yeni adımda marka tonunu ve koleksiyon kalitesini koruyan kontrollü bir genişleme.',
           en: 'Measured expansion that protects the tone of the brand and the quality of each collection.',
           fr: 'Une expansion maitrisee qui preserve le ton de la marque et la qualite de chaque collection.',
         },
@@ -353,7 +353,7 @@ export default function AboutUsPage() {
               </h2>
               <p className="section-copy animate-reveal animate-reveal-delay-2 mt-5">
                 {language === 'tr'
-                  ? 'Tasarim dilimizi sadece urun bazinda degil, markanin uzun vadeli tutarliligi icin de kuruyoruz.'
+                  ? 'Tasarım dilimizi sadece ürün bazında değil, markanın uzun vadeli tutarlılığı için de kuruyoruz.'
                   : language === 'fr'
                     ? 'Nous construisons notre langage design non seulement pour le produit, mais aussi pour la coherence durable de la marque.'
                     : 'We shape our design language not only for individual products, but for the long-term consistency of the brand.'}
@@ -413,18 +413,18 @@ export default function AboutUsPage() {
               <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
                 <div className="max-w-3xl">
                   <p className="section-kicker animate-reveal">
-                    {language === 'tr' ? 'Birlikte kuralim' : language === 'fr' ? 'Construisons ensemble' : 'Let us shape it together'}
+                    {language === 'tr' ? 'Birlikte kuralım' : language === 'fr' ? 'Construisons ensemble' : 'Let us shape it together'}
                   </p>
                   <h2 className="animate-reveal animate-reveal-delay-1 mt-5 font-headline text-4xl font-semibold text-primary md:text-5xl">
                     {language === 'tr'
-                      ? 'Mekana uygun klasik bir koleksiyon dili birlikte netlestirelim.'
+                      ? 'Mekana uygun klasik bir koleksiyon dili birlikte netleştirelim.'
                       : language === 'fr'
                         ? 'Definissons ensemble une ligne classique adaptee a votre interieur.'
                         : 'Let us define a classical collection language that fits your interior.'}
                   </h2>
                   <p className="animate-reveal animate-reveal-delay-2 mt-5 max-w-2xl text-base leading-8 text-primary/58">
                     {language === 'tr'
-                      ? 'Yemek odasi, yatak odasi ve salon secimlerini mekaninizin olcusu ve atmosferiyle uyumlu olacak sekilde yonlendiriyoruz.'
+                      ? 'Yemek odası, yatak odası ve salon seçimlerini mekanınızın ölçüsü ve atmosferiyle uyumlu olacak şekilde yönlendiriyoruz.'
                       : language === 'fr'
                         ? 'Nous guidons les selections de salon, salle a manger et chambre selon les dimensions et l atmosphere de votre espace.'
                         : 'We guide living, dining, and bedroom selections according to the proportions and atmosphere of your space.'}

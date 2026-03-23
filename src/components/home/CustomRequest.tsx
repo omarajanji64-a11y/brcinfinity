@@ -11,17 +11,17 @@ export default function CustomRequest() {
   const { t, language } = useTranslation();
   const supportPoints =
     language === 'tr'
-      ? ['Olcuye gore uyarlama', 'Malzeme secimi', 'Proje yonlendirmesi']
+      ? ['Ölçüye göre uyarlama', 'Malzeme seçimi', 'Proje yönlendirmesi']
       : language === 'fr'
         ? ['Dimensions adaptees', 'Choix des materiaux', 'Orientation projet']
         : ['Tailored sizing', 'Material selection', 'Project guidance'];
   const sideCopy =
     language === 'tr'
       ? {
-          kicker: 'Klasik mekan danismanligi',
-          title: 'Daha sakin, daha guclu bir mekan dili birlikte kurulsun.',
+          kicker: 'Klasik mekan danışmanlığı',
+          title: 'Daha sakin, daha güçlü bir mekan dili birlikte kurulsun.',
           description:
-            'Ekibimiz, mekaninizin olculerine ve ihtiyacina gore urun, oran ve genel atmosfer kararlarini birlikte netlestirir.',
+            'Ekibimiz, mekanınızın ölçülerine ve ihtiyacına göre ürün, oran ve genel atmosfer kararlarını birlikte netleştirir.',
         }
       : language === 'fr'
         ? {

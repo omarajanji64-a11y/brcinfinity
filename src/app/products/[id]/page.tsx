@@ -121,12 +121,12 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
         <Header />
         <main className="container mx-auto flex-grow px-4 py-12">
           <div className="theme-panel rounded-lg border bg-card p-8 text-center">
-            <h1 className="font-headline text-3xl font-bold">Urun bulunamadi</h1>
+            <h1 className="font-headline text-3xl font-bold">Ürün bulunamadı</h1>
             <p className="mt-3 text-muted-foreground">
-              Bu urun silinmis olabilir veya baglanti hatali olabilir.
+              Bu ürün silinmiş olabilir veya bağlantı hatalı olabilir.
             </p>
             <Button asChild className="mt-6">
-              <Link href="/products">Urunlere don</Link>
+              <Link href="/products">Ürünlere dön</Link>
             </Button>
           </div>
         </main>
@@ -142,7 +142,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
   const imageAlt =
     productName ||
     categoryLabel ||
-    (language === 'tr' ? 'Urun gorseli' : language === 'fr' ? 'Image du produit' : 'Product image');
+    (language === 'tr' ? 'Ürün görseli' : language === 'fr' ? 'Image du produit' : 'Product image');
   const phoneNumber = '905467898968';
   const message = buildWhatsAppOrderMessage({
     language,

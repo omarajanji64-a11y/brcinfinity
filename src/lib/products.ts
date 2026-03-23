@@ -21,9 +21,9 @@ export type Product = {
 type TranslationFn = (key: string) => string;
 
 export const FIXED_CATEGORY_OPTIONS = [
-  { key: 'living-room', translationKey: 'categories.living_room', adminLabel: 'Oturma Odasi' },
-  { key: 'dining-room', translationKey: 'categories.dining_room', adminLabel: 'Yemek Odasi' },
-  { key: 'bedroom', translationKey: 'categories.bedroom', adminLabel: 'Yatak Odasi' },
+  { key: 'living-room', translationKey: 'categories.living_room', adminLabel: 'Oturma Odası' },
+  { key: 'dining-room', translationKey: 'categories.dining_room', adminLabel: 'Yemek Odası' },
+  { key: 'bedroom', translationKey: 'categories.bedroom', adminLabel: 'Yatak Odası' },
 ] as const;
 
 const KNOWN_CATEGORY_LABELS: Record<string, string> = {
@@ -261,21 +261,21 @@ export const buildWhatsAppOrderMessage = ({
 }) => {
   const intro =
     language === 'tr'
-      ? 'Merhaba, bu urun icin siparis vermek istiyorum:'
+      ? 'Merhaba, bu ürün için sipariş vermek istiyorum:'
       : language === 'fr'
         ? 'Bonjour, je souhaite commander ce produit :'
         : 'Hello, I would like to order this product:';
 
   const nameLabel =
     language === 'tr'
-      ? 'Urun Adi'
+      ? 'Ürün Adı'
       : language === 'fr'
         ? 'Nom'
         : 'Name';
 
   const imageLabel =
     language === 'tr'
-      ? 'Urun Gorseli'
+      ? 'Ürün Görseli'
       : language === 'fr'
         ? 'Image'
         : 'Image';

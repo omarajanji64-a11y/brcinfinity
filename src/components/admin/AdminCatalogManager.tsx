@@ -115,7 +115,7 @@ export default function AdminCatalogManager() {
       const payload = await response.json();
 
       if (!response.ok) {
-        throw new Error(payload.error || 'PDF dosyalari yuklenemedi.');
+        throw new Error(payload.error || 'PDF dosyaları yüklenemedi.');
       }
 
       const uploadedUrls = Array.isArray(payload.pdfUrls)
@@ -125,7 +125,7 @@ export default function AdminCatalogManager() {
           : [];
 
       if (uploadedUrls.length === 0) {
-        throw new Error('Sunucudan gecerli PDF adresi donmedi.');
+        throw new Error('Sunucudan geçerli PDF adresi dönmedi.');
       }
 
       setHasLocalChanges(true);
@@ -139,14 +139,14 @@ export default function AdminCatalogManager() {
       ]);
 
       toast({
-        title: 'PDF yuklendi',
-        description: `${uploadedUrls.length} katalog forma eklendi. Kaydet butonuyla yayinlayabilirsin.`,
+        title: 'PDF yüklendi',
+        description: `${uploadedUrls.length} katalog forma eklendi. Kaydet butonuyla yayınlayabilirsin.`,
       });
     } catch (uploadError) {
       toast({
         variant: 'destructive',
-        title: 'PDF yukleme basarisiz',
-        description: uploadError instanceof Error ? uploadError.message : 'PDF dosyalari yuklenemedi.',
+        title: 'PDF yükleme başarısız',
+        description: uploadError instanceof Error ? uploadError.message : 'PDF dosyaları yüklenemedi.',
       });
     } finally {
       setIsUploading(false);
@@ -169,7 +169,7 @@ export default function AdminCatalogManager() {
       toast({
         variant: 'destructive',
         title: 'Eksik katalog bilgisi',
-        description: 'Her katalog icin ad ve gecerli bir PDF adresi girmen gerekiyor.',
+        description: 'Her katalog için ad ve geçerli bir PDF adresi girmen gerekiyor.',
       });
       return;
     }
@@ -190,12 +190,12 @@ export default function AdminCatalogManager() {
 
       toast({
         title: 'Kataloglar kaydedildi',
-        description: 'PDF katalog listesi sitede kullanilmak uzere guncellendi.',
+        description: 'PDF katalog listesi sitede kullanılmak üzere güncellendi.',
       });
     } catch (saveError) {
       toast({
         variant: 'destructive',
-        title: 'Kaydetme basarisiz',
+        title: 'Kaydetme başarısız',
         description: saveError instanceof Error ? saveError.message : 'Kataloglar kaydedilemedi.',
       });
     } finally {
@@ -211,7 +211,7 @@ export default function AdminCatalogManager() {
             <p className="text-xs uppercase tracking-[0.35em] text-accent">Admin Mode</p>
             <CardTitle className="font-headline text-3xl">{t('admin_nav.catalogs')}</CardTitle>
             <CardDescription className="max-w-2xl">
-              PDF kataloglarini yukle, isimlendir ve sitedeki katalog indirme alaninda yayinla.
+              PDF kataloglarını yükle, isimlendir ve sitedeki katalog indirme alanında yayınla.
             </CardDescription>
           </div>
 
@@ -223,7 +223,7 @@ export default function AdminCatalogManager() {
               </Link>
             </Button>
             <Button variant="outline" asChild>
-              <Link href="/">Siteye don</Link>
+              <Link href="/">Siteye dön</Link>
             </Button>
             <AdminLogoutButton />
           </div>
@@ -234,15 +234,15 @@ export default function AdminCatalogManager() {
         <CardHeader>
           <CardTitle>PDF katalog listesi</CardTitle>
           <CardDescription>
-            PDF dosyalarini cihazindan yukleyebilir veya harici katalog baglantilarini manuel ekleyebilirsin.
+            PDF dosyalarını cihazından yükleyebilir veya harici katalog bağlantılarını manuel ekleyebilirsin.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="rounded-[1.1rem] border border-white/10 bg-black/10 p-4">
             <div className="space-y-1">
-              <Label htmlFor="catalog-pdf-upload">PDF yukle</Label>
+              <Label htmlFor="catalog-pdf-upload">PDF yükle</Label>
               <p className="text-sm text-muted-foreground">
-                Yuklenen her PDF yeni bir katalog satiri olarak eklenir. Son adimda kaydetmeyi unutma.
+                Yüklenen her PDF yeni bir katalog satırı olarak eklenir. Son adımda kaydetmeyi unutma.
               </p>
             </div>
 
@@ -260,12 +260,12 @@ export default function AdminCatalogManager() {
                 {isUploading ? (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>PDF dosyalari yukleniyor...</span>
+                    <span>PDF dosyaları yükleniyor...</span>
                   </div>
                 ) : null}
                 <Button type="button" variant="outline" onClick={addCatalog}>
                   <PlusCircle className="mr-2 h-4 w-4" />
-                  Bos katalog satiri ekle
+                  Boş katalog satırı ekle
                 </Button>
               </div>
             </div>
@@ -273,7 +273,7 @@ export default function AdminCatalogManager() {
 
           {error ? (
             <div className="rounded-[1.1rem] border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">
-              Kataloglar okunurken bir sorun olustu. Yine de duzenleme yapabilirsin, ancak kaydetmeden once baglantiyi
+              Kataloglar okunurken bir sorun oluştu. Yine de düzenleme yapabilirsin, ancak kaydetmeden önce bağlantıyı
               kontrol etmen iyi olur.
             </div>
           ) : null}
@@ -281,21 +281,21 @@ export default function AdminCatalogManager() {
           {isLoading && items.length === 0 ? (
             <div className="flex items-center gap-2 rounded-[1.1rem] border border-white/10 p-4 text-sm text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin" />
-              <span>Kataloglar yukleniyor...</span>
+              <span>Kataloglar yükleniyor...</span>
             </div>
           ) : null}
 
           {items.length === 0 ? (
             <div className="rounded-[1.1rem] border border-dashed border-white/12 p-8 text-center">
               <FileText className="mx-auto h-10 w-10 text-accent/80" />
-              <p className="mt-4 text-base font-medium text-primary">Henuz katalog eklenmedi</p>
+              <p className="mt-4 text-base font-medium text-primary">Henüz katalog eklenmedi</p>
               <p className="mt-2 text-sm text-muted-foreground">
-                PDF yukleyerek veya bos satir ekleyerek ilk katalogunu olusturabilirsin.
+                PDF yükleyerek veya boş satır ekleyerek ilk katalogunu oluşturabilirsin.
               </p>
               <div className="mt-5 flex flex-wrap justify-center gap-3">
                 <Button type="button" variant="outline" onClick={addCatalog}>
                   <PlusCircle className="mr-2 h-4 w-4" />
-                  Bos katalog satiri
+                  Boş katalog satırı
                 </Button>
               </div>
             </div>
@@ -309,7 +309,7 @@ export default function AdminCatalogManager() {
                     <div className="mb-4 flex items-center justify-between gap-3">
                       <div>
                         <p className="text-sm font-medium text-primary">Katalog {index + 1}</p>
-                        <p className="text-xs text-muted-foreground">PDF baglantisi ve gorunen katalog adini duzenle.</p>
+                        <p className="text-xs text-muted-foreground">PDF bağlantısı ve görünen katalog adını düzenle.</p>
                       </div>
                       <Button type="button" variant="destructive" size="icon" onClick={() => removeCatalog(item.id)}>
                         <Trash2 className="h-4 w-4" />
@@ -318,12 +318,12 @@ export default function AdminCatalogManager() {
 
                     <div className="grid gap-4 xl:grid-cols-[1fr_1.6fr_auto]">
                       <div className="space-y-2">
-                        <Label htmlFor={`catalog-name-${item.id}`}>Katalog adi</Label>
+                        <Label htmlFor={`catalog-name-${item.id}`}>Katalog adı</Label>
                         <Input
                           id={`catalog-name-${item.id}`}
                           value={item.name}
                           onChange={(event) => updateItem(item.id, 'name', event.target.value)}
-                          placeholder="Ornek: 2026 Koleksiyonu"
+                          placeholder="Örnek: 2026 Koleksiyonu"
                         />
                       </div>
 
@@ -342,12 +342,12 @@ export default function AdminCatalogManager() {
                           <Button variant="outline" asChild className="w-full xl:w-auto">
                             <a href={item.url.trim()} target="_blank" rel="noopener noreferrer">
                               <Upload className="mr-2 h-4 w-4" />
-                              PDF ac
+                              PDF aç
                             </a>
                           </Button>
                         ) : (
                           <div className="w-full rounded-[0.9rem] border border-dashed border-white/10 px-4 py-2 text-sm text-muted-foreground xl:w-auto">
-                            Gecerli link bekleniyor
+                            Geçerli link bekleniyor
                           </div>
                         )}
                       </div>
@@ -361,7 +361,7 @@ export default function AdminCatalogManager() {
           <div className="flex justify-end gap-3">
             <Button type="button" onClick={handleSave} disabled={isSaving || isUploading}>
               {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-              {isSaving ? 'Kaydediliyor' : 'Kataloglari Kaydet'}
+              {isSaving ? 'Kaydediliyor' : 'Katalogları Kaydet'}
             </Button>
           </div>
         </CardContent>

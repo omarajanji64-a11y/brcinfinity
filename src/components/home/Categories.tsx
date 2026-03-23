@@ -18,9 +18,9 @@ export default function Categories() {
     language === 'tr'
       ? {
           kicker: 'Klasik kategoriler',
-          title: 'Klasik yasam alanlari icin seckin koleksiyonlar',
+          title: 'Klasik yaşam alanları için seçkin koleksiyonlar',
           description:
-            'Salon, yemek odasi ve yatak odasi icin hazirlanan secmelerimiz; oyma, varak ve zamansiz oranlarla klasik bir butunluk kurar.',
+            'Salon, yemek odası ve yatak odası için hazırlanan seçmelerimiz; oyma, varak ve zamansız oranlarla klasik bir bütünlük kurar.',
         }
       : language === 'fr'
         ? {

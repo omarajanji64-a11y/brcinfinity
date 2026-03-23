@@ -16,11 +16,11 @@ import { useTranslation } from '@/lib/i18n';
 import LanguageSwitcher from '../shared/LanguageSwitcher';
 
 export default function Header() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const navLinksLeft = [
     { href: '/', label: t('header.home') },
     { href: '/products', label: t('header.products') },
-    { href: '/about-us', label: 'Hakkimizda' },
+    { href: '/about-us', label: 'Hakkımızda' },
   ];
   const navLinksRight = [{ href: '/contact', label: t('header.contact') }];
   const navLinkClass =
@@ -91,7 +91,9 @@ export default function Header() {
                     </div>
 
                     <div className="theme-panel rounded-[1.2rem] p-5">
-                      <p className="text-[0.7rem] uppercase tracking-[0.16em] text-accent/84">Navigation</p>
+                      <p className="text-[0.7rem] uppercase tracking-[0.16em] text-accent/84">
+                        {language === 'tr' ? 'Menü' : 'Navigation'}
+                      </p>
                       <nav className="mt-6 flex flex-col gap-5">
                         {[...navLinksLeft, ...navLinksRight].map((link) => (
                           <SheetClose asChild key={link.href}>

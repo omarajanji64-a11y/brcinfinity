@@ -13,11 +13,11 @@ export async function POST(request: Request) {
   const password = body?.password?.trim();
 
   if (!password) {
-    return NextResponse.json({ error: 'Sifre gerekli.' }, { status: 400 });
+    return NextResponse.json({ error: 'Şifre gerekli.' }, { status: 400 });
   }
 
   if (password !== ADMIN_PASSWORD) {
-    return NextResponse.json({ error: 'Sifre yanlis.' }, { status: 401 });
+    return NextResponse.json({ error: 'Şifre yanlış.' }, { status: 401 });
   }
 
   const response = NextResponse.json({ success: true });

@@ -54,14 +54,14 @@ export default function ContactPage() {
   const heroCopy =
     language === 'tr'
       ? {
-          kicker: 'Iletisim ve proje destegi',
+          kicker: 'İletişim ve proje desteği',
           intro:
-            'Showroom randevusu, urun secimi veya mekan yonlendirmesi icin ekibimizle dogrudan iletisime gecebilirsin.',
+            'Showroom randevusu, ürün seçimi veya mekan yönlendirmesi için ekibimizle doğrudan iletişime geçebilirsin.',
           note:
-            'Formu doldurabilir ya da dogrudan telefon uzerinden bize ulasarak daha hizli bir gorusme planlayabilirsin.',
-          hours: 'Her gun 09:00 - 19:00',
-          consultationTitle: 'Gorusmede neleri netlestiriyoruz?',
-          consultationItems: ['Mekan olculeri', 'Urun kategorileri', 'Malzeme ve ton secimi'],
+            'Formu doldurabilir ya da doğrudan telefon üzerinden bize ulaşarak daha hızlı bir görüşme planlayabilirsin.',
+          hours: 'Her gün 09:00 - 19:00',
+          consultationTitle: 'Görüşmede neleri netleştiriyoruz?',
+          consultationItems: ['Mekan ölçüleri', 'Ürün kategorileri', 'Malzeme ve ton seçimi'],
         }
       : language === 'fr'
         ? {
@@ -88,7 +88,7 @@ export default function ContactPage() {
   const contactCards = [
     {
       title: t('contact_page.showroom.address'),
-      value: 'Masko Mobilyacilar Sitesi 18/B Blok No:35, Istanbul',
+      value: 'Masko Mobilyacılar Sitesi 18/B Blok No:35, İstanbul',
       Icon: MapPin,
     },
     {
@@ -193,7 +193,7 @@ export default function ContactPage() {
                   <div className="mt-10 space-y-5 text-sm text-primary/64">
                     <div className="flex items-start gap-3">
                       <MapPin className="mt-1 h-4 w-4 text-accent" />
-                      <span>Masko Mobilyacilar Sitesi 18/B Blok No:35, Istanbul</span>
+                      <span>Masko Mobilyacılar Sitesi 18/B Blok No:35, İstanbul</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <Phone className="h-4 w-4 text-accent" />
@@ -216,7 +216,7 @@ export default function ContactPage() {
                   <div className="mb-8">
                     <p className="section-kicker">{t('contact_page.form_title')}</p>
                     <h2 className="mt-5 font-headline text-4xl font-semibold text-primary">
-                      {language === 'tr' ? 'Mesajini birak' : language === 'fr' ? 'Laissez votre message' : 'Send your message'}
+                      {language === 'tr' ? 'Mesajını bırak' : language === 'fr' ? 'Laissez votre message' : 'Send your message'}
                     </h2>
                     <p className="mt-4 text-base leading-8 text-primary/58">{t('contact_page.subtitle')}</p>
                   </div>

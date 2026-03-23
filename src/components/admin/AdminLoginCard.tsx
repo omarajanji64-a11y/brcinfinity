@@ -34,21 +34,21 @@ export default function AdminLoginCard() {
       const payload = (await response.json().catch(() => null)) as { error?: string } | null;
 
       if (!response.ok) {
-        throw new Error(payload?.error || 'Sifre dogrulanamadi.');
+        throw new Error(payload?.error || 'Şifre doğrulanamadı.');
       }
 
       toast({
-        title: 'Admin modu acildi',
-        description: 'Urun yonetim ekranina geciliyor.',
+        title: 'Admin modu açıldı',
+        description: 'Ürün yönetim ekranına geçiliyor.',
       });
 
       router.refresh();
     } catch (submitError) {
-      const message = submitError instanceof Error ? submitError.message : 'Sifre hatali.';
+      const message = submitError instanceof Error ? submitError.message : 'Şifre hatalı.';
       setError(message);
       toast({
         variant: 'destructive',
-        title: 'Giris basarisiz',
+        title: 'Giriş başarısız',
         description: message,
       });
     } finally {
@@ -65,20 +65,20 @@ export default function AdminLoginCard() {
         <div className="space-y-2">
           <CardTitle className="font-headline text-3xl">Admin Mode</CardTitle>
           <CardDescription>
-            Urunleri duzenlemek ve yeni urun eklemek icin once sifreyi gir.
+            Ürünleri düzenlemek ve yeni ürün eklemek için önce şifreyi gir.
           </CardDescription>
         </div>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="admin-password">Sifre</Label>
+            <Label htmlFor="admin-password">Şifre</Label>
             <Input
               id="admin-password"
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              placeholder="Admin sifresi"
+              placeholder="Admin şifresi"
               autoComplete="current-password"
             />
           </div>
@@ -87,7 +87,7 @@ export default function AdminLoginCard() {
 
           <Button type="submit" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            {isSubmitting ? 'Kontrol ediliyor' : 'Admin modunu ac'}
+            {isSubmitting ? 'Kontrol ediliyor' : 'Admin modunu aç'}
           </Button>
         </form>
       </CardContent>

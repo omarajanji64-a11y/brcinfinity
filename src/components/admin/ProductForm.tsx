@@ -152,7 +152,7 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
       const payload = await response.json();
 
       if (!response.ok) {
-        throw new Error(payload.error || 'Gorseller yuklenemedi.');
+        throw new Error(payload.error || 'Görseller yüklenemedi.');
       }
 
       const uploadedUrls = Array.isArray(payload.imageUrls)
@@ -163,7 +163,7 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
         : [];
 
       if (uploadedUrls.length === 0) {
-        throw new Error('Sunucudan gecerli gorsel adresi donmedi.');
+        throw new Error('Sunucudan geçerli görsel adresi dönmedi.');
       }
 
       setForm((current) => {
@@ -177,17 +177,17 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
       });
 
       toast({
-        title: 'Gorseller yuklendi',
+        title: 'Görseller yüklendi',
         description:
           uploadErrors.length > 0
-            ? `${uploadedUrls.length} gorsel eklendi, ${uploadErrors.length} dosya atlandi.`
-            : `${uploadedUrls.length} gorsel forma eklendi.`,
+            ? `${uploadedUrls.length} görsel eklendi, ${uploadErrors.length} dosya atlandı.`
+            : `${uploadedUrls.length} görsel forma eklendi.`,
       });
     } catch (error) {
       toast({
         variant: 'destructive',
-        title: 'Yukleme basarisiz',
-        description: error instanceof Error ? error.message : 'Gorseller yuklenemedi.',
+        title: 'Yükleme başarısız',
+        description: error instanceof Error ? error.message : 'Görseller yüklenemedi.',
       });
     } finally {
       setIsUploading(false);
@@ -208,7 +208,7 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
       toast({
         variant: 'destructive',
         title: 'Kategori gerekli',
-        description: 'En az bir kategori sec.',
+        description: 'En az bir kategori seç.',
       });
       return;
     }
@@ -216,8 +216,8 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
     if (validImageUrls.length === 0) {
       toast({
         variant: 'destructive',
-        title: 'Gorsel gerekli',
-        description: 'En az bir gecerli https gorsel adresi ekle.',
+        title: 'Görsel gerekli',
+        description: 'En az bir geçerli https görsel adresi ekle.',
       });
       return;
     }
@@ -244,8 +244,8 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
       await setDoc(doc(firestore, 'products', form.id), payload, { merge: true });
 
       toast({
-        title: 'Urun kaydedildi',
-        description: 'Degisiklikler urun listesine yansitildi.',
+        title: 'Ürün kaydedildi',
+        description: 'Değişiklikler ürün listesine yansıtıldı.',
       });
 
       onSaved();
@@ -256,8 +256,8 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
     } catch (error) {
       toast({
         variant: 'destructive',
-        title: 'Kaydetme basarisiz',
-        description: error instanceof Error ? error.message : 'Urun kaydedilemedi.',
+        title: 'Kaydetme başarısız',
+        description: error instanceof Error ? error.message : 'Ürün kaydedilemedi.',
       });
     } finally {
       setIsSaving(false);
@@ -268,12 +268,12 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2 sm:col-span-2">
-          <Label htmlFor="product-name">Urun adi</Label>
+          <Label htmlFor="product-name">Ürün adı</Label>
           <Input
             id="product-name"
             value={form.name}
             onChange={(event) => updateField('name', event.target.value)}
-            placeholder="Ornek: Royal Koltuk Takimi (istege bagli)"
+            placeholder="Örnek: Royal Koltuk Takımı (isteğe bağlı)"
           />
         </div>
 
@@ -297,7 +297,7 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
               );
             })}
           </div>
-          <p className="text-sm text-muted-foreground">Bir urun birden fazla kategoride gorunebilir.</p>
+          <p className="text-sm text-muted-foreground">Bir ürün birden fazla kategoride görünebilir.</p>
         </div>
 
         <div className="space-y-2">
@@ -312,33 +312,33 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
         </div>
 
         <div className="space-y-2 sm:col-span-2">
-          <Label htmlFor="product-short-description">Kisa aciklama</Label>
+          <Label htmlFor="product-short-description">Kısa açıklama</Label>
           <Textarea
             id="product-short-description"
             rows={3}
             value={form.shortDescription}
             onChange={(event) => updateField('shortDescription', event.target.value)}
-            placeholder="Listeleme kartinda gorunecek kisa bilgi"
+            placeholder="Listeleme kartında görünecek kısa bilgi"
           />
         </div>
 
         <div className="space-y-2 sm:col-span-2">
-          <Label htmlFor="product-description">Detay aciklamasi</Label>
+          <Label htmlFor="product-description">Detay açıklaması</Label>
           <Textarea
             id="product-description"
             rows={6}
             value={form.description}
             onChange={(event) => updateField('description', event.target.value)}
-            placeholder="Urun detaylari"
+            placeholder="Ürün detayları"
           />
         </div>
       </div>
 
       <div className="space-y-4 rounded-lg border p-4">
         <div className="space-y-1">
-          <Label>Urun gorselleri</Label>
+          <Label>Ürün görselleri</Label>
           <p className="text-sm text-muted-foreground">
-            Dosya yukleyebilir veya gorsel URL&apos;lerini manuel ekleyebilirsin.
+            Dosya yükleyebilir veya görsel URL&apos;lerini manuel ekleyebilirsin.
           </p>
         </div>
 
@@ -354,12 +354,12 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
           {isUploading && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin" />
-              <span>Gorseller yukleniyor...</span>
+              <span>Görseller yükleniyor...</span>
             </div>
           )}
           <Button type="button" variant="outline" onClick={addImageField}>
             <Plus className="mr-2 h-4 w-4" />
-            URL alani ekle
+            URL alanı ekle
           </Button>
         </div>
 
@@ -385,7 +385,7 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
 
               {url.trim().startsWith('https://') && (
                 <div className="mt-3 overflow-hidden rounded-md border bg-muted">
-                  <img src={url.trim()} alt={`Urun gorseli ${index + 1}`} className="h-40 w-full object-cover" />
+                  <img src={url.trim()} alt={`Ürün görseli ${index + 1}`} className="h-40 w-full object-cover" />
                 </div>
               )}
             </div>
@@ -396,7 +396,7 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
       <div className="flex justify-end gap-3">
         <Button type="submit" disabled={isSaving || isUploading}>
           {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
-          {isSaving ? 'Kaydediliyor' : 'Urunu Kaydet'}
+          {isSaving ? 'Kaydediliyor' : 'Ürünü Kaydet'}
         </Button>
       </div>
     </form>

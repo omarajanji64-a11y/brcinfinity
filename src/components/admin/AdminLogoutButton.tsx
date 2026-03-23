@@ -21,19 +21,19 @@ export default function AdminLogoutButton() {
       });
 
       if (!response.ok) {
-        throw new Error('Cikis yapilamadi.');
+        throw new Error('Çıkış yapılamadı.');
       }
 
       toast({
-        title: 'Admin modu kapatildi',
-        description: 'Sifre ekrani yeniden acildi.',
+        title: 'Admin modu kapatıldı',
+        description: 'Şifre ekranı yeniden açıldı.',
       });
 
       router.refresh();
     } catch (logoutError) {
       toast({
         variant: 'destructive',
-        title: 'Cikis basarisiz',
+        title: 'Çıkış başarısız',
         description: logoutError instanceof Error ? logoutError.message : 'Tekrar dene.',
       });
     } finally {
@@ -44,7 +44,7 @@ export default function AdminLogoutButton() {
   return (
     <Button type="button" variant="outline" onClick={handleLogout} disabled={isLoggingOut}>
       {isLoggingOut ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <LogOut className="mr-2 h-4 w-4" />}
-      Cikis
+      Çıkış
     </Button>
   );
 }

@@ -95,7 +95,7 @@ export default function AdminHomepageEditor() {
       const payload = await response.json();
 
       if (!response.ok) {
-        throw new Error(payload.error || 'Gorsel yuklenemedi.');
+        throw new Error(payload.error || 'Görsel yüklenemedi.');
       }
 
       const uploadedUrl = Array.isArray(payload.imageUrls)
@@ -106,23 +106,23 @@ export default function AdminHomepageEditor() {
         : [];
 
       if (!uploadedUrl) {
-        throw new Error('Sunucudan gecerli gorsel adresi donmedi.');
+        throw new Error('Sunucudan geçerli görsel adresi dönmedi.');
       }
 
       updateItem(id, uploadedUrl);
 
       toast({
-        title: 'Gorsel yuklendi',
+        title: 'Görsel yüklendi',
         description:
           uploadErrors.length > 0
-            ? `Gorsel yuklendi, ${uploadErrors.length} dosya atlandi.`
-            : 'Yeni gorsel kaydetmeye hazir.',
+            ? `Görsel yüklendi, ${uploadErrors.length} dosya atlandı.`
+            : 'Yeni görsel kaydetmeye hazır.',
       });
     } catch (uploadError) {
       toast({
         variant: 'destructive',
-        title: 'Yukleme basarisiz',
-        description: uploadError instanceof Error ? uploadError.message : 'Gorsel yuklenemedi.',
+        title: 'Yükleme başarısız',
+        description: uploadError instanceof Error ? uploadError.message : 'Görsel yüklenemedi.',
       });
     } finally {
       setUploadingId(null);
@@ -136,8 +136,8 @@ export default function AdminHomepageEditor() {
     if (invalidItem) {
       toast({
         variant: 'destructive',
-        title: 'Gecersiz gorsel adresi',
-        description: 'Her kategori icin gecerli bir gorsel adresi veya yuklenmis dosya olmasi gerekiyor.',
+        title: 'Geçersiz görsel adresi',
+        description: 'Her kategori için geçerli bir görsel adresi veya yüklenmiş dosya olması gerekiyor.',
       });
       return;
     }
@@ -157,14 +157,14 @@ export default function AdminHomepageEditor() {
       setHasLocalChanges(false);
 
       toast({
-        title: 'Editor guncellendi',
-        description: 'Ana sayfa kategori gorselleri basariyla kaydedildi.',
+        title: 'Editör güncellendi',
+        description: 'Ana sayfa kategori görselleri başarıyla kaydedildi.',
       });
     } catch (saveError) {
       toast({
         variant: 'destructive',
-        title: 'Kaydetme basarisiz',
-        description: saveError instanceof Error ? saveError.message : 'Degisiklikler kaydedilemedi.',
+        title: 'Kaydetme başarısız',
+        description: saveError instanceof Error ? saveError.message : 'Değişiklikler kaydedilemedi.',
       });
     } finally {
       setIsSaving(false);
@@ -177,9 +177,9 @@ export default function AdminHomepageEditor() {
         <CardHeader className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div className="space-y-2">
             <p className="text-xs uppercase tracking-[0.35em] text-accent">Editor Mode</p>
-            <CardTitle className="font-headline text-3xl">Ana sayfa gorsel editoru</CardTitle>
+            <CardTitle className="font-headline text-3xl">Ana sayfa görsel editörü</CardTitle>
             <CardDescription className="max-w-2xl">
-              Ana sayfadaki uc kategori kartinin fotograflarini buradan degistirebilirsin. Gorseli yukle, onizle ve
+              Ana sayfadaki üç kategori kartının fotoğraflarını buradan değiştirebilirsin. Görseli yükle, önizle ve
               kaydet.
             </CardDescription>
           </div>
@@ -188,11 +188,11 @@ export default function AdminHomepageEditor() {
             <Button variant="outline" asChild>
               <Link href="/admin">
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Urun yonetimine don
+                Ürün yönetimine dön
               </Link>
             </Button>
             <Button variant="outline" asChild>
-              <Link href="/">Siteyi ac</Link>
+              <Link href="/">Siteyi aç</Link>
             </Button>
             <AdminLogoutButton />
           </div>
@@ -201,16 +201,16 @@ export default function AdminHomepageEditor() {
 
       <Card className="border-white/10 bg-background/95 shadow-2xl shadow-black/30">
         <CardHeader>
-          <CardTitle>Uc kategori karti</CardTitle>
+          <CardTitle>Üç kategori kartı</CardTitle>
           <CardDescription>
-            Oturma Odasi, Yemek Odasi ve Yatak Odasi gorsellerini tek yerden guncelle. Kayit sonrasi ana sayfada
-            otomatik gorunur.
+            Oturma Odası, Yemek Odası ve Yatak Odası görsellerini tek yerden güncelle. Kayıt sonrası ana sayfada
+            otomatik görünür.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {error ? (
             <div className="rounded-[1.1rem] border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">
-              Editor verisi okunurken bir sorun olustu. Varsayilan gorseller gosteriliyor; yine de yeni gorselleri
+              Editör verisi okunurken bir sorun oluştu. Varsayılan görseller gösteriliyor; yine de yeni görselleri
               kaydedebilirsin.
             </div>
           ) : null}
@@ -218,7 +218,7 @@ export default function AdminHomepageEditor() {
           {isLoading && items.length === 0 ? (
             <div className="flex items-center gap-2 rounded-[1.1rem] border border-white/10 p-4 text-sm text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin" />
-              <span>Editor verisi yukleniyor...</span>
+              <span>Editör verisi yükleniyor...</span>
             </div>
           ) : null}
 
@@ -242,7 +242,7 @@ export default function AdminHomepageEditor() {
                     </div>
                     <div>
                       <p className="text-base font-medium text-primary">{getCategoryLabel(item, language)}</p>
-                      <p className="text-xs text-muted-foreground">Kategori karti gorseli</p>
+                      <p className="text-xs text-muted-foreground">Kategori kartı görseli</p>
                     </div>
                   </div>
 
@@ -257,13 +257,13 @@ export default function AdminHomepageEditor() {
                       />
                     ) : (
                       <div className="flex aspect-[4/4.8] items-center justify-center px-6 text-center text-sm text-muted-foreground">
-                        Gecerli bir gorsel adresi girildiginde onizleme burada gorunecek.
+                        Geçerli bir görsel adresi girildiğinde önizleme burada görünecek.
                       </div>
                     )}
                   </div>
 
                   <div className="mt-4 space-y-2">
-                    <Label htmlFor={`homepage-image-url-${item.id}`}>Gorsel adresi</Label>
+                    <Label htmlFor={`homepage-image-url-${item.id}`}>Görsel adresi</Label>
                     <Input
                       id={`homepage-image-url-${item.id}`}
                       value={item.imageUrl}
@@ -273,7 +273,7 @@ export default function AdminHomepageEditor() {
                   </div>
 
                   <div className="mt-4 space-y-2">
-                    <Label htmlFor={`homepage-image-upload-${item.id}`}>Cihazdan yukle</Label>
+                    <Label htmlFor={`homepage-image-upload-${item.id}`}>Cihazdan yükle</Label>
                     <Input
                       id={`homepage-image-upload-${item.id}`}
                       type="file"
@@ -287,12 +287,12 @@ export default function AdminHomepageEditor() {
                     {isUploading ? (
                       <span className="inline-flex items-center gap-2">
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        Gorsel yukleniyor...
+                        Görsel yükleniyor...
                       </span>
                     ) : isValidPreview ? (
-                      'Kaydet butonuna bastiginda bu gorsel yayina alinacak.'
+                      'Kaydet butonuna bastığında bu görsel yayına alınacak.'
                     ) : (
-                      'Bu kart icin gecerli bir gorsel baglantisi gerekiyor.'
+                      'Bu kart için geçerli bir görsel bağlantısı gerekiyor.'
                     )}
                   </div>
                 </div>
@@ -303,7 +303,7 @@ export default function AdminHomepageEditor() {
           <div className="flex justify-end">
             <Button type="button" onClick={handleSave} disabled={isSaving || Boolean(uploadingId)}>
               {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-              {isSaving ? 'Kaydediliyor' : 'Degisiklikleri Kaydet'}
+              {isSaving ? 'Kaydediliyor' : 'Değişiklikleri Kaydet'}
             </Button>
           </div>
         </CardContent>

@@ -51,19 +51,19 @@ export const FALLBACK_LOGO_URL = '/brc-infinity-logo.png';
 export const CATEGORY_SHOWCASE_IMAGES: CategoryImage[] = [
   {
     id: 'cat-living-room',
-    name: { en: 'Living Room', fr: 'Salon', tr: 'Oturma Odasi' },
+    name: { en: 'Living Room', fr: 'Salon', tr: 'Oturma Odası' },
     imageUrl: getPlaceholderImage('cat-living-room', 'https://picsum.photos/seed/cat-living/600/600'),
     imageHint: getPlaceholderHint('cat-living-room', 'living room'),
   },
   {
     id: 'cat-dining-room',
-    name: { en: 'Dining Room', fr: 'Salle a manger', tr: 'Yemek Odasi' },
+    name: { en: 'Dining Room', fr: 'Salle a manger', tr: 'Yemek Odası' },
     imageUrl: getPlaceholderImage('cat-dining-room', 'https://picsum.photos/seed/cat-dining/600/600'),
     imageHint: getPlaceholderHint('cat-dining-room', 'dining room'),
   },
   {
     id: 'cat-bedroom',
-    name: { en: 'Bedroom', fr: 'Chambre', tr: 'Yatak Odasi' },
+    name: { en: 'Bedroom', fr: 'Chambre', tr: 'Yatak Odası' },
     imageUrl: getPlaceholderImage('cat-bedroom', 'https://picsum.photos/seed/cat-bedroom/600/600'),
     imageHint: getPlaceholderHint('cat-bedroom', 'bedroom furniture'),
   },

@@ -22,7 +22,10 @@ function ProductCard({ product }: ProductCardProps) {
 
   const productName = getProductName(product, language, '');
   const productCategory = getProductCategoryLabel(product, language, t);
-  const imageAlt = productName || productCategory || (language === 'tr' ? 'Urun gorseli' : language === 'fr' ? 'Image du produit' : 'Product image');
+  const imageAlt =
+    productName ||
+    productCategory ||
+    (language === 'tr' ? 'Ürün görseli' : language === 'fr' ? 'Image du produit' : 'Product image');
   const phoneNumber = '905467898968';
   const images = product.imageUrls.length > 0 ? product.imageUrls : product.imageUrl ? [product.imageUrl] : [];
   const currentImage = images[currentImageIndex] || '';
@@ -44,7 +47,7 @@ function ProductCard({ product }: ProductCardProps) {
   });
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
   const detailLabel =
-    language === 'tr' ? 'Incele' : language === 'fr' ? 'Decouvrir' : 'Explore';
+    language === 'tr' ? 'İncele' : language === 'fr' ? 'Decouvrir' : 'Explore';
 
   const nextImage = () => {
     if (images.length === 0) {

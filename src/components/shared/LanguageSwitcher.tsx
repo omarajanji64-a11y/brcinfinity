@@ -14,9 +14,9 @@ import { useTranslation } from '@/lib/i18n';
 type LanguageCode = 'tr' | 'en' | 'fr';
 
 const LANGUAGE_OPTIONS = [
-  { value: 'tr', label: 'TR', name: 'Turkce' },
+  { value: 'tr', label: 'TR', name: 'Türkçe' },
   { value: 'en', label: 'EN', name: 'English' },
-  { value: 'fr', label: 'FR', name: 'Francais' },
+  { value: 'fr', label: 'FR', name: 'Français' },
 ] as const;
 
 function LanguageFlag({ language }: { language: LanguageCode }) {

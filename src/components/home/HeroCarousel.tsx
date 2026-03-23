@@ -25,7 +25,7 @@ const HERO_SLIDES: HeroSlide[] = [
       fr: 'Collection classique',
     },
     note: {
-      tr: 'Zamansiz klasik cizgiler, derin tonlar ve gosteristen uzak guclu bir sunum.',
+      tr: 'Zamansız klasik çizgiler, derin tonlar ve gösterişten uzak güçlü bir sunum.',
       en: 'Timeless classical lines, darker tones, and a restrained but confident presentation.',
       fr: 'Des lignes classiques intemporelles, des tons sombres et une presentation sobre mais forte.',
     },
@@ -33,12 +33,12 @@ const HERO_SLIDES: HeroSlide[] = [
   {
     src: '/hero-slider/canopy-bedroom.jpg',
     eyebrow: {
-      tr: 'Saray esintili tasarim',
+      tr: 'Saray esintili tasarım',
       en: 'Palatial atmosphere',
       fr: 'Atmosphere palatiale',
     },
     note: {
-      tr: 'Koyu ve sakin bir atmosfer icinde urunun karakteri one cikar, detaylar daha net hissedilir.',
+      tr: 'Koyu ve sakin bir atmosfer içinde ürünün karakteri öne çıkar, detaylar daha net hissedilir.',
       en: 'In a darker and calmer atmosphere, the product speaks more clearly and the details stand out.',
       fr: 'Dans une atmosphere plus sombre et plus calme, le produit s exprime mieux et les details ressortent.',
     },
@@ -52,7 +52,7 @@ const CONTACT_LABEL: LocalizedCopy = {
 };
 
 const HERO_HIGHLIGHTS: Record<Language, string[]> = {
-  tr: ['Masko showroom', 'Seckin klasik takimlar', 'Rafine malzeme secimi'],
+  tr: ['Masko showroom', 'Seçkin klasik takımlar', 'Rafine malzeme seçimi'],
   en: ['Masko showroom', 'Signature classic sets', 'Refined material choices'],
   fr: ['Showroom Masko', 'Ensembles classiques choisis', 'Materiaux raffines'],
 };

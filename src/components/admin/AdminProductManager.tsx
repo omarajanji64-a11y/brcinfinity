@@ -57,7 +57,7 @@ export default function AdminProductManager() {
   const sortedProducts = useMemo(
     () =>
       [...products].sort((left, right) =>
-        getProductName(left, language, 'Adsiz urun').localeCompare(getProductName(right, language, 'Adsiz urun'), 'tr')
+        getProductName(left, language, 'Adsız ürün').localeCompare(getProductName(right, language, 'Adsız ürün'), 'tr')
       ),
     [language, products]
   );
@@ -76,14 +76,14 @@ export default function AdminProductManager() {
     try {
       await deleteProduct(product.id);
       toast({
-        title: 'Urun silindi',
-        description: `${getProductName(product, language, 'Adsiz urun')} listeden kaldirildi.`,
+        title: 'Ürün silindi',
+        description: `${getProductName(product, language, 'Adsız ürün')} listeden kaldırıldı.`,
       });
     } catch (deleteError) {
       toast({
         variant: 'destructive',
-        title: 'Silme basarisiz',
-        description: deleteError instanceof Error ? deleteError.message : 'Urun silinemedi.',
+        title: 'Silme başarısız',
+        description: deleteError instanceof Error ? deleteError.message : 'Ürün silinemedi.',
       });
     }
   };
@@ -101,9 +101,9 @@ export default function AdminProductManager() {
       >
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
           <DialogHeader>
-            <DialogTitle>{selectedProduct ? 'Urunu duzenle' : 'Yeni urun ekle'}</DialogTitle>
+            <DialogTitle>{selectedProduct ? 'Ürünü düzenle' : 'Yeni ürün ekle'}</DialogTitle>
             <DialogDescription>
-              Fotograf, ad, aciklama, kategori ve diger urun bilgilerini bu ekrandan yonet.
+              Fotoğraf, ad, açıklama, kategori ve diğer ürün bilgilerini bu ekrandan yönet.
             </DialogDescription>
           </DialogHeader>
           <ProductForm
@@ -121,9 +121,9 @@ export default function AdminProductManager() {
           <CardHeader className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div className="space-y-2">
               <p className="text-xs uppercase tracking-[0.35em] text-accent">Admin Mode</p>
-              <CardTitle className="font-headline text-3xl">Urun Yonetimi</CardTitle>
+              <CardTitle className="font-headline text-3xl">Ürün Yönetimi</CardTitle>
               <CardDescription className="max-w-2xl">
-                Yeni urun ekle, mevcut urunleri duzenle, fotograflari guncelle ve kategorileri filtrelerle uyumlu
+                Yeni ürün ekle, mevcut ürünleri düzenle, fotoğrafları güncelle ve kategorileri filtrelerle uyumlu
                 tut.
               </CardDescription>
             </div>
@@ -132,7 +132,7 @@ export default function AdminProductManager() {
               <Button variant="outline" asChild>
                 <Link href="/">
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Siteye don
+                  Siteye dön
                 </Link>
               </Button>
               <Button variant="outline" asChild>
@@ -150,7 +150,7 @@ export default function AdminProductManager() {
               <AdminLogoutButton />
               <Button onClick={openCreateDialog}>
                 <PlusCircle className="mr-2 h-4 w-4" />
-                Yeni urun
+                Yeni ürün
               </Button>
             </div>
           </CardHeader>
@@ -159,14 +159,14 @@ export default function AdminProductManager() {
         <Card className="border-white/10 bg-background/95 shadow-2xl shadow-black/30">
           <CardHeader>
             <CardTitle>{t('admin_nav.products')}</CardTitle>
-            <CardDescription>Kaydedilen urunler burada listelenir. Duzenle veya sil islemleri anlik uygulanir.</CardDescription>
+            <CardDescription>Kaydedilen ürünler burada listelenir. Düzenle veya sil işlemleri anlık uygulanır.</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[96px]">Gorsel</TableHead>
-                  <TableHead>Urun</TableHead>
+                  <TableHead className="w-[96px]">Görsel</TableHead>
+                  <TableHead>Ürün</TableHead>
                   <TableHead>Kategori</TableHead>
                   <TableHead>Stok</TableHead>
                   <TableHead className="w-[70px]" />
@@ -184,13 +184,13 @@ export default function AdminProductManager() {
                 ) : sortedProducts.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} className="py-10 text-center text-muted-foreground">
-                      Henuz urun yok. Ilk urunu eklemek icin yukaridaki butonu kullan.
+                      Henüz ürün yok. İlk ürünü eklemek için yukarıdaki butonu kullan.
                     </TableCell>
                   </TableRow>
                 ) : (
                   sortedProducts.map((product) => {
                     const previewImage = product.imageUrls[0] || product.imageUrl;
-                    const productName = getProductName(product, language, 'Adsiz urun');
+                    const productName = getProductName(product, language, 'Adsız ürün');
                     const categoryLabel = getProductCategoryLabel(product, language, t);
                     const shortDescription = getLocalizedText(product.shortDescription, language);
 
@@ -222,7 +222,7 @@ export default function AdminProductManager() {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem onClick={() => openEditDialog(product)}>
-                                Duzenle
+                                Düzenle
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 className="text-destructive"
