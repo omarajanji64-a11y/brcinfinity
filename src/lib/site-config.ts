@@ -43,7 +43,8 @@ export const DEFAULT_THEME: ThemeConfig = {
   accent: { h: 24, s: 12, l: 56 },
 };
 
-export const HEADER_LOGO_URL = '/brc-infinity-logo.png';
+export const HEADER_LOGO_URL =
+  'https://i.ibb.co/N2r4xFMc/Screenshot-2026-01-06-09-00-56-removebg-preview.png';
 
 export const FALLBACK_LOGO_URL = '/brc-infinity-logo.png';
 

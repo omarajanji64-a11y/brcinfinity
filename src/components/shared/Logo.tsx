@@ -16,17 +16,17 @@ export default function Logo({ priority = false }: LogoProps) {
   const canRenderWithNextImage = logoUrl ? canUseNextImage(logoUrl) : false;
 
   return (
-    <Link href="/" className="group inline-flex min-w-0 items-center gap-3">
+    <Link href="/" className="group flex min-w-0 items-center gap-2">
       {logoUrl ? (
-        <div className="relative flex h-[48px] w-[128px] shrink-0 items-center justify-center overflow-hidden sm:h-[56px] sm:w-[150px] md:h-[72px] md:w-[210px]">
+        <div className="relative h-[86px] w-[210px] shrink-0 sm:h-[104px] sm:w-[260px] md:h-32 md:w-80">
           {canRenderWithNextImage ? (
             <Image
               src={logoUrl}
               alt="BRC INFINITY Logo"
               fill
               priority={priority}
-              sizes="(max-width: 640px) 128px, (max-width: 768px) 150px, 210px"
-              className="object-contain"
+              sizes="(max-width: 640px) 210px, (max-width: 768px) 260px, 320px"
+              className="h-full w-full object-contain"
             />
           ) : (
             <img
@@ -41,7 +41,7 @@ export default function Logo({ priority = false }: LogoProps) {
       ) : (
         <>
           <Crown className="h-7 w-7 text-accent group-hover:animate-pulse" />
-          <span className="font-headline text-2xl font-bold tracking-tight text-primary">BRC INFINITY</span>
+          <span className="font-headline text-2xl font-bold tracking-tight">BRC INFINITY</span>
         </>
       )}
     </Link>

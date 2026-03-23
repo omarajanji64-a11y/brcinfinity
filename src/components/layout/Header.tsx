@@ -30,7 +30,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 px-3 pt-3 md:px-4">
       <div className="container mx-auto px-0">
         <div className="theme-panel relative overflow-hidden rounded-[1.5rem] px-4 py-3 md:rounded-full md:px-6">
-          <div className="relative flex min-h-[64px] items-center justify-between gap-3 md:grid md:min-h-[72px] md:grid-cols-[1fr_auto_1fr] md:gap-6">
+          <div className="relative flex min-h-[86px] items-center justify-between gap-3 md:grid md:min-h-[128px] md:grid-cols-[1fr_auto_1fr] md:gap-6">
             <nav className="hidden items-center gap-7 md:flex">
               {navLinksLeft.map((link) => (
                 <Link key={link.href} href={link.href} className={navLinkClass}>
