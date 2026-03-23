@@ -1,13 +1,12 @@
 import type { Metadata } from 'next';
 import { Cormorant_Garamond, Manrope } from 'next/font/google';
 
-import ThemeLoader from '@/components/ThemeLoader';
 import WhatsAppButton from '@/components/shared/WhatsAppButton';
 import { Toaster } from '@/components/ui/toaster';
 import { LanguageProvider } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
-import ClientProviders from './client-providers';
+import Providers from './providers';
 import './globals.css';
 
 const cormorantGaramond = Cormorant_Garamond({
@@ -52,12 +51,11 @@ export default function RootLayout({
       >
         <div aria-hidden="true" className="site-background" />
         <LanguageProvider>
-          <ClientProviders>
-            <ThemeLoader />
+          <Providers>
             {children}
             <WhatsAppButton phoneNumber="905467898968" />
             <Toaster />
-          </ClientProviders>
+          </Providers>
         </LanguageProvider>
       </body>
     </html>

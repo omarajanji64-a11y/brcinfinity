@@ -186,8 +186,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                       alt={imageAlt}
                       fill
                       priority={currentImageIndex === 0}
-                      unoptimized
-                      sizes="100vw"
+                      sizes="(max-width: 1280px) 100vw, 1152px"
                       className="h-full w-full object-contain"
                     />
                   ) : (

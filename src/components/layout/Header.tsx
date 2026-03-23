@@ -29,8 +29,8 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 px-3 pt-3 md:px-4">
       <div className="container mx-auto px-0">
-        <div className="theme-panel relative overflow-hidden rounded-full px-4 py-3 md:px-6">
-          <div className="relative grid min-h-[72px] grid-cols-[auto_1fr_auto] items-center gap-3 md:grid-cols-[1fr_auto_1fr] md:gap-6">
+        <div className="theme-panel relative overflow-hidden rounded-[1.5rem] px-4 py-3 md:rounded-full md:px-6">
+          <div className="relative flex min-h-[64px] items-center justify-between gap-3 md:grid md:min-h-[72px] md:grid-cols-[1fr_auto_1fr] md:gap-6">
             <nav className="hidden items-center gap-7 md:flex">
               {navLinksLeft.map((link) => (
                 <Link key={link.href} href={link.href} className={navLinkClass}>
@@ -39,8 +39,8 @@ export default function Header() {
               ))}
             </nav>
 
-            <div className="flex items-center justify-start md:justify-center">
-              <Logo />
+            <div className="flex min-w-0 flex-1 items-center md:flex-none md:justify-center">
+              <Logo priority />
             </div>
 
             <div className="hidden items-center justify-end gap-3 md:flex">
@@ -58,7 +58,10 @@ export default function Header() {
               </div>
             </div>
 
-            <div className="flex items-center justify-end md:hidden">
+            <div className="flex items-center justify-end gap-2 md:hidden">
+              <div className="rounded-full border border-white/8 bg-white/[0.03] px-1.5 py-1">
+                <LanguageSwitcher />
+              </div>
               <Sheet>
                 <SheetTrigger asChild>
                   <Button
@@ -74,8 +77,8 @@ export default function Header() {
                   className="w-[320px] border-l border-white/8 bg-[rgba(9,9,10,0.98)] text-primary sm:w-[380px]"
                 >
                   <div className="flex h-full flex-col p-4">
-                    <div className="mb-8 flex items-center justify-between">
-                      <Logo />
+                    <div className="mb-8 flex items-center justify-between gap-3">
+                      <Logo priority />
                       <SheetClose asChild>
                         <Button
                           variant="ghost"
@@ -108,7 +111,7 @@ export default function Header() {
                         variant="outline"
                         className="h-11 rounded-full text-[0.72rem]"
                       />
-                      <div className="rounded-full border border-white/8 bg-white/[0.03] p-2">
+                      <div className="rounded-[1rem] border border-white/8 bg-white/[0.03] p-2">
                         <LanguageSwitcher />
                       </div>
                     </div>

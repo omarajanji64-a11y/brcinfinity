@@ -19,16 +19,16 @@ export default function Footer() {
   return (
     <footer className="px-3 pb-3 md:px-4 md:pb-4">
       <div className="container mx-auto px-0">
-        <div className="theme-panel overflow-hidden rounded-[1.6rem] px-5 py-10 md:px-8 md:py-12">
-          <div className="grid gap-10 lg:grid-cols-[1.2fr_0.75fr_0.75fr_1fr]">
-            <div className="space-y-5">
+        <div className="theme-panel overflow-hidden rounded-[1.4rem] px-5 py-10 md:rounded-[1.6rem] md:px-8 md:py-12">
+          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.2fr_0.75fr_0.75fr_1fr]">
+            <div className="space-y-5 text-center md:text-left">
               <Logo />
-              <p className="max-w-sm text-sm leading-7 text-primary/66">{t('footer.tagline')}</p>
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-white/[0.03] px-4 py-2 text-[0.72rem] uppercase tracking-[0.14em] text-accent/84">
+              <p className="mx-auto max-w-sm text-sm leading-7 text-primary/66 md:mx-0">{t('footer.tagline')}</p>
+              <div className="inline-flex max-w-full flex-wrap items-center justify-center gap-2 rounded-full border border-white/8 bg-white/[0.03] px-4 py-2 text-[0.72rem] uppercase tracking-[0.14em] text-accent/84 md:justify-start">
                 <MapPin className="h-3.5 w-3.5" />
                 {showroomCopy}
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center gap-3 md:justify-start">
                 <Link
                   href="https://www.instagram.com/brcinfinity/"
                   target="_blank"
@@ -44,7 +44,7 @@ export default function Footer() {
               </div>
             </div>
 
-            <div>
+            <div className="text-center md:text-left">
               <h3 className="font-headline text-2xl font-semibold text-primary">{t('footer.quick_links')}</h3>
               <ul className="mt-5 space-y-3">
                 <li>
@@ -70,7 +70,7 @@ export default function Footer() {
               </ul>
             </div>
 
-            <div>
+            <div className="text-center md:text-left">
               <h3 className="font-headline text-2xl font-semibold text-primary">{t('footer.categories')}</h3>
               <ul className="mt-5 space-y-3">
                 <li>
@@ -91,14 +91,14 @@ export default function Footer() {
               </ul>
             </div>
 
-            <div>
+            <div className="text-center md:text-left">
               <h3 className="font-headline text-2xl font-semibold text-primary">{t('footer.contact_us')}</h3>
               <div className="mt-5 space-y-4 text-sm text-primary/70">
-                <div className="flex items-start gap-3">
+                <div className="flex items-start justify-center gap-3 md:justify-start">
                   <MapPin className="mt-0.5 h-4 w-4 text-accent" />
                   <span>{showroomCopy}</span>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center gap-3 md:justify-start">
                   <Phone className="h-4 w-4 text-accent" />
                   <a
                     href="tel:+905467898968"
@@ -111,7 +111,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="mt-10 flex flex-col gap-3 border-t border-white/8 pt-6 text-sm text-primary/56 md:flex-row md:items-center md:justify-between">
+          <div className="mt-10 flex flex-col gap-3 border-t border-white/8 pt-6 text-center text-sm text-primary/56 md:flex-row md:items-center md:justify-between md:text-left">
             <p>&copy; {new Date().getFullYear()} BRC INFINITY. {t('footer.rights_reserved')}</p>
             <Link
               href="/admin"

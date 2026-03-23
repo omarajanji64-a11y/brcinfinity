@@ -104,7 +104,6 @@ export default function ContactPage() {
   ];
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
     toast({
       title: t('contact_page.toast.title'),
       description: t('contact_page.toast.description'),

@@ -74,7 +74,6 @@ function ProductCard({ product }: ProductCardProps) {
                   alt={imageAlt}
                   width={560}
                   height={610}
-                  unoptimized
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   className="aspect-[4/4.3] h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                 />

@@ -91,7 +91,7 @@ export default function HeroCarousel() {
           <div className="photo-veil opacity-45" />
           <div className="relative max-w-xl px-2 py-4 sm:px-4">
             <p className="section-kicker animate-reveal">{getCopy(activeSlide.eyebrow, language)}</p>
-            <h1 className="animate-reveal animate-reveal-delay-1 mt-5 font-headline text-5xl font-semibold leading-[0.98] text-primary md:text-7xl">
+            <h1 className="animate-reveal animate-reveal-delay-1 mt-5 font-headline text-4xl font-semibold leading-[0.98] text-primary sm:text-5xl md:text-7xl">
               {t('hero.title')}
             </h1>
             <p className="animate-reveal animate-reveal-delay-2 mt-5 max-w-xl text-base leading-8 text-primary/72 md:text-lg">
@@ -102,13 +102,13 @@ export default function HeroCarousel() {
             </p>
 
             <div className="animate-reveal animate-reveal-delay-3 mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-              <Button asChild size="lg" className="h-11 rounded-full px-6">
+              <Button asChild size="lg" className="h-11 w-full rounded-full px-6 sm:w-auto">
                 <Link href="/products">
                   {t('hero.explore_collections')}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="h-11 rounded-full px-6">
+              <Button asChild size="lg" variant="outline" className="h-11 w-full rounded-full px-6 sm:w-auto">
                 <Link href="/contact">{getCopy(CONTACT_LABEL, language)}</Link>
               </Button>
             </div>
@@ -144,7 +144,7 @@ export default function HeroCarousel() {
           </div>
 
           <div className="animate-reveal animate-reveal-delay-2 relative overflow-hidden rounded-[1.6rem] border border-white/10 bg-black/30 shadow-[0_24px_48px_rgba(0,0,0,0.34)]">
-            <div className="relative h-[420px] sm:h-[520px]">
+            <div className="relative h-[320px] sm:h-[520px]">
               {HERO_SLIDES.map((slide, index) => (
                 <div
                   key={slide.src}
@@ -168,7 +168,7 @@ export default function HeroCarousel() {
                 </div>
               ))}
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,5,6,0.05),rgba(5,5,6,0.18)_42%,rgba(5,5,6,0.54)_100%)]" />
-              <div className="pointer-events-none absolute inset-x-6 bottom-6 flex items-end justify-between gap-4">
+              <div className="pointer-events-none absolute inset-x-4 bottom-4 flex items-end justify-between gap-4 sm:inset-x-6 sm:bottom-6">
                 <div className="rounded-full border border-white/10 bg-black/36 px-4 py-2 text-[0.68rem] uppercase tracking-[0.18em] text-primary/70 backdrop-blur-md">
                   {getCopy(activeSlide.eyebrow, language)}
                 </div>

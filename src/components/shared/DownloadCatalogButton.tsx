@@ -21,23 +21,16 @@ export default function DownloadCatalogButton({
   const catalogs = SITE_CATALOGS.filter((catalog) => catalog.url && catalog.name);
 
   if (catalogs.length === 0) {
-    return (
-      <Button variant={variant} disabled className={className}>
-        <Download className="mr-2 h-4 w-4" />
-        {t('header.download_catalog')}
-      </Button>
-    );
+    return null;
   }
 
   if (catalogs.length === 1) {
     return (
-      <Button
-        variant={variant}
-        className={className}
-        onClick={() => window.open(catalogs[0].url, '_blank', 'noopener,noreferrer')}
-      >
-        <Download className="mr-2 h-4 w-4" />
-        {catalogs[0].name || t('header.download_catalog')}
+      <Button variant={variant} className={className} asChild>
+        <a href={catalogs[0].url} target="_blank" rel="noopener noreferrer">
+          <Download className="mr-2 h-4 w-4" />
+          {catalogs[0].name || t('header.download_catalog')}
+        </a>
       </Button>
     );
   }

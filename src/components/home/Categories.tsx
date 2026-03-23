@@ -65,7 +65,6 @@ export default function Categories() {
                         alt={category.displayName}
                         width={960}
                         height={1180}
-                        unoptimized
                         sizes="(max-width: 768px) 100vw, 33vw"
                         className="aspect-[4/4.8] w-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
                       />

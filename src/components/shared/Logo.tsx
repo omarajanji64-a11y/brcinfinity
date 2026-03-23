@@ -7,21 +7,25 @@ import { Crown } from 'lucide-react';
 import { HEADER_LOGO_URL } from '@/lib/site-config';
 import { canUseNextImage } from '@/lib/image-utils';
 
-export default function Logo() {
+type LogoProps = {
+  priority?: boolean;
+};
+
+export default function Logo({ priority = false }: LogoProps) {
   const logoUrl = HEADER_LOGO_URL;
   const canRenderWithNextImage = logoUrl ? canUseNextImage(logoUrl) : false;
 
   return (
-    <Link href="/" className="group inline-flex items-center gap-3">
+    <Link href="/" className="group inline-flex min-w-0 items-center gap-3">
       {logoUrl ? (
-        <div className="relative flex h-[60px] w-[160px] items-center justify-center overflow-hidden md:h-[72px] md:w-[210px]">
+        <div className="relative flex h-[48px] w-[128px] shrink-0 items-center justify-center overflow-hidden sm:h-[56px] sm:w-[150px] md:h-[72px] md:w-[210px]">
           {canRenderWithNextImage ? (
             <Image
               src={logoUrl}
               alt="BRC INFINITY Logo"
               fill
-              priority
-              sizes="(max-width: 768px) 160px, 210px"
+              priority={priority}
+              sizes="(max-width: 640px) 128px, (max-width: 768px) 150px, 210px"
               className="object-contain"
             />
           ) : (
