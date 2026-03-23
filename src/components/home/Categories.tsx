@@ -3,13 +3,14 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
+import { useHomepageCategoryShowcase } from '@/hooks/use-homepage-category-showcase';
 import { buildCloudinaryImageUrl, canUseNextImage } from '@/lib/image-utils';
 import { useTranslation } from '@/lib/i18n';
-import { CATEGORY_SHOWCASE_IMAGES } from '@/lib/site-config';
 
 export default function Categories() {
   const { language, t } = useTranslation();
-  const categoriesToRender = CATEGORY_SHOWCASE_IMAGES.map((category) => ({
+  const { categoryShowcaseImages } = useHomepageCategoryShowcase();
+  const categoriesToRender = categoryShowcaseImages.map((category) => ({
     ...category,
     displayName: category.name[language] || category.name.tr || category.name.en || 'Category',
   }));

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
-import { ArrowLeft, FileText, MoreHorizontal, PlusCircle } from 'lucide-react';
+import { ArrowLeft, FileImage, FileText, MoreHorizontal, PlusCircle } from 'lucide-react';
 
 import ProductForm from '@/components/admin/ProductForm';
 import AdminLogoutButton from '@/components/admin/AdminLogoutButton';
@@ -139,6 +139,12 @@ export default function AdminProductManager() {
                 <Link href="/admin/catalogs">
                   <FileText className="mr-2 h-4 w-4" />
                   {t('admin_nav.catalogs')}
+                </Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link href="/admin/homepage">
+                  <FileImage className="mr-2 h-4 w-4" />
+                  Editor Mode
                 </Link>
               </Button>
               <AdminLogoutButton />
