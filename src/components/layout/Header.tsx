@@ -29,9 +29,9 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 px-3 pt-2.5 md:px-4 md:pt-3">
       <div className="container mx-auto px-0">
-        <div className="theme-panel relative overflow-hidden rounded-[1.35rem] px-3.5 py-2.5 md:rounded-full md:px-4 lg:px-5">
-          <div className="relative flex min-h-[72px] items-center justify-between gap-3 md:min-h-[100px] md:justify-center md:gap-6 lg:gap-8">
-            <nav className="hidden items-center gap-4 lg:gap-5 md:flex">
+        <div className="theme-panel relative overflow-hidden rounded-[1.35rem] px-3.5 py-2.5 md:rounded-full md:px-6 lg:px-7">
+          <div className="relative flex min-h-[72px] items-center justify-between gap-3 md:grid md:min-h-[100px] md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:items-center md:gap-6 lg:gap-8">
+            <nav className="hidden items-center justify-self-start gap-4 lg:gap-5 md:flex">
               {navLinksLeft.map((link) => (
                 <Link key={link.href} href={link.href} className={navLinkClass}>
                   {link.label}
@@ -39,11 +39,11 @@ export default function Header() {
               ))}
             </nav>
 
-            <div className="flex min-w-0 flex-1 items-center md:flex-none md:justify-center">
+            <div className="flex min-w-0 flex-1 items-center md:min-w-[220px] md:flex-none md:justify-center">
               <Logo priority />
             </div>
 
-            <div className="hidden items-center gap-2.5 lg:gap-3 md:flex">
+            <div className="hidden items-center justify-self-end gap-2.5 lg:gap-3 md:flex">
               {navLinksRight.map((link) => (
                 <Link key={link.href} href={link.href} className={navLinkClass}>
                   {link.label}
