@@ -4,7 +4,7 @@ export type Catalog = {
   url: string;
 };
 
-export const CATALOG_SETTINGS_COLLECTION = 'site-config';
+export const CATALOG_SETTINGS_COLLECTION = 'config';
 export const CATALOG_SETTINGS_DOC = 'catalogs';
 
 const EMPTY_CATALOG: Catalog = {

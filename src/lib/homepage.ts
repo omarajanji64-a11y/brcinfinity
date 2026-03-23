@@ -1,7 +1,7 @@
 import { isHttpsImageUrl, isLocalImagePath } from '@/lib/image-utils';
 import { CATEGORY_SHOWCASE_IMAGES, type CategoryImage } from '@/lib/site-config';
 
-export const HOMEPAGE_SETTINGS_COLLECTION = 'site-config';
+export const HOMEPAGE_SETTINGS_COLLECTION = 'config';
 export const HOMEPAGE_SETTINGS_DOC = 'homepage';
 
 type HomepageCategoryImageOverride = {
