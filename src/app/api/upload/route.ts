@@ -1,6 +1,8 @@
-
 import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
+import { randomUUID } from 'crypto';
+import { mkdir, writeFile } from 'fs/promises';
+import path from 'path';
 import { Readable } from 'stream';
 
 import { sanitizeUploadFileName } from '@/lib/upload-utils';
@@ -25,6 +27,9 @@ const EXTRA_IMAGE_MIME_TYPES = new Set([
   'application/heic',
   'application/heif',
 ]);
+const LOCAL_UPLOAD_ROOT = path.join(process.cwd(), 'public', 'uploads');
+const CLOUDINARY_REQUIRED_ENV_VARS = ['CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET'] as const;
+const hasCloudinaryConfig = CLOUDINARY_REQUIRED_ENV_VARS.every((key) => Boolean(process.env[key]));
 
 // Configure Cloudinary using environment variables
 cloudinary.config({
@@ -74,6 +79,36 @@ const uploadStreamToCloudinary = ({
   });
 };
 
+const createReadableStream = (buffer: Buffer) => {
+  const readableNodeStream = new Readable();
+  readableNodeStream.push(buffer);
+  readableNodeStream.push(null);
+  return readableNodeStream;
+};
+
+const saveFileLocally = async ({
+  buffer,
+  fileName,
+  resourceType,
+}: {
+  buffer: Buffer;
+  fileName: string;
+  resourceType: 'image' | 'raw';
+}) => {
+  const subfolder = resourceType === 'raw' ? 'catalogs' : 'images';
+  const uploadDirectory = path.join(LOCAL_UPLOAD_ROOT, subfolder);
+  const extension = fileName.includes('.') ? fileName.substring(fileName.lastIndexOf('.') + 1) : '';
+  const baseName = fileName.includes('.') ? fileName.substring(0, fileName.lastIndexOf('.')) : fileName;
+  const uniqueSuffix = `${Date.now()}-${randomUUID()}`;
+  const outputFileName = extension ? `${baseName}-${uniqueSuffix}.${extension}` : `${baseName}-${uniqueSuffix}`;
+  const outputFilePath = path.join(uploadDirectory, outputFileName);
+
+  await mkdir(uploadDirectory, { recursive: true });
+  await writeFile(outputFilePath, buffer);
+
+  return `/uploads/${subfolder}/${outputFileName}`;
+};
+
 const isPdfFile = (file: File) => file.type === PDF_MIME_TYPE || file.name.toLowerCase().endsWith('.pdf');
 
 const getFileExtension = (fileName: string) => {
@@ -88,16 +123,7 @@ const isImageFile = (file: File) =>
 
 export async function POST(req: NextRequest) {
     try {
-        // 1. Verify that required environment variables are present
-        const requiredEnvVars = ['CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET'];
-        for (const v of requiredEnvVars) {
-            if (!process.env[v]) {
-                console.error(`Missing Cloudinary environment variable: ${v}`);
-                throw new Error(`Server configuration error: Missing required variable '${v}'. Uploads are disabled.`);
-            }
-        }
-
-        // 2. Parse the incoming form data to get the files
+        // 1. Parse the incoming form data to get the files
         const formData = await req.formData();
         const files = formData.getAll('files') as File[];
 
@@ -105,7 +131,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'No files were uploaded.' }, { status: 400 });
         }
 
-        // 3. Upload each file to Cloudinary in parallel
+        // 2. Upload each file to Cloudinary when configured, otherwise store it locally.
         const uploadResults = await Promise.allSettled(
             files.map(async (file) => {
                 const isPdf = isPdfFile(file);
@@ -120,16 +146,29 @@ export async function POST(req: NextRequest) {
                 }
 
                 const buffer = Buffer.from(await file.arrayBuffer());
-                const readableNodeStream = new Readable();
-                readableNodeStream.push(buffer);
-                readableNodeStream.push(null);
+                const resourceType = isPdf ? 'raw' : 'image';
+                let url = '';
 
-                const url = await uploadStreamToCloudinary({
-                    stream: readableNodeStream,
-                    fileName: safeFileName,
-                    resourceType: isPdf ? 'raw' : 'image',
-                    folder: isPdf ? 'catalog-uploads' : 'direct-uploads',
-                });
+                if (hasCloudinaryConfig) {
+                    try {
+                        url = await uploadStreamToCloudinary({
+                            stream: createReadableStream(buffer),
+                            fileName: safeFileName,
+                            resourceType,
+                            folder: isPdf ? 'catalog-uploads' : 'direct-uploads',
+                        });
+                    } catch (cloudinaryError) {
+                        console.error('[Upload API] Cloudinary upload failed, falling back to local storage.', cloudinaryError);
+                    }
+                }
+
+                if (!url) {
+                    url = await saveFileLocally({
+                        buffer,
+                        fileName: safeFileName,
+                        resourceType,
+                    });
+                }
 
                 return {
                     name: safeFileName,
@@ -160,8 +199,14 @@ export async function POST(req: NextRequest) {
         const imageUrls = uploadedFiles.filter((file) => file.type === 'image').map((file) => file.url);
         const pdfUrls = uploadedFiles.filter((file) => file.type === 'pdf').map((file) => file.url);
 
-        // 4. Return the secure URLs without breaking existing image upload consumers
-        return NextResponse.json({ uploadedUrls, imageUrls, pdfUrls, errors: uploadErrors });
+        // 3. Return the generated URLs without breaking existing upload consumers
+        return NextResponse.json({
+            uploadedUrls,
+            imageUrls,
+            pdfUrls,
+            errors: uploadErrors,
+            storageProvider: hasCloudinaryConfig ? 'cloudinary-or-local-fallback' : 'local',
+        });
 
     } catch (error: any) {
         console.error('[Direct Upload API Error]', error);

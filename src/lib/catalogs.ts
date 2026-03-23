@@ -13,9 +13,17 @@ const EMPTY_CATALOG: Catalog = {
   url: '',
 };
 
+const isLocalCatalogPath = (value: string) => value.startsWith('/');
+
 export const isValidCatalogUrl = (value: string) => {
+  const trimmedValue = value.trim();
+
+  if (isLocalCatalogPath(trimmedValue)) {
+    return true;
+  }
+
   try {
-    const parsedUrl = new URL(value);
+    const parsedUrl = new URL(trimmedValue);
     return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
   } catch {
     return false;

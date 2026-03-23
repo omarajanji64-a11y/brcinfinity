@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useFirestore } from '@/firebase/client-provider';
+import { isHttpsImageUrl, isLocalImagePath } from '@/lib/image-utils';
 import {
   FIXED_CATEGORY_OPTIONS,
   createLocalizedText,
@@ -77,7 +78,10 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
   }, [product]);
 
   const validImageUrls = useMemo(
-    () => form.imageUrls.map((url) => url.trim()).filter((url) => url.startsWith('https://')),
+    () =>
+      form.imageUrls
+        .map((url) => url.trim())
+        .filter((url) => isHttpsImageUrl(url) || isLocalImagePath(url)),
     [form.imageUrls]
   );
 
@@ -217,7 +221,7 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
       toast({
         variant: 'destructive',
         title: 'Görsel gerekli',
-        description: 'En az bir geçerli https görsel adresi ekle.',
+        description: 'En az bir geçerli görsel adresi ekle veya dosya yükle.',
       });
       return;
     }
@@ -383,7 +387,7 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
                 </Button>
               </div>
 
-              {url.trim().startsWith('https://') && (
+              {(isHttpsImageUrl(url.trim()) || isLocalImagePath(url.trim())) && (
                 <div className="mt-3 overflow-hidden rounded-md border bg-muted">
                   <img src={url.trim()} alt={`Ürün görseli ${index + 1}`} className="h-40 w-full object-cover" />
                 </div>
