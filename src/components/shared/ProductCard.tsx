@@ -61,7 +61,7 @@ function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <Card className="group flex h-full flex-col overflow-hidden rounded-[1.4rem] p-0 transition-colors duration-500 hover:border-white/14">
+    <Card className="theme-panel-lift group flex h-full flex-col overflow-hidden rounded-[1.4rem] p-0 transition-colors duration-500 hover:border-white/14">
       <CardHeader className="p-0">
         <div className="group/image relative overflow-hidden rounded-t-[1.4rem] border-b border-white/8">
           {isValidUrl ? (

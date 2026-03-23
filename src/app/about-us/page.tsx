@@ -3,18 +3,20 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 
-import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
-import { Card, CardContent } from '@/components/ui/card';
+import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
-import { useTranslation } from '@/lib/i18n';
+import { Card, CardContent } from '@/components/ui/card';
+import { useTranslation, type Language } from '@/lib/i18n';
 
 type IconProps = {
   className?: string;
 };
 
+type LocalizedCopy = Record<Language, string>;
+
 const IconFrame = ({ children }: { children: ReactNode }) => (
-  <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/20 via-transparent to-accent/5 shadow-[0_0_30px_rgba(255,215,130,0.18)]">
+  <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/20 via-transparent to-accent/5 shadow-[0_0_30px_rgba(255,215,130,0.16)]">
     <div className="absolute -bottom-1 -right-1 h-2 w-2 rounded-full bg-accent/60" />
     {children}
   </div>
@@ -63,125 +65,337 @@ const SustainabilityIcon = ({ className }: IconProps) => (
   </svg>
 );
 
-export default function AboutUsPage() {
-  const { t } = useTranslation();
+const getLocalizedValue = (copy: LocalizedCopy, language: Language) => copy[language] || copy.tr;
 
-  const missionItems = [
+export default function AboutUsPage() {
+  const { t, language } = useTranslation();
+
+  const heroCopy =
+    language === 'tr'
+      ? {
+          kicker: 'Marka hikayesi',
+          title: 'Klasik ihtisami daha rafine ve guven veren bir dile donusturuyoruz.',
+          lead:
+            'BRC Infinity, klasik mobilyayi sadece gosteri olarak degil; kalicilik, denge ve mekan karakteri olarak ele alir.',
+          body:
+            'Her koleksiyonda oran, malzeme ve detay uyumunu ayni ciddiyetle ele aliyor; yasam alanlarina zamansiz, guclu ve huzurlu bir atmosfer kazandiriyoruz.',
+          sideTitle: 'Ne uzerine insa ediyoruz?',
+          sideDescription:
+            'Secili koleksiyon, saglam iscilik ve showroom deneyimini tek cizgide birlestiren daha kontrollu bir marka dili.',
+        }
+      : language === 'fr'
+        ? {
+            kicker: 'Histoire de la marque',
+            title: 'Nous reinterpretions la grandeur classique avec une presence plus raffinee et plus sure.',
+            lead:
+              'BRC Infinity traite le mobilier classique non comme une simple demonstration, mais comme un langage durable pour l espace.',
+            body:
+              'Dans chaque collection, nous travaillons l equilibre des proportions, des materiaux et des details afin d apporter une atmosphere intemporelle et sereine.',
+            sideTitle: 'Notre base',
+            sideDescription:
+              'Une ligne de marque plus maitrisee qui reunit collections choisies, execution solide et experience showroom.',
+          }
+        : {
+            kicker: 'Brand story',
+            title: 'We reshape classical grandeur into a more refined and reassuring presence.',
+            lead:
+              'BRC Infinity approaches classical furniture not as spectacle, but as a lasting language for the interior.',
+            body:
+              'Across every collection, we balance proportion, material, and detail with the same discipline to create a timeless and composed atmosphere.',
+            sideTitle: 'What we build on',
+            sideDescription:
+              'A more controlled brand language built on selected collections, solid craftsmanship, and a confident showroom experience.',
+          };
+
+  const stats = [
     {
-      title: 'Amaçlı Lüks',
+      value: 'Masko',
+      label:
+        language === 'tr'
+          ? 'Showroom merkezi'
+          : language === 'fr'
+            ? 'Showroom principal'
+            : 'Main showroom',
+    },
+    {
+      value: 'Classic',
+      label:
+        language === 'tr'
+          ? 'Imza koleksiyon hissi'
+          : language === 'fr'
+            ? 'Signature classique'
+            : 'Signature classic mood',
+    },
+    {
+      value: 'Premium',
+      label:
+        language === 'tr'
+          ? 'Malzeme ve detay secimi'
+          : language === 'fr'
+            ? 'Selection des details'
+            : 'Material and detail curation',
+    },
+  ];
+
+  const pillars = [
+    {
+      title:
+        language === 'tr'
+          ? 'Klasik zarafet'
+          : language === 'fr'
+            ? 'Elegance classique'
+            : 'Classical elegance',
       description:
-        'Klasik çizgiyi modern konforla birleştiren, her detayıyla ayrıcalık hissi veren mobilyalar üretmek.',
+        language === 'tr'
+          ? 'Oyma, varak ve oran duygusunu daha sakin bir luks anlayisiyla dengeliyoruz.'
+          : language === 'fr'
+            ? 'Nous equilibrons sculpture, dorure et proportions avec une idee du luxe plus calme.'
+            : 'We balance carving, gilding, and proportion with a calmer idea of luxury.',
       Icon: LuxuryIcon,
     },
     {
-      title: 'Güvenli ve Dayanıklı',
+      title:
+        language === 'tr'
+          ? 'Guven veren dayaniklilik'
+          : language === 'fr'
+            ? 'Durabilite rassurante'
+            : 'Assured durability',
       description:
-        'Sağlam malzeme ve titiz işçilikle güvenli, uzun ömürlü ve aileler için konforlu yaşam alanları oluşturmak.',
+        language === 'tr'
+          ? 'Uzun omurlu kullanim icin malzeme secimini ve iscilik disiplinini birlikte ele aliyoruz.'
+          : language === 'fr'
+            ? 'Nous associons choix des materiaux et discipline d execution pour une utilisation durable.'
+            : 'We pair material selection with disciplined execution for long-term use.',
       Icon: SafetyIcon,
     },
     {
-      title: 'Sürdürülebilir Zarafet',
+      title:
+        language === 'tr'
+          ? 'Sorumlu ustalik'
+          : language === 'fr'
+            ? 'Savoir-faire responsable'
+            : 'Responsible craftsmanship',
       description:
-        'Sorumlu tedarik ve çevre duyarlılığı ile lüksün doğayla uyumlu olabileceğini göstermek.',
+        language === 'tr'
+          ? 'Mekanin degerini koruyan, gereksiz gosteriden uzak ama etkili bir ustalik anlayisi.'
+          : language === 'fr'
+            ? 'Une maitrise efficace, eloignee de l exces, qui respecte la valeur de l espace.'
+            : 'An effective craft language that respects the space without unnecessary excess.',
       Icon: SustainabilityIcon,
+    },
+  ];
+
+  const missionItems = [
+    {
+      title: getLocalizedValue({ tr: 'Amacli luks', en: 'Purposeful luxury', fr: 'Luxe intentionnel' }, language),
+      description: getLocalizedValue(
+        {
+          tr: 'Klasik cizgiyi modern konforla bulusturan, kullanildikca deger kazanan mekanlar kurmak.',
+          en: 'To shape interiors where classical lines meet modern comfort and gain value over time.',
+          fr: 'Creer des interieurs ou les lignes classiques rencontrent le confort moderne et gagnent en valeur.',
+        },
+        language
+      ),
+      Icon: LuxuryIcon,
+    },
+    {
+      title: getLocalizedValue({ tr: 'Guvenli kalite', en: 'Reliable quality', fr: 'Qualite fiable' }, language),
+      description: getLocalizedValue(
+        {
+          tr: 'Saglam malzeme, kontrollu iscilik ve dengeli tasarimla uzun omurlu kullanim sunmak.',
+          en: 'To deliver longevity through solid materials, controlled execution, and balanced design.',
+          fr: 'Offrir une longue duree de vie grace a des materiaux solides, une execution maitrisee et un design equilibre.',
+        },
+        language
+      ),
+      Icon: SafetyIcon,
+    },
+    {
+      title: getLocalizedValue({ tr: 'Mekan uyumu', en: 'Spatial harmony', fr: 'Harmonie de l espace' }, language),
+      description: getLocalizedValue(
+        {
+          tr: 'Urunu tek basina degil, mekanin genel dili icinde degerlendiren bir secim anlayisi kurmak.',
+          en: 'To curate products not in isolation, but as part of a complete interior language.',
+          fr: 'Choisir les pieces non isolees, mais comme partie d un langage interieur complet.',
+        },
+        language
+      ),
+      Icon: TimelessIcon,
     },
   ];
 
   const visionItems = [
     {
-      title: 'Zamansız İmza',
-      description:
-        'Klasik estetikte modern bir yorumla, dünyada zamansız ve güçlü bir marka izi bırakmak.',
+      title: getLocalizedValue({ tr: 'Zamansiz imza', en: 'Timeless signature', fr: 'Signature intemporelle' }, language),
+      description: getLocalizedValue(
+        {
+          tr: 'Klasik mobilyada daha rafine, daha secici ve uzun omurlu bir marka izi birakmak.',
+          en: 'To leave a more refined, selective, and lasting signature in classical furniture.',
+          fr: 'Laisser une signature plus raffinee, selective et durable dans le mobilier classique.',
+        },
+        language
+      ),
       Icon: TimelessIcon,
     },
     {
-      title: 'Ustalık Mirası',
-      description:
-        'Nesiller boyu değerini koruyan, güvenle tercih edilen bir ustalık mirası inşa etmek.',
+      title: getLocalizedValue({ tr: 'Ustalik mirasi', en: 'Craft legacy', fr: 'Heritage du savoir-faire' }, language),
+      description: getLocalizedValue(
+        {
+          tr: 'Nesiller boyunca guvenle anilacak bir kalite standardi insa etmek.',
+          en: 'To build a quality standard that can be trusted across generations.',
+          fr: 'Construire un niveau de qualite reconnu et fiable au fil des generations.',
+        },
+        language
+      ),
       Icon: LegacyIcon,
     },
     {
-      title: 'Sorumlu Lüks',
-      description:
-        'Sürdürülebilir üretimi lüksle buluşturarak sektör için kalıcı ve ilham veren bir standart oluşturmak.',
-      Icon: LuxuryIcon,
+      title: getLocalizedValue({ tr: 'Secili buyume', en: 'Selective growth', fr: 'Croissance choisie' }, language),
+      description: getLocalizedValue(
+        {
+          tr: 'Her yeni adimda marka tonunu ve koleksiyon kalitesini koruyan kontrollu bir genisleme.',
+          en: 'Measured expansion that protects the tone of the brand and the quality of each collection.',
+          fr: 'Une expansion maitrisee qui preserve le ton de la marque et la qualite de chaque collection.',
+        },
+        language
+      ),
+      Icon: SustainabilityIcon,
     },
   ];
 
-  const whyUs = [
-    {
-      title: t('home.why_us_1_title'),
-      description: t('home.why_us_1_desc'),
-    },
-    {
-      title: t('home.why_us_2_title'),
-      description: t('home.why_us_2_desc'),
-    },
-    {
-      title: t('home.why_us_3_title'),
-      description: t('home.why_us_3_desc'),
-    },
-  ];
-
-  const categories = [
-    t('categories.living_room'),
-    t('categories.dining_room'),
-    t('categories.bedroom'),
-  ];
-
-  const contactFields = [
-    t('contact_page.form.name'),
-    t('contact_page.form.email'),
-    t('contact_page.form.subject'),
-    t('contact_page.form.message'),
-  ];
+  const categories = [t('categories.living_room'), t('categories.dining_room'), t('categories.bedroom')];
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-grow">
-        <section className="theme-surface relative overflow-hidden bg-gradient-to-b from-secondary/60 to-background">
-          <div className="absolute inset-0 opacity-20">
-            <div className="absolute -top-12 left-10 h-72 w-72 rounded-full bg-accent blur-3xl" />
-            <div className="absolute bottom-0 right-10 h-80 w-80 rounded-full bg-accent blur-[140px]" />
-          </div>
-          <div className="container mx-auto px-4 py-16 md:py-24 relative z-10">
-            <div className="grid gap-12 lg:grid-cols-[1.2fr_0.8fr] items-center">
-              <div className="space-y-6">
-                <p className="text-xs uppercase tracking-[0.3em] text-accent/80">{t('footer.tagline')}</p>
-                <h1 className="font-headline text-5xl md:text-6xl font-bold text-foreground">Hakkımızda</h1>
-                <p className="text-2xl md:text-3xl font-semibold text-accent">{t('hero.title')}</p>
-                <p className="text-lg text-muted-foreground">{t('hero.subtitle')}</p>
-                <p className="text-base text-muted-foreground">
-                  BRC Infinity, lüksü zamansız tasarımla buluşturan; klasik, güvenli ve sürdürülebilir mobilyalar
-                  üretmeyi amaçlayan bir marka. Her parça, yaşam alanlarını yücelten bir zarafet ve kalıcı bir kalite
-                  için tasarlanır.
-                </p>
-                <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">{t('footer.quick_links')}</p>
-                <div className="flex flex-wrap gap-4">
-                  <Button asChild size="lg" className="transition-transform duration-300 hover:scale-105">
-                    <Link href="/products">{t('hero.explore_collections')}</Link>
-                  </Button>
-                  <Button asChild size="lg" variant="outline" className="border-accent text-accent hover:bg-accent/10">
-                    <Link href="/contact">{t('home.custom_request_button')}</Link>
-                  </Button>
-                  <Button asChild size="lg" variant="ghost" className="text-accent hover:bg-accent/10">
-                    <Link href="/products">{t('header.download_catalog')}</Link>
-                  </Button>
+        <section className="theme-surface relative overflow-hidden px-4 pb-8 pt-3 md:pb-12 md:pt-4">
+          <div className="photo-veil opacity-30" />
+          <div className="ambient-orb animate-float-slow left-[-5rem] top-10 h-56 w-56 sm:h-72 sm:w-72" />
+          <div className="ambient-orb animate-float-slower bottom-8 right-[-5rem] h-64 w-64 sm:h-80 sm:w-80" />
+          <div className="container relative mx-auto px-0">
+            <div className="theme-panel overflow-hidden rounded-[2rem] p-6 sm:p-8 lg:p-10">
+              <div className="grid items-start gap-10 lg:grid-cols-[1.12fr_0.88fr]">
+                <div className="max-w-2xl">
+                  <p className="section-kicker animate-reveal">{heroCopy.kicker}</p>
+                  <h1 className="animate-reveal animate-reveal-delay-1 mt-5 font-headline text-5xl font-semibold leading-[0.98] text-primary md:text-7xl">
+                    {heroCopy.title}
+                  </h1>
+                  <p className="animate-reveal animate-reveal-delay-2 mt-5 text-lg leading-8 text-primary/74 md:text-xl">
+                    {heroCopy.lead}
+                  </p>
+                  <p className="animate-reveal animate-reveal-delay-3 mt-6 max-w-2xl text-base leading-8 text-primary/56">
+                    {heroCopy.body}
+                  </p>
+
+                  <div className="animate-reveal animate-reveal-delay-3 mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                    <Button asChild size="lg" className="h-11 rounded-full px-6">
+                      <Link href="/products">{t('hero.explore_collections')}</Link>
+                    </Button>
+                    <Button asChild size="lg" variant="outline" className="h-11 rounded-full px-6">
+                      <Link href="/contact">{t('home.custom_request_button')}</Link>
+                    </Button>
+                  </div>
+
+                  <div className="mt-10 grid gap-3 sm:grid-cols-3">
+                    {stats.map((stat, index) => (
+                      <div
+                        key={stat.label}
+                        className="animate-reveal rounded-[1.2rem] border border-white/8 bg-white/[0.03] px-4 py-4"
+                        style={{ animationDelay: `${0.36 + index * 0.08}s` }}
+                      >
+                        <p className="font-headline text-2xl font-semibold text-primary">{stat.value}</p>
+                        <p className="mt-2 text-xs uppercase tracking-[0.16em] text-primary/46">{stat.label}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid gap-4">
+                  <Card className="animate-reveal animate-reveal-delay-2 theme-panel-lift rounded-[1.6rem]">
+                    <CardContent className="p-6 sm:p-7">
+                      <p className="text-[0.72rem] uppercase tracking-[0.18em] text-accent/84">{heroCopy.sideTitle}</p>
+                      <h2 className="mt-4 font-headline text-3xl font-semibold text-primary">{t('home.why_us_title')}</h2>
+                      <p className="mt-4 text-sm leading-7 text-primary/58">{heroCopy.sideDescription}</p>
+                    </CardContent>
+                  </Card>
+
+                  {pillars.map(({ title, description, Icon }, index) => (
+                    <Card
+                      key={title}
+                      className="theme-panel-lift animate-reveal rounded-[1.4rem]"
+                      style={{ animationDelay: `${0.24 + index * 0.1}s` }}
+                    >
+                      <CardContent className="flex gap-4 p-6">
+                        <IconFrame>
+                          <Icon className="h-7 w-7 text-accent" />
+                        </IconFrame>
+                        <div>
+                          <h3 className="font-headline text-2xl font-semibold text-primary">{title}</h3>
+                          <p className="mt-2 text-sm leading-7 text-primary/58">{description}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
               </div>
-              <Card className="border border-accent/20 bg-background/70 shadow-xl">
-                <CardContent className="p-8 space-y-6">
-                  <div>
-                    <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground">BRC Infinity</p>
-                    <h2 className="text-2xl font-headline font-semibold">{t('home.why_us_title')}</h2>
-                  </div>
-                  <div className="space-y-4">
-                    {whyUs.map(({ title, description }) => (
+            </div>
+          </div>
+        </section>
+
+        <section className="theme-surface-soft relative overflow-hidden px-4 py-20 md:py-24">
+          <div className="photo-veil opacity-15" />
+          <div className="container relative mx-auto px-0">
+            <div className="mx-auto mb-12 max-w-3xl text-center">
+              <p className="section-kicker animate-reveal justify-center">{t('footer.tagline')}</p>
+              <h2 className="section-title animate-reveal animate-reveal-delay-1 mt-5">
+                {language === 'tr' ? 'Misyon ve vizyon' : language === 'fr' ? 'Mission et vision' : 'Mission and vision'}
+              </h2>
+              <p className="section-copy animate-reveal animate-reveal-delay-2 mt-5">
+                {language === 'tr'
+                  ? 'Tasarim dilimizi sadece urun bazinda degil, markanin uzun vadeli tutarliligi icin de kuruyoruz.'
+                  : language === 'fr'
+                    ? 'Nous construisons notre langage design non seulement pour le produit, mais aussi pour la coherence durable de la marque.'
+                    : 'We shape our design language not only for individual products, but for the long-term consistency of the brand.'}
+              </p>
+            </div>
+
+            <div className="grid gap-8 lg:grid-cols-2">
+              <Card className="theme-panel-lift animate-reveal rounded-[1.6rem]" style={{ animationDelay: '0.12s' }}>
+                <CardContent className="p-8 sm:p-9">
+                  <p className="text-[0.72rem] uppercase tracking-[0.18em] text-accent/84">
+                    {language === 'tr' ? 'Misyonumuz' : language === 'fr' ? 'Notre mission' : 'Our mission'}
+                  </p>
+                  <div className="mt-6 space-y-6">
+                    {missionItems.map(({ title, description, Icon }) => (
                       <div key={title} className="flex gap-4">
+                        <IconFrame>
+                          <Icon className="h-7 w-7 text-accent" />
+                        </IconFrame>
                         <div>
-                          <h3 className="font-semibold text-foreground">{title}</h3>
-                          <p className="text-sm text-muted-foreground">{description}</p>
+                          <h3 className="font-headline text-2xl font-semibold text-primary">{title}</h3>
+                          <p className="mt-2 text-sm leading-7 text-primary/58">{description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="theme-panel-lift animate-reveal rounded-[1.6rem]" style={{ animationDelay: '0.22s' }}>
+                <CardContent className="p-8 sm:p-9">
+                  <p className="text-[0.72rem] uppercase tracking-[0.18em] text-accent/84">
+                    {language === 'tr' ? 'Vizyonumuz' : language === 'fr' ? 'Notre vision' : 'Our vision'}
+                  </p>
+                  <div className="mt-6 space-y-6">
+                    {visionItems.map(({ title, description, Icon }) => (
+                      <div key={title} className="flex gap-4">
+                        <IconFrame>
+                          <Icon className="h-7 w-7 text-accent" />
+                        </IconFrame>
+                        <div>
+                          <h3 className="font-headline text-2xl font-semibold text-primary">{title}</h3>
+                          <p className="mt-2 text-sm leading-7 text-primary/58">{description}</p>
                         </div>
                       </div>
                     ))}
@@ -192,141 +406,52 @@ export default function AboutUsPage() {
           </div>
         </section>
 
-        <section className="container mx-auto px-4 py-16">
-          <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] items-start">
-            <div className="space-y-6">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground">{t('product_page.title')}</h2>
-              <p className="text-lg text-muted-foreground">{t('product_page.subtitle')}</p>
-              <div className="space-y-4">
-                <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground">
-                  {t('home.featured_products')}
-                </p>
-                <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
-                  {t('footer.categories')}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {categories.map((category) => (
-                    <span key={category} className="rounded-full border border-accent/30 px-4 py-1 text-sm text-foreground">
-                      {category}
-                    </span>
-                  ))}
+        <section className="relative overflow-hidden px-4 pb-20 md:pb-24">
+          <div className="container mx-auto px-0">
+            <div className="theme-panel relative overflow-hidden rounded-[2rem] p-8 sm:p-10 lg:p-12">
+              <div className="photo-veil opacity-30" />
+              <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+                <div className="max-w-3xl">
+                  <p className="section-kicker animate-reveal">
+                    {language === 'tr' ? 'Birlikte kuralim' : language === 'fr' ? 'Construisons ensemble' : 'Let us shape it together'}
+                  </p>
+                  <h2 className="animate-reveal animate-reveal-delay-1 mt-5 font-headline text-4xl font-semibold text-primary md:text-5xl">
+                    {language === 'tr'
+                      ? 'Mekana uygun klasik bir koleksiyon dili birlikte netlestirelim.'
+                      : language === 'fr'
+                        ? 'Definissons ensemble une ligne classique adaptee a votre interieur.'
+                        : 'Let us define a classical collection language that fits your interior.'}
+                  </h2>
+                  <p className="animate-reveal animate-reveal-delay-2 mt-5 max-w-2xl text-base leading-8 text-primary/58">
+                    {language === 'tr'
+                      ? 'Yemek odasi, yatak odasi ve salon secimlerini mekaninizin olcusu ve atmosferiyle uyumlu olacak sekilde yonlendiriyoruz.'
+                      : language === 'fr'
+                        ? 'Nous guidons les selections de salon, salle a manger et chambre selon les dimensions et l atmosphere de votre espace.'
+                        : 'We guide living, dining, and bedroom selections according to the proportions and atmosphere of your space.'}
+                  </p>
+                  <div className="mt-8 flex flex-wrap gap-3">
+                    {categories.map((category, index) => (
+                      <span
+                        key={category}
+                        className="animate-reveal rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-[0.72rem] uppercase tracking-[0.16em] text-primary/58"
+                        style={{ animationDelay: `${0.28 + index * 0.08}s` }}
+                      >
+                        {category}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-wrap gap-4">
-                <Button asChild size="lg">
-                  <Link href="/products">{t('home.view_all_products')}</Link>
-                </Button>
-                <Button asChild size="lg" variant="outline" className="border-accent text-accent hover:bg-accent/10">
-                  <Link href="/products">{t('product_page.all_products')}</Link>
-                </Button>
-              </div>
-            </div>
-            <div className="grid gap-6">
-              <Card className="border border-accent/20 bg-background/70 shadow-lg">
-                <CardContent className="p-6 space-y-4">
-                  <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground">{t('footer.tagline')}</p>
-                  <h3 className="text-2xl font-headline font-semibold">{t('hero.title')}</h3>
-                  <p className="text-muted-foreground">{t('hero.subtitle')}</p>
-                </CardContent>
-              </Card>
-              <Card className="border border-accent/20 bg-secondary/60 shadow-lg">
-                <CardContent className="p-6 space-y-3">
-                  <h3 className="text-xl font-semibold text-foreground">{t('home.custom_request_title')}</h3>
-                  <p className="text-muted-foreground">{t('home.custom_request_desc')}</p>
-                  <Button asChild size="lg" variant="outline" className="border-accent text-accent hover:bg-accent/10">
+
+                <div className="animate-reveal animate-reveal-delay-3 flex flex-col gap-3 sm:flex-row lg:flex-col">
+                  <Button asChild size="lg" className="h-11 rounded-full px-6">
+                    <Link href="/products">{t('home.view_all_products')}</Link>
+                  </Button>
+                  <Button asChild size="lg" variant="outline" className="h-11 rounded-full px-6">
                     <Link href="/contact">{t('home.custom_request_button')}</Link>
                   </Button>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </div>
-          </div>
-        </section>
-
-        <section className="container mx-auto px-4 py-16">
-          <div className="text-center space-y-4 mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground">Misyonumuz ve Vizyonumuz</h2>
-            <p className="text-lg text-muted-foreground">{t('footer.tagline')}</p>
-          </div>
-          <div className="grid gap-10 lg:grid-cols-2">
-            <Card className="border border-accent/20 bg-background/70 shadow-xl">
-              <CardContent className="p-8 space-y-6">
-                <h3 className="text-2xl font-headline font-semibold">Misyonumuz</h3>
-                <div className="space-y-5">
-                  {missionItems.map(({ title, description, Icon }) => (
-                    <div key={title} className="flex gap-4">
-                      <IconFrame>
-                        <Icon className="h-7 w-7 text-accent" />
-                      </IconFrame>
-                      <div>
-                        <h4 className="font-semibold text-foreground">{title}</h4>
-                        <p className="text-sm text-muted-foreground">{description}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="border border-accent/20 bg-background/70 shadow-xl">
-              <CardContent className="p-8 space-y-6">
-                <h3 className="text-2xl font-headline font-semibold">Vizyonumuz</h3>
-                <div className="space-y-5">
-                  {visionItems.map(({ title, description, Icon }) => (
-                    <div key={title} className="flex gap-4">
-                      <IconFrame>
-                        <Icon className="h-7 w-7 text-accent" />
-                      </IconFrame>
-                      <div>
-                        <h4 className="font-semibold text-foreground">{title}</h4>
-                        <p className="text-sm text-muted-foreground">{description}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-
-        <section className="container mx-auto px-4 py-16">
-          <div className="text-center space-y-4 mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground">{t('contact_page.title')}</h2>
-            <p className="text-lg text-muted-foreground">{t('contact_page.subtitle')}</p>
-            <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">{t('footer.contact_us')}</p>
-          </div>
-          <div className="grid gap-8 lg:grid-cols-2">
-            <Card className="border border-accent/20 bg-background/70 shadow-xl">
-              <CardContent className="p-8 space-y-6">
-                <h3 className="text-2xl font-headline font-semibold">{t('contact_page.showroom_title')}</h3>
-                <p className="text-muted-foreground">{t('contact_page.showroom_description')}</p>
-                <div className="space-y-3 text-sm text-muted-foreground">
-                  <div>
-                    <p className="uppercase tracking-[0.2em] text-xs text-muted-foreground">{t('contact_page.showroom.address')}</p>
-                    <p>Masko mobilyacılar sitesi 18/B No 35 Istanbul, Turkey</p>
-                  </div>
-                  <div>
-                    <p className="uppercase tracking-[0.2em] text-xs text-muted-foreground">{t('contact_page.showroom.phone')}</p>
-                    <p className="font-code">+90 546 789 89 68</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="border border-accent/20 bg-background/70 shadow-xl">
-              <CardContent className="p-8 space-y-6">
-                <h3 className="text-2xl font-headline font-semibold">{t('contact_page.form_title')}</h3>
-                <p className="text-muted-foreground">{t('home.custom_request_desc')}</p>
-                <div className="grid gap-3 text-sm text-muted-foreground">
-                  {contactFields.map((field) => (
-                    <div key={field} className="flex items-center gap-3">
-                      <div className="h-2 w-2 rounded-full bg-accent/70" />
-                      <span>{field}</span>
-                    </div>
-                  ))}
-                </div>
-                <Button asChild size="lg" className="w-full">
-                  <Link href="/contact">{t('contact_page.form.submit_button')}</Link>
-                </Button>
-              </CardContent>
-            </Card>
           </div>
         </section>
       </main>

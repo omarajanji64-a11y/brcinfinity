@@ -45,11 +45,12 @@ export default function RootLayout({
       </head>
       <body
         className={cn(
-          'font-body antialiased min-h-screen bg-background',
+          'relative min-h-screen overflow-x-hidden bg-background font-body antialiased',
           cormorantGaramond.variable,
           manrope.variable
         )}
       >
+        <div aria-hidden="true" className="site-background" />
         <LanguageProvider>
           <ClientProviders>
             <ThemeLoader />

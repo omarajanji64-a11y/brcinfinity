@@ -33,11 +33,13 @@ export default function FeaturedProducts() {
 
   return (
     <section className="theme-surface-soft relative overflow-hidden bg-secondary/20">
+      <div className="photo-veil opacity-15" />
+      <div className="ambient-orb animate-float-slower right-[-5rem] top-12 h-64 w-64" />
       <div className="container relative mx-auto px-4 py-20 md:py-24">
         <div className="mx-auto mb-12 max-w-3xl text-center">
-          <p className="section-kicker justify-center">{sectionCopy.kicker}</p>
-          <h2 className="section-title mt-5">{t('home.featured_products')}</h2>
-          <p className="section-copy mt-5">{sectionCopy.description}</p>
+          <p className="section-kicker animate-reveal justify-center">{sectionCopy.kicker}</p>
+          <h2 className="section-title animate-reveal animate-reveal-delay-1 mt-5">{t('home.featured_products')}</h2>
+          <p className="section-copy animate-reveal animate-reveal-delay-2 mt-5">{sectionCopy.description}</p>
         </div>
 
         <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -63,14 +65,14 @@ export default function FeaturedProducts() {
             ))
           ) : (
             featuredProducts.map((product, i) => (
-              <div key={product.id} className="animate-fade-in-up" style={{animationDelay: `${i * 0.1}s`, animationFillMode: 'backwards'}}>
+              <div key={product.id} className="animate-fade-in-up" style={{ animationDelay: `${i * 0.1}s`, animationFillMode: 'backwards' }}>
                 <ProductCard product={product} />
               </div>
             ))
           )}
         </div>
 
-        <div className="mt-12 text-center">
+        <div className="animate-reveal animate-reveal-delay-3 mt-12 text-center">
           <Button asChild variant="outline" size="lg" className="h-12 px-7 text-[0.74rem] tracking-[0.16em]">
             <Link href="/products">
               {t('home.view_all_products')}

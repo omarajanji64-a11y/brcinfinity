@@ -51,6 +51,12 @@ const CONTACT_LABEL: LocalizedCopy = {
   fr: 'Prendre rendez-vous',
 };
 
+const HERO_HIGHLIGHTS: Record<Language, string[]> = {
+  tr: ['Masko showroom', 'Seckin klasik takimlar', 'Rafine malzeme secimi'],
+  en: ['Masko showroom', 'Signature classic sets', 'Refined material choices'],
+  fr: ['Showroom Masko', 'Ensembles classiques choisis', 'Materiaux raffines'],
+};
+
 const getCopy = (value: LocalizedCopy, language: Language) =>
   value[language] || value.tr || value.en || value.fr;
 
@@ -60,6 +66,7 @@ export default function HeroCarousel() {
   const { t, language } = useTranslation();
   const [activeIndex, setActiveIndex] = useState(0);
   const activeSlide = HERO_SLIDES[activeIndex];
+  const heroHighlights = HERO_HIGHLIGHTS[language] || HERO_HIGHLIGHTS.tr;
 
   useEffect(() => {
     if (HERO_SLIDES.length < 2) {
@@ -77,21 +84,24 @@ export default function HeroCarousel() {
 
   return (
     <section className="relative isolate overflow-hidden px-3 pb-10 pt-4 md:px-4 md:pb-14">
+      <div className="ambient-orb animate-float-slow left-[-6rem] top-10 h-48 w-48 sm:h-64 sm:w-64" />
+      <div className="ambient-orb animate-float-slower bottom-8 right-[-4rem] h-56 w-56 sm:h-72 sm:w-72" />
       <div className="container mx-auto px-0">
-        <div className="grid items-center gap-8 rounded-[2rem] border border-white/8 bg-[rgba(4,4,5,0.42)] p-4 sm:p-6 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:p-8">
-          <div className="max-w-xl px-2 py-4 sm:px-4">
-            <p className="section-kicker">{getCopy(activeSlide.eyebrow, language)}</p>
-            <h1 className="mt-5 font-headline text-5xl font-semibold leading-[0.98] text-primary md:text-7xl">
+        <div className="theme-panel relative grid items-center gap-8 overflow-hidden rounded-[2rem] p-4 sm:p-6 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:p-8">
+          <div className="photo-veil opacity-45" />
+          <div className="relative max-w-xl px-2 py-4 sm:px-4">
+            <p className="section-kicker animate-reveal">{getCopy(activeSlide.eyebrow, language)}</p>
+            <h1 className="animate-reveal animate-reveal-delay-1 mt-5 font-headline text-5xl font-semibold leading-[0.98] text-primary md:text-7xl">
               {t('hero.title')}
             </h1>
-            <p className="mt-5 max-w-xl text-base leading-8 text-primary/72 md:text-lg">
+            <p className="animate-reveal animate-reveal-delay-2 mt-5 max-w-xl text-base leading-8 text-primary/72 md:text-lg">
               {t('hero.subtitle')}
             </p>
-            <p className="mt-6 max-w-xl text-sm leading-7 text-primary/52 md:text-base">
+            <p className="animate-reveal animate-reveal-delay-3 mt-6 max-w-xl text-sm leading-7 text-primary/52 md:text-base">
               {getCopy(activeSlide.note, language)}
             </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <div className="animate-reveal animate-reveal-delay-3 mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <Button asChild size="lg" className="h-11 rounded-full px-6">
                 <Link href="/products">
                   {t('hero.explore_collections')}
@@ -103,7 +113,19 @@ export default function HeroCarousel() {
               </Button>
             </div>
 
-            <div className="mt-8 flex items-center gap-3">
+            <div className="mt-8 flex flex-wrap gap-3">
+              {heroHighlights.map((highlight, index) => (
+                <span
+                  key={highlight}
+                  className="animate-reveal rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-[0.7rem] uppercase tracking-[0.16em] text-primary/58"
+                  style={{ animationDelay: `${0.42 + index * 0.08}s` }}
+                >
+                  {highlight}
+                </span>
+              ))}
+            </div>
+
+            <div className="animate-reveal mt-8 flex items-center gap-3" style={{ animationDelay: '0.5s' }}>
               {HERO_SLIDES.map((slide, index) => (
                 <button
                   key={`${slide.src}-dot`}
@@ -121,7 +143,7 @@ export default function HeroCarousel() {
             </div>
           </div>
 
-          <div className="relative overflow-hidden rounded-[1.6rem] border border-white/10 bg-black/30">
+          <div className="animate-reveal animate-reveal-delay-2 relative overflow-hidden rounded-[1.6rem] border border-white/10 bg-black/30 shadow-[0_24px_48px_rgba(0,0,0,0.34)]">
             <div className="relative h-[420px] sm:h-[520px]">
               {HERO_SLIDES.map((slide, index) => (
                 <div
@@ -145,7 +167,15 @@ export default function HeroCarousel() {
                   </div>
                 </div>
               ))}
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,5,6,0.08),rgba(5,5,6,0.18)_46%,rgba(5,5,6,0.5)_100%)]" />
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,5,6,0.05),rgba(5,5,6,0.18)_42%,rgba(5,5,6,0.54)_100%)]" />
+              <div className="pointer-events-none absolute inset-x-6 bottom-6 flex items-end justify-between gap-4">
+                <div className="rounded-full border border-white/10 bg-black/36 px-4 py-2 text-[0.68rem] uppercase tracking-[0.18em] text-primary/70 backdrop-blur-md">
+                  {getCopy(activeSlide.eyebrow, language)}
+                </div>
+                <div className="hidden rounded-full border border-white/10 bg-black/30 px-4 py-2 text-[0.68rem] uppercase tracking-[0.18em] text-primary/58 backdrop-blur-md sm:block">
+                  Masko, Istanbul
+                </div>
+              </div>
             </div>
           </div>
         </div>

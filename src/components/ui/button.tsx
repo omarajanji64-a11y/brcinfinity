@@ -5,15 +5,15 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[0.85rem] border px-4 text-sm font-medium tracking-[0.04em] ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[0.85rem] border px-4 text-sm font-medium tracking-[0.04em] ring-offset-background transition-[transform,background-color,border-color,color,box-shadow] duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:-translate-y-[1px] active:translate-y-0 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "border-[rgba(255,255,255,0.08)] bg-[rgba(168,147,122,0.18)] text-primary shadow-[0_10px_24px_rgba(0,0,0,0.18)] hover:bg-[rgba(168,147,122,0.26)]",
+        default: "border-[rgba(255,255,255,0.08)] bg-[rgba(168,147,122,0.18)] text-primary shadow-[0_12px_28px_rgba(0,0,0,0.2)] hover:border-[rgba(255,255,255,0.16)] hover:bg-[rgba(168,147,122,0.28)] hover:shadow-[0_16px_36px_rgba(0,0,0,0.28)]",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
-          "border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] text-primary hover:bg-[rgba(255,255,255,0.06)] hover:text-primary",
+          "border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] text-primary shadow-[0_10px_22px_rgba(0,0,0,0.12)] hover:border-[rgba(255,255,255,0.14)] hover:bg-[rgba(255,255,255,0.07)] hover:text-primary hover:shadow-[0_16px_30px_rgba(0,0,0,0.2)]",
         secondary:
           "border-[rgba(255,255,255,0.06)] bg-secondary text-secondary-foreground hover:bg-[rgba(255,255,255,0.08)]",
         ghost: "border-transparent bg-transparent text-primary hover:bg-[rgba(255,255,255,0.05)] hover:text-primary",

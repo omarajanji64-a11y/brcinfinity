@@ -89,8 +89,11 @@ export default function ProductsPage() {
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-grow">
-        <div className="theme-surface bg-secondary">
-          <div className="container mx-auto px-4 py-12 text-center">
+        <div className="theme-surface relative overflow-hidden bg-secondary">
+          <div className="photo-veil opacity-25" />
+          <div className="ambient-orb animate-float-slow left-[-5rem] top-10 h-56 w-56 sm:h-72 sm:w-72" />
+          <div className="ambient-orb animate-float-slower bottom-0 right-[-5rem] h-64 w-64 sm:h-80 sm:w-80" />
+          <div className="container relative mx-auto px-4 py-12 text-center">
             <h1 className="animate-fade-in-up font-headline text-4xl font-bold md:text-5xl">
               {t('product_page.title')}
             </h1>
@@ -109,7 +112,7 @@ export default function ProductsPage() {
           </div>
         </div>
         <div className="container mx-auto px-4 py-16">
-          <div className="theme-panel mb-12 flex flex-col items-center justify-between gap-4 rounded-lg bg-secondary p-2 md:flex-row">
+          <div className="theme-panel-lift theme-panel mb-12 flex flex-col items-center justify-between gap-4 rounded-[1.4rem] bg-secondary p-3 md:flex-row">
             <Tabs
               value={activeCategory}
               onValueChange={(value) => startTransition(() => setActiveCategory(value))}

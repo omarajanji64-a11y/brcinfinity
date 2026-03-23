@@ -5,7 +5,7 @@
 
 @layer base {
   :root {
-    --theme-background-image: none;
+    --theme-background-image: url('/brc-theme-bg.jpg');
     --background: 0 0% 4%;
     --foreground: 28 12% 91%;
 
@@ -85,17 +85,13 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-image:
-      radial-gradient(circle at 50% 38%, rgba(230, 218, 198, 0.08), transparent 18%),
-      radial-gradient(circle at 18% 72%, rgba(255, 255, 255, 0.035), transparent 12%),
-      radial-gradient(circle at 82% 66%, rgba(255, 255, 255, 0.03), transparent 10%),
-      radial-gradient(circle, rgba(255, 255, 255, 0.032) 0.8px, transparent 1.2px),
-      radial-gradient(circle, rgba(224, 206, 178, 0.022) 0.6px, transparent 1px),
-      linear-gradient(180deg, rgba(2, 2, 3, 0.96), rgba(8, 8, 10, 0.98)),
-      var(--theme-background-image);
-    background-position: center 38%, 18% 72%, 82% 66%, 0 0, 60px 40px, center, center top;
-    background-repeat: no-repeat, no-repeat, no-repeat, repeat, repeat, no-repeat, no-repeat;
-    background-size: auto, auto, auto, 170px 170px, 120px 120px, cover, cover;
+    position: relative;
+    isolation: isolate;
+    overflow-x: hidden;
+    background-image: linear-gradient(180deg, rgba(4, 4, 5, 0.98), rgba(8, 8, 10, 0.99));
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
     letter-spacing: 0.01em;
   }
 
@@ -110,34 +106,175 @@
 }
 
 @layer components {
-  .theme-surface {
+  .site-background {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
     background-image:
-      linear-gradient(180deg, rgba(4, 4, 5, 0.94), rgba(8, 8, 10, 0.9)),
-      radial-gradient(circle at 50% 12%, rgba(222, 204, 177, 0.06), transparent 28%),
+      radial-gradient(circle at 16% 18%, rgba(220, 190, 140, 0.12), transparent 22%),
+      radial-gradient(circle at 84% 24%, rgba(255, 255, 255, 0.06), transparent 16%),
+      linear-gradient(180deg, rgba(2, 2, 3, 0.9), rgba(7, 7, 9, 0.96)),
+      var(--theme-background-image);
+    background-position: 16% 18%, 84% 24%, center, center top;
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+    background-size: 34rem 34rem, 24rem 24rem, cover, cover;
+  }
+
+  .site-background::before,
+  .site-background::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .site-background::before {
+    inset: -6%;
+    background-image: var(--theme-background-image);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 0.26;
+    filter: blur(1.5px) brightness(0.74) saturate(0.72);
+    mix-blend-mode: screen;
+    animation: ambient-drift 26s ease-in-out infinite alternate;
+  }
+
+  .site-background::after {
+    background-image:
+      radial-gradient(circle at 50% 38%, rgba(230, 218, 198, 0.08), transparent 18%),
+      radial-gradient(circle at 18% 72%, rgba(255, 255, 255, 0.032), transparent 12%),
+      radial-gradient(circle at 82% 66%, rgba(255, 255, 255, 0.03), transparent 10%),
+      radial-gradient(circle, rgba(255, 255, 255, 0.032) 0.8px, transparent 1.2px),
+      radial-gradient(circle, rgba(224, 206, 178, 0.022) 0.6px, transparent 1px);
+    background-position: center 38%, 18% 72%, 82% 66%, 0 0, 60px 40px;
+    background-repeat: no-repeat, no-repeat, no-repeat, repeat, repeat;
+    background-size: auto, auto, auto, 170px 170px, 120px 120px;
+  }
+
+  .theme-surface {
+    position: relative;
+    isolation: isolate;
+    background-image:
+      linear-gradient(180deg, rgba(5, 5, 6, 0.88), rgba(8, 8, 10, 0.82)),
+      radial-gradient(circle at 50% 12%, rgba(222, 204, 177, 0.08), transparent 28%),
       radial-gradient(circle, rgba(255, 255, 255, 0.022) 0.7px, transparent 1.15px),
       var(--theme-background-image);
     background-position: center, center top, 0 0, center;
     background-repeat: no-repeat, no-repeat, repeat, no-repeat;
     background-size: cover, auto, 190px 190px, cover;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
   }
 
   .theme-surface-soft {
+    position: relative;
+    isolation: isolate;
     background-image:
-      linear-gradient(180deg, rgba(5, 5, 6, 0.88), rgba(7, 7, 9, 0.76)),
-      radial-gradient(circle at 50% 10%, rgba(222, 204, 177, 0.05), transparent 24%);
-    background-position: center, top center;
-    background-repeat: no-repeat, no-repeat;
-    background-size: cover, auto;
+      linear-gradient(180deg, rgba(5, 5, 6, 0.82), rgba(7, 7, 9, 0.68)),
+      radial-gradient(circle at 50% 10%, rgba(222, 204, 177, 0.06), transparent 24%),
+      var(--theme-background-image);
+    background-position: center, top center, center;
+    background-repeat: no-repeat, no-repeat, no-repeat;
+    background-size: cover, auto, cover;
   }
 
   .theme-panel {
+    position: relative;
+    isolation: isolate;
     background-color: rgba(10, 10, 11, 0.78);
-    background-image: linear-gradient(180deg, rgba(14, 14, 16, 0.84), rgba(9, 9, 10, 0.72));
+    background-image:
+      linear-gradient(180deg, rgba(16, 16, 18, 0.88), rgba(9, 9, 10, 0.74)),
+      radial-gradient(circle at 12% 0%, rgba(213, 180, 122, 0.14), transparent 26%),
+      radial-gradient(circle at 100% 100%, rgba(255, 255, 255, 0.028), transparent 22%),
+      var(--theme-background-image);
+    background-position: center, top left, bottom right, center;
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+    background-size: cover, auto, auto, cover;
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow:
-      0 16px 34px rgba(0, 0, 0, 0.28),
-      inset 0 1px 0 rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(14px);
+      0 22px 48px rgba(0, 0, 0, 0.32),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(18px);
+  }
+
+  .theme-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.04),
+      transparent 28%,
+      transparent 72%,
+      rgba(213, 180, 122, 0.045)
+    );
+  }
+
+  .theme-panel-lift {
+    transition:
+      transform 500ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 320ms ease,
+      box-shadow 320ms ease,
+      background-color 320ms ease;
+  }
+
+  .theme-panel-lift:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow:
+      0 28px 54px rgba(0, 0, 0, 0.36),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.02);
+  }
+
+  .photo-veil {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(180deg, rgba(6, 6, 8, 0.08), rgba(6, 6, 8, 0.28)),
+      var(--theme-background-image);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    filter: brightness(0.84) saturate(0.72);
+    mix-blend-mode: screen;
+    opacity: 0.24;
+  }
+
+  .ambient-orb {
+    position: absolute;
+    border-radius: 9999px;
+    background: radial-gradient(circle, rgba(212, 177, 116, 0.18), rgba(212, 177, 116, 0));
+    filter: blur(10px);
+    pointer-events: none;
+  }
+
+  .animate-reveal {
+    animation: reveal-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .animate-reveal-delay-1 {
+    animation-delay: 0.12s;
+  }
+
+  .animate-reveal-delay-2 {
+    animation-delay: 0.24s;
+  }
+
+  .animate-reveal-delay-3 {
+    animation-delay: 0.36s;
+  }
+
+  .animate-float-slow {
+    animation: float-slow 8s ease-in-out infinite;
+  }
+
+  .animate-float-slower {
+    animation: float-slow 12s ease-in-out infinite reverse;
   }
 
   .classic-shell {
@@ -179,6 +316,29 @@
   }
 }
 
+@keyframes ambient-drift {
+  0% {
+    transform: scale(1.08) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: scale(1.12) translate3d(-1.2%, 0.8%, 0);
+  }
+  100% {
+    transform: scale(1.1) translate3d(1.5%, -1.4%, 0);
+  }
+}
+
+@keyframes reveal-up {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 @keyframes hero-pan {
   0% {
     transform: scale(1.02) translate3d(0, 0, 0);
@@ -195,5 +355,18 @@
   }
   50% {
     transform: translateY(-10px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-background::before,
+  .animate-reveal,
+  .animate-float-slow,
+  .animate-float-slower {
+    animation: none !important;
+  }
+
+  html {
+    scroll-behavior: auto;
   }
 }

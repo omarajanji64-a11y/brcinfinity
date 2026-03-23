@@ -44,18 +44,23 @@ export default function WhyUs() {
 
   return (
     <section className="theme-surface-soft bg-background">
-      <div className="container mx-auto px-4 py-20 md:py-24">
+      <div className="photo-veil opacity-[0.18]" />
+      <div className="container relative mx-auto px-4 py-20 md:py-24">
         <div className="mx-auto mb-12 max-w-3xl text-center">
-          <p className="section-kicker justify-center">{sectionCopy.kicker}</p>
-          <h2 className="section-title mt-5">{t('home.why_us_title')}</h2>
-          <p className="section-copy mt-5">{sectionCopy.description}</p>
+          <p className="section-kicker animate-reveal justify-center">{sectionCopy.kicker}</p>
+          <h2 className="section-title animate-reveal animate-reveal-delay-1 mt-5">{t('home.why_us_title')}</h2>
+          <p className="section-copy animate-reveal animate-reveal-delay-2 mt-5">{sectionCopy.description}</p>
         </div>
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           {features.map((feature, index) => (
-            <Card key={index} className="rounded-[1.4rem] px-6 py-7 text-left">
+            <Card
+              key={index}
+              className="theme-panel-lift animate-reveal rounded-[1.4rem] px-6 py-7 text-left"
+              style={{ animationDelay: `${0.12 + index * 0.1}s` }}
+            >
               <CardHeader className="items-start px-0 pb-4 pt-0">
-                <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/[0.04]">
+                <div className="animate-float-slow mb-5 inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/[0.04]" style={{ animationDelay: `${index * 0.2}s` }}>
                   {feature.icon}
                 </div>
                 <CardTitle className="font-headline text-2xl text-primary">{feature.title}</CardTitle>

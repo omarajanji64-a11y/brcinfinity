@@ -36,15 +36,17 @@ export default function Categories() {
           };
   return (
     <section className="theme-surface-soft relative overflow-hidden bg-background">
+      <div className="photo-veil opacity-20" />
+      <div className="ambient-orb animate-float-slow left-[-5rem] top-20 h-56 w-56" />
       <div className="container relative mx-auto px-4 py-20 md:py-24">
         <div className="mx-auto mb-12 max-w-3xl text-center">
-          <p className="section-kicker justify-center">{sectionCopy.kicker}</p>
-          <h2 className="section-title mt-5">{sectionCopy.title}</h2>
-          <p className="section-copy mt-5">{sectionCopy.description}</p>
+          <p className="section-kicker animate-reveal justify-center">{sectionCopy.kicker}</p>
+          <h2 className="section-title animate-reveal animate-reveal-delay-1 mt-5">{sectionCopy.title}</h2>
+          <p className="section-copy animate-reveal animate-reveal-delay-2 mt-5">{sectionCopy.description}</p>
         </div>
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-          {categoriesToRender.map((category) => {
+          {categoriesToRender.map((category, index) => {
             const imageUrl = buildCloudinaryImageUrl(category.imageUrl, {
               width: 960,
               height: 1180,
@@ -54,8 +56,8 @@ export default function Categories() {
             });
 
             return (
-              <Link key={category.id} href="/products">
-                <Card className="group overflow-hidden rounded-[1.4rem] p-0">
+              <Link key={category.id} href="/products" className="animate-reveal block" style={{ animationDelay: `${0.12 + index * 0.1}s` }}>
+                <Card className="theme-panel-lift group overflow-hidden rounded-[1.4rem] p-0">
                   <div className="relative overflow-hidden rounded-[0.75rem] border border-[rgba(193,148,79,0.18)]">
                     {canUseNextImage(imageUrl) ? (
                       <Image
@@ -65,18 +67,18 @@ export default function Categories() {
                         height={1180}
                         unoptimized
                         sizes="(max-width: 768px) 100vw, 33vw"
-                        className="aspect-[4/4.8] w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                        className="aspect-[4/4.8] w-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
                       />
                     ) : (
                       <img
                         src={imageUrl}
                         alt={category.displayName}
-                        className="aspect-[4/4.8] w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                        className="aspect-[4/4.8] w-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
                         loading="lazy"
                         decoding="async"
                       />
                     )}
-                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,5,6,0.03),rgba(5,5,6,0.1)_38%,rgba(5,5,6,0.34)_100%)]" />
+                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,5,6,0.02),rgba(5,5,6,0.08)_34%,rgba(5,5,6,0.44)_100%)]" />
                   </div>
 
                   <div className="px-6 py-6 text-center">
