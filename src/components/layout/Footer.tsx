@@ -19,7 +19,9 @@ export default function Footer() {
   return (
     <footer className="px-3 pb-3 md:px-4 md:pb-4">
       <div className="container mx-auto px-0">
-        <div className="theme-panel overflow-hidden rounded-[1.4rem] px-5 py-10 md:rounded-[1.6rem] md:px-8 md:py-12">
+        <div className="theme-panel relative overflow-hidden rounded-[1.4rem] px-5 py-10 md:rounded-[1.6rem] md:px-8 md:py-12">
+          <div className="section-spotlight" />
+          <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(214,175,104,0.5),transparent)]" />
           <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.2fr_0.75fr_0.75fr_1fr]">
             <div className="space-y-5 text-center md:text-left">
               <Logo />

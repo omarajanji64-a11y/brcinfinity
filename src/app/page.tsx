@@ -1,10 +1,34 @@
+import dynamic from 'next/dynamic';
+
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
-import Categories from '@/components/home/Categories';
-import FeaturedProducts from '@/components/home/FeaturedProducts';
-import WhyUs from '@/components/home/WhyUs';
-import CustomRequest from '@/components/home/CustomRequest';
 import HeroCarousel from '@/components/home/HeroCarousel';
+
+function DeferredSectionPlaceholder() {
+  return (
+    <div className="px-4 py-20 md:py-24">
+      <div className="container mx-auto px-0">
+        <div className="theme-panel h-[320px] rounded-[1.8rem] opacity-60" />
+      </div>
+    </div>
+  );
+}
+
+const Categories = dynamic(() => import('@/components/home/Categories'), {
+  loading: () => <DeferredSectionPlaceholder />,
+});
+
+const FeaturedProducts = dynamic(() => import('@/components/home/FeaturedProducts'), {
+  loading: () => <DeferredSectionPlaceholder />,
+});
+
+const WhyUs = dynamic(() => import('@/components/home/WhyUs'), {
+  loading: () => <DeferredSectionPlaceholder />,
+});
+
+const CustomRequest = dynamic(() => import('@/components/home/CustomRequest'), {
+  loading: () => <DeferredSectionPlaceholder />,
+});
 
 const deferredSectionStyle = {
   contentVisibility: 'auto',

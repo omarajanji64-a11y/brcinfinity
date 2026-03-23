@@ -30,16 +30,49 @@ export default function FeaturedProducts() {
             kicker: 'Selected pieces',
             description: 'Explore pieces that best represent our interpretation of classical furniture.',
           };
+  const featuredNotes =
+    language === 'tr'
+      ? [
+          { label: 'Seçki anlayışı', value: 'Editoryal', note: 'Marka dilini en net taşıyan parçalar' },
+          { label: 'Detay seviyesi', value: 'Yüksek', note: 'Oyma, varak ve yüzey geçişlerinde rafine işçilik' },
+          { label: 'İletişim akışı', value: 'Hızlı', note: 'WhatsApp ve showroom üzerinden doğrudan yönlendirme' },
+        ]
+      : language === 'fr'
+        ? [
+            { label: 'Selection', value: 'Editoriale', note: 'Les pieces qui representent le mieux la marque' },
+            { label: 'Detail', value: 'Eleve', note: 'Sculpture, dorure et finitions plus soignées' },
+            { label: 'Contact', value: 'Direct', note: 'Prise de contact rapide via WhatsApp et showroom' },
+          ]
+        : [
+            { label: 'Selection mode', value: 'Editorial', note: 'Pieces that express the brand most clearly' },
+            { label: 'Detail level', value: 'High', note: 'Refined carving, gilding, and surface transitions' },
+            { label: 'Contact flow', value: 'Direct', note: 'Fast outreach through WhatsApp and showroom support' },
+          ];
 
   return (
     <section className="theme-surface-soft relative overflow-hidden bg-secondary/20">
+      <div className="section-spotlight" />
       <div className="photo-veil opacity-15" />
       <div className="ambient-orb animate-float-slower right-[-5rem] top-12 h-64 w-64" />
       <div className="container relative mx-auto px-4 py-20 md:py-24">
-        <div className="mx-auto mb-12 max-w-3xl text-center">
+        <div className="section-frame mx-auto mb-12 max-w-3xl text-center">
           <p className="section-kicker animate-reveal justify-center">{sectionCopy.kicker}</p>
           <h2 className="section-title animate-reveal animate-reveal-delay-1 mt-5">{t('home.featured_products')}</h2>
           <p className="section-copy animate-reveal animate-reveal-delay-2 mt-5">{sectionCopy.description}</p>
+        </div>
+
+        <div className="mx-auto mb-12 grid max-w-5xl gap-3 md:grid-cols-3">
+          {featuredNotes.map((item, index) => (
+            <div
+              key={item.label}
+              className="metric-card animate-fade-in-up text-center md:text-left"
+              style={{ animationDelay: `${0.08 + index * 0.08}s` }}
+            >
+              <p className="text-[0.7rem] uppercase tracking-[0.18em] text-primary/46">{item.label}</p>
+              <p className="mt-3 font-headline text-[1.85rem] font-semibold text-primary">{item.value}</p>
+              <p className="mt-2 text-sm leading-6 text-primary/56">{item.note}</p>
+            </div>
+          ))}
         </div>
 
         <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">

@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -19,39 +20,52 @@ const LANGUAGE_OPTIONS = [
   { value: 'fr', label: 'FR', name: 'Français' },
 ] as const;
 
+function FlagFrame({ children }: { children: ReactNode }) {
+  return (
+    <span className="relative inline-flex h-[18px] w-[28px] shrink-0 overflow-hidden rounded-[0.45rem] border border-white/14 bg-black/20 shadow-[0_8px_18px_rgba(0,0,0,0.24)] ring-1 ring-black/10 before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-1/2 before:bg-[linear-gradient(180deg,rgba(255,255,255,0.18),rgba(255,255,255,0))]">
+      {children}
+    </span>
+  );
+}
+
 function LanguageFlag({ language }: { language: LanguageCode }) {
   if (language === 'tr') {
     return (
-      <svg viewBox="0 0 24 16" className="h-4 w-5 rounded-[4px] shadow-[0_0_0_1px_rgba(255,255,255,0.08)]" aria-hidden="true">
-        <rect width="24" height="16" rx="2" fill="#E11D48" />
-        <circle cx="10" cy="8" r="4.1" fill="#FFFFFF" />
-        <circle cx="11.3" cy="8" r="3.3" fill="#E11D48" />
-        <path d="M14.7 8l1.4.45-.87-1.18 1.33-.56-1.46-.08-.4-1.4-.39 1.4-1.46.08 1.33.56-.87 1.18L14.7 8Z" fill="#FFFFFF" />
-      </svg>
+      <FlagFrame>
+        <svg viewBox="0 0 28 18" className="h-full w-full" aria-hidden="true">
+          <rect width="28" height="18" fill="#D31245" />
+          <circle cx="11.2" cy="9" r="4.35" fill="#FFFFFF" />
+          <circle cx="12.55" cy="9" r="3.45" fill="#D31245" />
+          <path d="m16.95 9 1.48.48-.92-1.24 1.41-.62-1.55-.08-.42-1.47-.42 1.47-1.55.08 1.41.62-.92 1.24 1.48-.48Z" fill="#FFFFFF" />
+        </svg>
+      </FlagFrame>
     );
   }
 
   if (language === 'fr') {
     return (
-      <svg viewBox="0 0 24 16" className="h-4 w-5 rounded-[4px] shadow-[0_0_0_1px_rgba(255,255,255,0.08)]" aria-hidden="true">
-        <rect width="8" height="16" rx="2" fill="#1D4ED8" />
-        <rect x="8" width="8" height="16" fill="#F8FAFC" />
-        <rect x="16" width="8" height="16" rx="2" fill="#DC2626" />
-      </svg>
+      <FlagFrame>
+        <svg viewBox="0 0 28 18" className="h-full w-full" aria-hidden="true">
+          <rect width="9.34" height="18" fill="#1C4ED8" />
+          <rect x="9.33" width="9.34" height="18" fill="#F8FAFC" />
+          <rect x="18.66" width="9.34" height="18" fill="#D5232C" />
+        </svg>
+      </FlagFrame>
     );
   }
 
   return (
-    <svg viewBox="0 0 24 16" className="h-4 w-5 rounded-[4px] shadow-[0_0_0_1px_rgba(255,255,255,0.08)]" aria-hidden="true">
-      <rect width="24" height="16" rx="2" fill="#1D4ED8" />
-      <path d="M0 1.5 9.2 7.4V16h2.6V7.4L21 1.5V0h-2.3L12 4.2 5.3 0H0v1.5Z" fill="#F8FAFC" />
-      <path d="M24 1.5 14.8 7.4V16h-2.6V7.4L3 1.5V0h2.3L12 4.2 18.7 0H24v1.5Z" fill="#F8FAFC" />
-      <path d="M10 0h4v16h-4z" fill="#F8FAFC" />
-      <path d="M0 6h24v4H0z" fill="#F8FAFC" />
-      <path d="M0 0h1.3L9.6 5.2H7.3L0 0Zm22.7 0H24v.9L16.5 5.2h-2.3L22.7 0ZM24 15.1V16h-1.3l-8.5-5.2h2.3L24 15.1ZM1.3 16H0v-.9l7.5-4.3h2.3L1.3 16Z" fill="#DC2626" />
-      <path d="M10.8 0h2.4v16h-2.4z" fill="#DC2626" />
-      <path d="M0 6.8h24v2.4H0z" fill="#DC2626" />
-    </svg>
+    <FlagFrame>
+      <svg viewBox="0 0 28 18" className="h-full w-full" aria-hidden="true">
+        <rect width="28" height="18" fill="#1846B7" />
+        <path d="M0 0h3.05l8.17 5.3V0h5.56v5.3L24.95 0H28v2.05l-7.99 5.07H28v3.76h-7.99L28 15.95V18h-3.05l-8.17-5.3V18h-5.56v-5.3L3.05 18H0v-2.05l7.99-5.07H0V7.12h7.99L0 2.05V0Z" fill="#FFFFFF" />
+        <path d="M0 0h1.58l9.64 6.16h-2.3L0 0Zm26.42 0H28v.92l-9.01 5.24h-2.3L26.42 0ZM28 17.08V18h-1.58l-9.73-6.16h2.3L28 17.08ZM1.58 18H0v-.92l9.01-5.24h2.3L1.58 18Z" fill="#D92332" />
+        <path d="M11.78 0h4.44v18h-4.44z" fill="#FFFFFF" />
+        <path d="M0 6.78h28v4.44H0z" fill="#FFFFFF" />
+        <path d="M12.67 0h2.66v18h-2.66z" fill="#D92332" />
+        <path d="M0 7.67h28v2.66H0z" fill="#D92332" />
+      </svg>
+    </FlagFrame>
   );
 }
 
@@ -65,7 +79,7 @@ export default function LanguageSwitcher() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="h-9 rounded-full px-3 text-primary/82 transition-colors hover:bg-[rgba(255,245,221,0.06)] hover:text-primary"
+          className="h-9 rounded-full gap-2.5 px-2.5 pr-2.5 text-primary/82 transition-colors hover:bg-[rgba(255,245,221,0.06)] hover:text-primary"
         >
           <LanguageFlag language={activeLanguage.value} />
           <span className="text-[0.72rem] font-semibold uppercase tracking-[0.16em]">
@@ -83,15 +97,15 @@ export default function LanguageSwitcher() {
           <DropdownMenuItem
             key={option.value}
             onClick={() => setLanguage(option.value)}
-            className={`cursor-pointer rounded-xl px-3 py-2 text-primary/82 focus:bg-white/[0.08] focus:text-primary ${
+            className={`cursor-pointer rounded-xl px-3 py-2.5 text-primary/82 focus:bg-white/[0.08] focus:text-primary ${
               language === option.value ? 'bg-white/[0.06] text-primary' : ''
             }`}
           >
             <LanguageFlag language={option.value} />
-            <span className="min-w-[1.9rem] text-[0.72rem] font-semibold uppercase tracking-[0.16em]">
+            <span className="min-w-[1.9rem] text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-primary/72">
               {option.label}
             </span>
-            <span>{option.name}</span>
+            <span className="text-[0.92rem]">{option.name}</span>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

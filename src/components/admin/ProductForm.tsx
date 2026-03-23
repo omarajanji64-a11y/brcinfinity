@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useFirestore } from '@/firebase/client-provider';
+import { invalidateProductsCache } from '@/hooks/use-products';
 import {
   FIXED_CATEGORY_OPTIONS,
   createLocalizedText,
@@ -242,6 +243,7 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
       };
 
       await setDoc(doc(firestore, 'products', form.id), payload, { merge: true });
+      invalidateProductsCache();
 
       toast({
         title: 'Ürün kaydedildi',

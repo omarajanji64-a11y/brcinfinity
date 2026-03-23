@@ -17,7 +17,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useFirestore } from '@/firebase/client-provider';
-import { useHomepageCategoryShowcase } from '@/hooks/use-homepage-category-showcase';
+import {
+  invalidateHomepageCategoryShowcaseCache,
+  useHomepageCategoryShowcase,
+} from '@/hooks/use-homepage-category-showcase';
 import { useToast } from '@/hooks/use-toast';
 import {
   HOMEPAGE_SETTINGS_COLLECTION,
@@ -40,7 +43,7 @@ export default function AdminHomepageEditor() {
   const firestore = useFirestore();
   const { toast } = useToast();
   const { language } = useTranslation();
-  const { categoryShowcaseImages, isLoading, error } = useHomepageCategoryShowcase();
+  const { categoryShowcaseImages, isLoading, error } = useHomepageCategoryShowcase({ realtime: true });
 
   const [items, setItems] = useState<EditableCategoryImage[]>([]);
   const [isSaving, setIsSaving] = useState(false);
@@ -153,6 +156,7 @@ export default function AdminHomepageEditor() {
         },
         { merge: true }
       );
+      invalidateHomepageCategoryShowcaseCache();
 
       setHasLocalChanges(false);
 

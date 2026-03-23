@@ -66,7 +66,7 @@ function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <Card className="theme-panel-lift group flex h-full flex-col overflow-hidden rounded-[1.4rem] p-0 transition-colors duration-500 hover:border-white/14">
+    <Card className="theme-panel-lift card-sheen group flex h-full flex-col overflow-hidden rounded-[1.4rem] p-0 transition-colors duration-500 hover:border-white/14">
       <CardHeader className="p-0">
         <div className="group/image relative overflow-hidden rounded-t-[1.4rem] border-b border-white/8">
           {isValidUrl ? (
@@ -128,6 +128,18 @@ function ProductCard({ product }: ProductCardProps) {
               </div>
             </>
           )}
+          <div className="absolute inset-x-3 top-3 flex items-start justify-between gap-2">
+            {productCategory ? (
+              <span className="glass-badge text-[0.62rem] uppercase tracking-[0.16em] text-primary/68">
+                {productCategory}
+              </span>
+            ) : <span />}
+            {images.length > 1 ? (
+              <span className="glass-badge glass-badge-strong text-[0.62rem] uppercase tracking-[0.16em] text-primary/72">
+                {currentImageIndex + 1}/{images.length}
+              </span>
+            ) : null}
+          </div>
         </div>
       </CardHeader>
       <Link href={`/products/${product.id}`} className="flex flex-1 flex-col">
