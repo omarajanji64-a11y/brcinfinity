@@ -5,6 +5,8 @@ import { Readable } from 'stream';
 
 export const runtime = 'nodejs';
 
+const PDF_MIME_TYPE = 'application/pdf';
+
 // Configure Cloudinary using environment variables
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -13,17 +15,31 @@ cloudinary.config({
 });
 
 // Reusable function to upload a file stream to Cloudinary
-const uploadStreamToCloudinary = (stream: Readable, fileName: string): Promise<string> => {
+const uploadStreamToCloudinary = ({
+  stream,
+  fileName,
+  resourceType,
+  folder,
+}: {
+  stream: Readable;
+  fileName: string;
+  resourceType: 'image' | 'raw';
+  folder: string;
+}): Promise<string> => {
   return new Promise((resolve, reject) => {
     const safeFileName = fileName.replace(/[^\w.-]/g, '_');
     const fileBaseName = safeFileName.includes('.')
       ? safeFileName.substring(0, safeFileName.lastIndexOf('.'))
       : safeFileName;
+    const fileExtension = safeFileName.includes('.') ? safeFileName.substring(safeFileName.lastIndexOf('.') + 1) : '';
+    const publicIdBase = `${fileBaseName}-${Date.now()}`;
+    const publicId = resourceType === 'raw' && fileExtension ? `${publicIdBase}.${fileExtension}` : publicIdBase;
     const uploadStream = cloudinary.uploader.upload_stream(
-      { 
-        folder: 'direct-uploads',
-        public_id: `${fileBaseName}-${Date.now()}`,
+      {
+        folder,
+        public_id: publicId,
         overwrite: true,
+        resource_type: resourceType,
       },
       (error, result) => {
         if (error) {
@@ -38,6 +54,10 @@ const uploadStreamToCloudinary = (stream: Readable, fileName: string): Promise<s
     stream.pipe(uploadStream);
   });
 };
+
+const isPdfFile = (file: File) => file.type === PDF_MIME_TYPE || file.name.toLowerCase().endsWith('.pdf');
+
+const isImageFile = (file: File) => file.type.startsWith('image/');
 
 export async function POST(req: NextRequest) {
     try {
@@ -59,10 +79,13 @@ export async function POST(req: NextRequest) {
         }
 
         // 3. Upload each file to Cloudinary in parallel
-        const imageUrls = await Promise.all(
+        const uploadedFiles = await Promise.all(
             files.map(async (file) => {
-                if (!file.type.startsWith('image/')) {
-                    throw new Error(`'${file.name}' bir gorsel dosyasi degil.`);
+                const isPdf = isPdfFile(file);
+                const isImage = isImageFile(file);
+
+                if (!isPdf && !isImage) {
+                    throw new Error(`'${file.name}' desteklenmeyen bir dosya turu.`);
                 }
 
                 const buffer = Buffer.from(await file.arrayBuffer());
@@ -70,12 +93,27 @@ export async function POST(req: NextRequest) {
                 readableNodeStream.push(buffer);
                 readableNodeStream.push(null);
 
-                return uploadStreamToCloudinary(readableNodeStream, file.name);
+                const url = await uploadStreamToCloudinary({
+                    stream: readableNodeStream,
+                    fileName: file.name,
+                    resourceType: isPdf ? 'raw' : 'image',
+                    folder: isPdf ? 'catalog-uploads' : 'direct-uploads',
+                });
+
+                return {
+                    name: file.name,
+                    type: isPdf ? 'pdf' : 'image',
+                    url,
+                };
             })
         );
-        
-        // 4. Return the secure URLs of the uploaded images
-        return NextResponse.json({ imageUrls });
+
+        const uploadedUrls = uploadedFiles.map((file) => file.url);
+        const imageUrls = uploadedFiles.filter((file) => file.type === 'image').map((file) => file.url);
+        const pdfUrls = uploadedFiles.filter((file) => file.type === 'pdf').map((file) => file.url);
+
+        // 4. Return the secure URLs without breaking existing image upload consumers
+        return NextResponse.json({ uploadedUrls, imageUrls, pdfUrls });
 
     } catch (error: any) {
         console.error('[Direct Upload API Error]', error);

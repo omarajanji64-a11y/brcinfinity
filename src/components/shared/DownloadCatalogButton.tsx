@@ -3,10 +3,10 @@
 import type { ComponentProps } from 'react';
 import { Download } from 'lucide-react';
 
+import { useCatalogs } from '@/hooks/use-catalogs';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useTranslation } from '@/lib/i18n';
-import { SITE_CATALOGS } from '@/lib/site-config';
 
 type DownloadCatalogButtonProps = {
   className?: string;
@@ -18,7 +18,7 @@ export default function DownloadCatalogButton({
   variant = 'default',
 }: DownloadCatalogButtonProps) {
   const { t } = useTranslation();
-  const catalogs = SITE_CATALOGS.filter((catalog) => catalog.url && catalog.name);
+  const { catalogs } = useCatalogs();
 
   if (catalogs.length === 0) {
     return null;
@@ -45,11 +45,10 @@ export default function DownloadCatalogButton({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {catalogs.map((catalog) => (
-          <DropdownMenuItem
-            key={catalog.id}
-            onClick={() => window.open(catalog.url, '_blank', 'noopener,noreferrer')}
-          >
-            {catalog.name}
+          <DropdownMenuItem key={catalog.id} asChild>
+            <a href={catalog.url} target="_blank" rel="noopener noreferrer">
+              {catalog.name}
+            </a>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

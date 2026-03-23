@@ -22,12 +22,6 @@ export type ThemeConfig = {
   accent: HslColor;
 };
 
-export type Catalog = {
-  id: string;
-  name: string;
-  url: string;
-};
-
 export type CategoryImage = {
   id: string;
   name: LocalizedString;
@@ -52,8 +46,6 @@ export const DEFAULT_THEME: ThemeConfig = {
 export const HEADER_LOGO_URL = '/brc-infinity-logo.png';
 
 export const FALLBACK_LOGO_URL = '/brc-infinity-logo.png';
-
-export const SITE_CATALOGS: Catalog[] = [];
 
 export const CATEGORY_SHOWCASE_IMAGES: CategoryImage[] = [
   {
