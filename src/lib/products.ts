@@ -197,8 +197,54 @@ export const getProductCategoryLabel = (
   return getLocalizedText(product.category, language, product.categoryKey);
 };
 
-export const getProductName = (product: Pick<Product, 'name'>, language: Language) =>
-  getLocalizedText(product.name, language, 'BRC Infinity');
+export const getProductName = (
+  product: Pick<Product, 'name'>,
+  language: Language,
+  fallback = ''
+) => getLocalizedText(product.name, language, fallback);
+
+export const buildWhatsAppOrderMessage = ({
+  language,
+  productName,
+  productImage,
+}: {
+  language: Language;
+  productName?: string;
+  productImage?: string;
+}) => {
+  const intro =
+    language === 'tr'
+      ? 'Merhaba, bu urun icin siparis vermek istiyorum:'
+      : language === 'fr'
+        ? 'Bonjour, je souhaite commander ce produit :'
+        : 'Hello, I would like to order this product:';
+
+  const nameLabel =
+    language === 'tr'
+      ? 'Urun Adi'
+      : language === 'fr'
+        ? 'Nom'
+        : 'Name';
+
+  const imageLabel =
+    language === 'tr'
+      ? 'Urun Gorseli'
+      : language === 'fr'
+        ? 'Image'
+        : 'Image';
+
+  const lines = [intro];
+
+  if (productName?.trim()) {
+    lines.push(`${nameLabel}: ${productName.trim()}`);
+  }
+
+  if (productImage?.trim()) {
+    lines.push(`${imageLabel}: ${productImage.trim()}`);
+  }
+
+  return lines.join('\n\n');
+};
 
 export const getFixedCategoryAdminLabel = (value: string) => {
   const normalizedCategory = normalizeCategoryKey(value);

@@ -57,7 +57,7 @@ export default function AdminProductManager() {
   const sortedProducts = useMemo(
     () =>
       [...products].sort((left, right) =>
-        getProductName(left, language).localeCompare(getProductName(right, language), 'tr')
+        getProductName(left, language, 'Adsiz urun').localeCompare(getProductName(right, language, 'Adsiz urun'), 'tr')
       ),
     [language, products]
   );
@@ -77,7 +77,7 @@ export default function AdminProductManager() {
       await deleteProduct(product.id);
       toast({
         title: 'Urun silindi',
-        description: `${getProductName(product, language)} listeden kaldirildi.`,
+        description: `${getProductName(product, language, 'Adsiz urun')} listeden kaldirildi.`,
       });
     } catch (deleteError) {
       toast({
@@ -178,7 +178,7 @@ export default function AdminProductManager() {
                 ) : (
                   sortedProducts.map((product) => {
                     const previewImage = product.imageUrls[0] || product.imageUrl;
-                    const productName = getProductName(product, language);
+                    const productName = getProductName(product, language, 'Adsiz urun');
                     const categoryLabel = getProductCategoryLabel(product, language, t);
                     const shortDescription = getLocalizedText(product.shortDescription, language);
 

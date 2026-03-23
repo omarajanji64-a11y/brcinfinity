@@ -191,15 +191,6 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
     const trimmedDescription = form.description.trim();
     const resolvedStock = Number(form.stock);
 
-    if (!trimmedName) {
-      toast({
-        variant: 'destructive',
-        title: 'Urun adi gerekli',
-        description: 'Kaydetmeden once urun adini gir.',
-      });
-      return;
-    }
-
     if (!trimmedCategory) {
       toast({
         variant: 'destructive',
@@ -267,7 +258,7 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
             id="product-name"
             value={form.name}
             onChange={(event) => updateField('name', event.target.value)}
-            placeholder="Ornek: Royal Koltuk Takimi"
+            placeholder="Ornek: Royal Koltuk Takimi (istege bagli)"
           />
         </div>
 

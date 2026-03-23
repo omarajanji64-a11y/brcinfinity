@@ -6,7 +6,7 @@ import { memo, useState } from 'react';
 import { ArrowUpRight, ChevronLeft, ChevronRight, MessageCircle } from 'lucide-react';
 
 import { buildCloudinaryImageUrl, canUseNextImage } from '@/lib/image-utils';
-import { getProductCategoryLabel, getProductName, type Product } from '@/lib/products';
+import { buildWhatsAppOrderMessage, getProductCategoryLabel, getProductName, type Product } from '@/lib/products';
 import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '../ui/button';
@@ -20,8 +20,9 @@ function ProductCard({ product }: ProductCardProps) {
   const { t, language } = useTranslation();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const productName = getProductName(product, language);
+  const productName = getProductName(product, language, '');
   const productCategory = getProductCategoryLabel(product, language, t);
+  const imageAlt = productName || productCategory || (language === 'tr' ? 'Urun gorseli' : language === 'fr' ? 'Image du produit' : 'Product image');
   const phoneNumber = '905467898968';
   const images = product.imageUrls.length > 0 ? product.imageUrls : product.imageUrl ? [product.imageUrl] : [];
   const currentImage = images[currentImageIndex] || '';
@@ -36,7 +37,8 @@ function ProductCard({ product }: ProductCardProps) {
       })
     : '';
   const canRenderWithNextImage = transformedUrl ? canUseNextImage(transformedUrl) : false;
-  const message = t('whatsapp.order_message', {
+  const message = buildWhatsAppOrderMessage({
+    language,
     productName,
     productImage: currentImage || product.imageUrl || '',
   });
@@ -69,7 +71,7 @@ function ProductCard({ product }: ProductCardProps) {
               {canRenderWithNextImage ? (
                 <Image
                   src={transformedUrl}
-                  alt={productName}
+                  alt={imageAlt}
                   width={560}
                   height={610}
                   unoptimized
@@ -79,7 +81,7 @@ function ProductCard({ product }: ProductCardProps) {
               ) : (
                 <img
                   src={transformedUrl}
-                  alt={productName}
+                  alt={imageAlt}
                   className="aspect-[4/4.3] h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                   loading="lazy"
                   decoding="async"
@@ -129,7 +131,9 @@ function ProductCard({ product }: ProductCardProps) {
       <Link href={`/products/${product.id}`} className="flex flex-1 flex-col">
         <CardContent className="flex flex-grow flex-col gap-3 p-5 text-left">
           <p className="text-[0.72rem] uppercase tracking-[0.16em] text-primary/42">{productCategory}</p>
-          <CardTitle className="font-headline text-2xl leading-tight text-primary">{productName}</CardTitle>
+          {productName ? (
+            <CardTitle className="font-headline text-2xl leading-tight text-primary">{productName}</CardTitle>
+          ) : null}
           <div className="flex-grow" />
           <div className="inline-flex items-center gap-2 text-sm text-primary/54">
             {detailLabel}

@@ -13,6 +13,7 @@ import { useProduct } from '@/hooks/use-product';
 import { buildCloudinaryImageUrl, canUseNextImage } from '@/lib/image-utils';
 import { useTranslation } from '@/lib/i18n';
 import {
+  buildWhatsAppOrderMessage,
   getLocalizedText,
   getProductCategoryLabel,
   getProductName,
@@ -134,10 +135,20 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     );
   }
 
-  const productName = getProductName(product, language);
+  const productName = getProductName(product, language, '');
   const categoryLabel = getProductCategoryLabel(product, language, t);
+  const shortDescription = getLocalizedText(product.shortDescription, language);
+  const description = getLocalizedText(product.description, language);
+  const imageAlt =
+    productName ||
+    categoryLabel ||
+    (language === 'tr' ? 'Urun gorseli' : language === 'fr' ? 'Image du produit' : 'Product image');
   const phoneNumber = '905467898968';
-  const message = t('whatsapp.order_message', { productName, productImage: images[0] || '' });
+  const message = buildWhatsAppOrderMessage({
+    language,
+    productName,
+    productImage: images[0] || '',
+  });
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
   const nextImage = () => {
@@ -158,30 +169,31 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
 
   const transformedImage = transformedImages[currentImageIndex] ?? '';
   const canRenderWithNextImage = transformedImage ? canUseNextImage(transformedImage) : false;
+  const hasInfo = Boolean(productName || categoryLabel || shortDescription || description);
 
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="container mx-auto flex-grow px-4 py-12">
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
+      <main className="container mx-auto flex-grow px-4 py-8 md:py-12">
+        <div className="mx-auto max-w-6xl">
           <div className="relative">
             {images.length > 0 ? (
               <>
-                <div className="theme-panel relative flex h-[clamp(320px,60vh,720px)] items-center justify-center overflow-hidden rounded-lg border bg-secondary/30 p-4 shadow-lg">
+                <div className="theme-panel relative flex h-[clamp(360px,78vh,920px)] items-center justify-center overflow-hidden rounded-[1.8rem] border bg-secondary/20 p-4 shadow-lg">
                   {canRenderWithNextImage ? (
                     <Image
                       src={transformedImage}
-                      alt={productName}
+                      alt={imageAlt}
                       fill
                       priority={currentImageIndex === 0}
                       unoptimized
-                      sizes="(max-width: 768px) 100vw, 50vw"
+                      sizes="100vw"
                       className="h-full w-full object-contain"
                     />
                   ) : (
                     <img
                       src={transformedImage}
-                      alt={productName}
+                      alt={imageAlt}
                       className="h-full w-full object-contain"
                       loading="eager"
                       decoding="async"
@@ -193,7 +205,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                         type="button"
                         variant="ghost"
                         size="icon"
-                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white"
+                        className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/50 text-white"
                         onClick={prevImage}
                       >
                         <ChevronLeft className="h-5 w-5" />
@@ -202,7 +214,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                         type="button"
                         variant="ghost"
                         size="icon"
-                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/50 text-white"
                         onClick={nextImage}
                       >
                         <ChevronRight className="h-5 w-5" />
@@ -222,22 +234,34 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                 </div>
               </>
             ) : (
-              <Skeleton className="h-[clamp(320px,60vh,720px)] w-full rounded-lg" />
+              <Skeleton className="h-[clamp(360px,78vh,920px)] w-full rounded-[1.8rem]" />
             )}
           </div>
-          <div>
-            <h1 className="mb-4 font-headline text-3xl font-bold md:text-4xl">{productName}</h1>
-            <div className="mb-2 text-lg text-muted-foreground">{categoryLabel}</div>
-            <div className="mb-6">
-              <div className="mb-1 font-semibold">{t('product_form.long_desc_label')}</div>
-              <div>{getLocalizedText(product.description, language)}</div>
-            </div>
-            <Button asChild className="mt-4 w-full">
+
+          <div className="mx-auto mt-6 max-w-3xl">
+            <Button asChild className="w-full rounded-full">
               <Link href={whatsappUrl} target="_blank" rel="noopener noreferrer">
                 <MessageCircle className="mr-2 h-4 w-4" />
                 {t('common.order_whatsapp')}
               </Link>
             </Button>
+
+            {hasInfo ? (
+              <div className="theme-panel mt-6 rounded-[1.6rem] p-6 sm:p-8">
+                {productName ? (
+                  <h1 className="font-headline text-3xl font-bold text-primary md:text-4xl">{productName}</h1>
+                ) : null}
+                {categoryLabel ? (
+                  <div className={`${productName ? 'mt-3' : ''} text-lg text-muted-foreground`}>{categoryLabel}</div>
+                ) : null}
+                {shortDescription ? (
+                  <p className="mt-5 text-base leading-8 text-primary/70">{shortDescription}</p>
+                ) : null}
+                {description ? (
+                  <div className="mt-6 text-base leading-8 text-primary/72">{description}</div>
+                ) : null}
+              </div>
+            ) : null}
           </div>
         </div>
       </main>
