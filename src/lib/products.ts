@@ -8,6 +8,7 @@ export type Product = {
   name: LocalizedText;
   category: LocalizedText;
   categoryKey: string;
+  categoryKeys: string[];
   style: ProductStyle;
   shortDescription: LocalizedText;
   description: LocalizedText;
@@ -41,6 +42,9 @@ const FIXED_CATEGORY_ADMIN_LABELS = FIXED_CATEGORY_OPTIONS.reduce<Record<string,
   result[option.key] = option.adminLabel;
   return result;
 }, {});
+
+const uniqueCategoryKeys = (values: string[]) =>
+  values.filter((value, index, array) => value && array.indexOf(value) === index);
 
 const DEFAULT_LOCALIZED_TEXT: LocalizedText = {
   tr: '',
@@ -139,6 +143,17 @@ export const normalizeCategoryKey = (value: string) => {
   return matchedKnownCategory?.[0] ?? normalized;
 };
 
+export const normalizeCategoryKeys = (value: unknown, fallbackValue = '') => {
+  const parsedCategoryKeys = Array.isArray(value)
+    ? value
+        .map((item) => (typeof item === 'string' ? normalizeCategoryKey(item) : ''))
+        .filter(Boolean)
+    : [];
+  const fallbackKey = fallbackValue ? normalizeCategoryKey(fallbackValue) : '';
+
+  return uniqueCategoryKeys([...parsedCategoryKeys, fallbackKey]);
+};
+
 export const normalizeProduct = (value: Record<string, unknown>): Product => {
   const name = normalizeLocalizedText(value.name);
   const category = normalizeLocalizedText(value.category);
@@ -154,16 +169,18 @@ export const normalizeProduct = (value: Record<string, unknown>): Product => {
   const imageUrls = rawImageUrls.length > 0 ? rawImageUrls : imageUrl ? [imageUrl] : [];
   const fallbackCategoryLabel =
     getLocalizedText(category, 'tr') || getLocalizedText(category, 'en') || getLocalizedText(category, 'fr');
+  const categoryKeys = normalizeCategoryKeys(
+    value.categoryKeys,
+    typeof value.categoryKey === 'string' && value.categoryKey.trim().length > 0 ? value.categoryKey : fallbackCategoryLabel
+  );
+  const categoryKey = categoryKeys[0] ?? normalizeCategoryKey(fallbackCategoryLabel);
 
   return {
     id: typeof value.id === 'string' ? value.id : '',
     name,
     category,
-    categoryKey: normalizeCategoryKey(
-      typeof value.categoryKey === 'string' && value.categoryKey.trim().length > 0
-        ? value.categoryKey
-        : fallbackCategoryLabel
-    ),
+    categoryKey,
+    categoryKeys,
     style: value.style === 'Classic' ? 'Classic' : 'Modern',
     shortDescription,
     description,
@@ -185,16 +202,46 @@ export const normalizeProduct = (value: Record<string, unknown>): Product => {
 };
 
 export const getProductCategoryLabel = (
-  product: Pick<Product, 'category' | 'categoryKey'>,
+  product: Pick<Product, 'category' | 'categoryKey' | 'categoryKeys'>,
   language: Language,
   t: TranslationFn
 ) => {
-  const translationKey = KNOWN_CATEGORY_LABELS[product.categoryKey];
-  if (translationKey) {
-    return t(translationKey);
+  const categoryLabels = getProductCategoryLabels(product, language, t);
+  return categoryLabels.join(', ');
+};
+
+export const getProductCategoryKeys = (
+  product: Pick<Product, 'category' | 'categoryKey' | 'categoryKeys'>
+) => {
+  const fallbackCategoryLabel =
+    getLocalizedText(product.category, 'tr') || getLocalizedText(product.category, 'en') || getLocalizedText(product.category, 'fr');
+
+  return normalizeCategoryKeys(product.categoryKeys, product.categoryKey || fallbackCategoryLabel);
+};
+
+export const getProductCategoryLabels = (
+  product: Pick<Product, 'category' | 'categoryKey' | 'categoryKeys'>,
+  language: Language,
+  t: TranslationFn
+) => {
+  const categoryKeys = getProductCategoryKeys(product);
+  const labels = categoryKeys
+    .map((categoryKey) => {
+      const translationKey = KNOWN_CATEGORY_LABELS[categoryKey];
+      if (translationKey) {
+        return t(translationKey);
+      }
+
+      return getFixedCategoryAdminLabel(categoryKey) || categoryKey;
+    })
+    .filter(Boolean);
+
+  if (labels.length > 0) {
+    return labels;
   }
 
-  return getLocalizedText(product.category, language, product.categoryKey);
+  const fallbackLabel = getLocalizedText(product.category, language, product.categoryKey);
+  return fallbackLabel ? [fallbackLabel] : [];
 };
 
 export const getProductName = (
@@ -250,6 +297,9 @@ export const getFixedCategoryAdminLabel = (value: string) => {
   const normalizedCategory = normalizeCategoryKey(value);
   return FIXED_CATEGORY_ADMIN_LABELS[normalizedCategory] ?? '';
 };
+
+export const getFixedCategoryAdminLabels = (values: string[]) =>
+  uniqueCategoryKeys(values.map((value) => getFixedCategoryAdminLabel(value)).filter(Boolean));
 
 export const buildCategoryOptions = (
   _products: Product[],

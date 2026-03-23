@@ -37,7 +37,9 @@ export default function ProductsPage() {
 
   const filteredProducts = useMemo(
     () =>
-      products.filter((product) => activeCategory === 'all' || product.categoryKey === activeCategory),
+      products.filter(
+        (product) => activeCategory === 'all' || product.categoryKeys.includes(activeCategory) || product.categoryKey === activeCategory
+      ),
     [activeCategory, products]
   );
 

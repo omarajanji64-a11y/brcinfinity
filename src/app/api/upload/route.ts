@@ -6,6 +6,23 @@ import { Readable } from 'stream';
 export const runtime = 'nodejs';
 
 const PDF_MIME_TYPE = 'application/pdf';
+const IMAGE_EXTENSION_SET = new Set([
+  'jpg',
+  'jpeg',
+  'png',
+  'webp',
+  'gif',
+  'bmp',
+  'svg',
+  'avif',
+  'heic',
+  'heif',
+  'jfif',
+]);
+const EXTRA_IMAGE_MIME_TYPES = new Set([
+  'application/heic',
+  'application/heif',
+]);
 
 // Configure Cloudinary using environment variables
 cloudinary.config({
@@ -57,7 +74,15 @@ const uploadStreamToCloudinary = ({
 
 const isPdfFile = (file: File) => file.type === PDF_MIME_TYPE || file.name.toLowerCase().endsWith('.pdf');
 
-const isImageFile = (file: File) => file.type.startsWith('image/');
+const getFileExtension = (fileName: string) => {
+  const normalizedName = fileName.toLowerCase();
+  return normalizedName.includes('.') ? normalizedName.substring(normalizedName.lastIndexOf('.') + 1) : '';
+};
+
+const isImageFile = (file: File) =>
+  file.type.startsWith('image/') ||
+  EXTRA_IMAGE_MIME_TYPES.has(file.type.toLowerCase()) ||
+  IMAGE_EXTENSION_SET.has(getFileExtension(file.name));
 
 export async function POST(req: NextRequest) {
     try {
@@ -79,13 +104,13 @@ export async function POST(req: NextRequest) {
         }
 
         // 3. Upload each file to Cloudinary in parallel
-        const uploadedFiles = await Promise.all(
+        const uploadResults = await Promise.allSettled(
             files.map(async (file) => {
                 const isPdf = isPdfFile(file);
                 const isImage = isImageFile(file);
 
                 if (!isPdf && !isImage) {
-                    throw new Error(`'${file.name}' desteklenmeyen bir dosya turu.`);
+                    throw new Error(`'${file.name}' desteklenmeyen bir dosya turu. JPG, PNG, WEBP, HEIC veya PDF kullan.`);
                 }
 
                 const buffer = Buffer.from(await file.arrayBuffer());
@@ -108,12 +133,29 @@ export async function POST(req: NextRequest) {
             })
         );
 
+        const uploadedFiles = uploadResults
+            .filter((result): result is PromiseFulfilledResult<{ name: string; type: 'pdf' | 'image'; url: string }> => result.status === 'fulfilled')
+            .map((result) => result.value);
+        const uploadErrors = uploadResults
+            .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
+            .map((result) => result.reason instanceof Error ? result.reason.message : 'Dosya yuklenemedi.');
+
+        if (uploadedFiles.length === 0) {
+            return NextResponse.json(
+                {
+                    error: uploadErrors[0] || 'Dosyalar yuklenemedi.',
+                    errors: uploadErrors,
+                },
+                { status: 400 }
+            );
+        }
+
         const uploadedUrls = uploadedFiles.map((file) => file.url);
         const imageUrls = uploadedFiles.filter((file) => file.type === 'image').map((file) => file.url);
         const pdfUrls = uploadedFiles.filter((file) => file.type === 'pdf').map((file) => file.url);
 
         // 4. Return the secure URLs without breaking existing image upload consumers
-        return NextResponse.json({ uploadedUrls, imageUrls, pdfUrls });
+        return NextResponse.json({ uploadedUrls, imageUrls, pdfUrls, errors: uploadErrors });
 
     } catch (error: any) {
         console.error('[Direct Upload API Error]', error);

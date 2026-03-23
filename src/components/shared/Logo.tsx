@@ -18,14 +18,14 @@ export default function Logo({ priority = false }: LogoProps) {
   return (
     <Link href="/" className="group flex min-w-0 items-center gap-2">
       {logoUrl ? (
-        <div className="relative h-[86px] w-[210px] shrink-0 sm:h-[104px] sm:w-[260px] md:h-32 md:w-80">
+        <div className="relative h-[68px] w-[170px] shrink-0 sm:h-[78px] sm:w-[200px] md:h-[96px] md:w-[250px]">
           {canRenderWithNextImage ? (
             <Image
               src={logoUrl}
               alt="BRC INFINITY Logo"
               fill
               priority={priority}
-              sizes="(max-width: 640px) 210px, (max-width: 768px) 260px, 320px"
+              sizes="(max-width: 640px) 170px, (max-width: 768px) 200px, 250px"
               className="h-full w-full object-contain"
             />
           ) : (

@@ -6,24 +6,17 @@ import { doc, setDoc } from 'firebase/firestore';
 import { Loader2, Plus, Trash2, Upload } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useFirestore } from '@/firebase/client-provider';
 import {
   FIXED_CATEGORY_OPTIONS,
   createLocalizedText,
-  getFixedCategoryAdminLabel,
   getLocalizedText,
-  normalizeCategoryKey,
+  getProductCategoryKeys,
   type Product,
 } from '@/lib/products';
 
@@ -35,7 +28,7 @@ type ProductFormProps = {
 type ProductFormState = {
   id: string;
   name: string;
-  category: string;
+  categoryKeys: string[];
   shortDescription: string;
   description: string;
   stock: string;
@@ -45,7 +38,7 @@ type ProductFormState = {
 const emptyFormState = (): ProductFormState => ({
   id: uuidv4(),
   name: '',
-  category: '',
+  categoryKeys: [],
   shortDescription: '',
   description: '',
   stock: '0',
@@ -60,9 +53,9 @@ const buildFormState = (product?: Product | null): ProductFormState => {
   return {
     id: product.id,
     name: getLocalizedText(product.name, 'tr') || getLocalizedText(product.name, 'en'),
-    category:
-      getFixedCategoryAdminLabel(product.categoryKey) ||
-      getFixedCategoryAdminLabel(getLocalizedText(product.category, 'tr') || getLocalizedText(product.category, 'en')),
+    categoryKeys: getProductCategoryKeys(product).filter((key) =>
+      FIXED_CATEGORY_OPTIONS.some((option) => option.key === key)
+    ),
     shortDescription:
       getLocalizedText(product.shortDescription, 'tr') || getLocalizedText(product.shortDescription, 'en'),
     description: getLocalizedText(product.description, 'tr') || getLocalizedText(product.description, 'en'),
@@ -101,6 +94,19 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
       return {
         ...current,
         imageUrls: nextImageUrls,
+      };
+    });
+  };
+
+  const toggleCategory = (categoryKey: string, isChecked: boolean) => {
+    setForm((current) => {
+      const nextCategoryKeys = isChecked
+        ? Array.from(new Set([...current.categoryKeys, categoryKey]))
+        : current.categoryKeys.filter((key) => key !== categoryKey);
+
+      return {
+        ...current,
+        categoryKeys: nextCategoryKeys,
       };
     });
   };
@@ -151,6 +157,9 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
       const uploadedUrls = Array.isArray(payload.imageUrls)
         ? payload.imageUrls.filter((url: unknown): url is string => typeof url === 'string')
         : [];
+      const uploadErrors = Array.isArray(payload.errors)
+        ? payload.errors.filter((message: unknown): message is string => typeof message === 'string' && message.trim().length > 0)
+        : [];
 
       if (uploadedUrls.length === 0) {
         throw new Error('Sunucudan gecerli gorsel adresi donmedi.');
@@ -168,7 +177,10 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
 
       toast({
         title: 'Gorseller yuklendi',
-        description: `${uploadedUrls.length} gorsel forma eklendi.`,
+        description:
+          uploadErrors.length > 0
+            ? `${uploadedUrls.length} gorsel eklendi, ${uploadErrors.length} dosya atlandi.`
+            : `${uploadedUrls.length} gorsel forma eklendi.`,
       });
     } catch (error) {
       toast({
@@ -186,16 +198,16 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
     event.preventDefault();
 
     const trimmedName = form.name.trim();
-    const trimmedCategory = form.category.trim();
+    const selectedCategoryOptions = FIXED_CATEGORY_OPTIONS.filter((option) => form.categoryKeys.includes(option.key));
     const trimmedShortDescription = form.shortDescription.trim();
     const trimmedDescription = form.description.trim();
     const resolvedStock = Number(form.stock);
 
-    if (!trimmedCategory) {
+    if (selectedCategoryOptions.length === 0) {
       toast({
         variant: 'destructive',
         title: 'Kategori gerekli',
-        description: 'Filtrelerin calismasi icin kategori gir.',
+        description: 'En az bir kategori sec.',
       });
       return;
     }
@@ -212,11 +224,13 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
     setIsSaving(true);
 
     try {
+      const primaryCategory = selectedCategoryOptions[0];
       const payload = {
         id: form.id,
         name: createLocalizedText(trimmedName),
-        category: createLocalizedText(trimmedCategory),
-        categoryKey: normalizeCategoryKey(trimmedCategory),
+        category: createLocalizedText(primaryCategory.adminLabel),
+        categoryKey: primaryCategory.key,
+        categoryKeys: selectedCategoryOptions.map((option) => option.key),
         style: product?.style ?? 'Modern',
         shortDescription: createLocalizedText(trimmedShortDescription),
         description: createLocalizedText(trimmedDescription),
@@ -262,20 +276,27 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="product-category">Kategori</Label>
-          <Select value={form.category || undefined} onValueChange={(value) => updateField('category', value)}>
-            <SelectTrigger id="product-category">
-              <SelectValue placeholder="Kategori sec" />
-            </SelectTrigger>
-            <SelectContent>
-              {FIXED_CATEGORY_OPTIONS.map((option) => (
-                <SelectItem key={option.key} value={option.adminLabel}>
-                  {option.adminLabel}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="space-y-3 sm:col-span-2">
+          <Label>Kategoriler</Label>
+          <div className="grid gap-3 rounded-lg border p-4 sm:grid-cols-3">
+            {FIXED_CATEGORY_OPTIONS.map((option) => {
+              const isChecked = form.categoryKeys.includes(option.key);
+
+              return (
+                <label
+                  key={option.key}
+                  className="flex cursor-pointer items-center gap-3 rounded-md border border-white/8 bg-white/[0.02] px-3 py-3 transition-colors hover:bg-white/[0.05]"
+                >
+                  <Checkbox
+                    checked={isChecked}
+                    onCheckedChange={(checked) => toggleCategory(option.key, checked === true)}
+                  />
+                  <span className="text-sm text-primary">{option.adminLabel}</span>
+                </label>
+              );
+            })}
+          </div>
+          <p className="text-sm text-muted-foreground">Bir urun birden fazla kategoride gorunebilir.</p>
         </div>
 
         <div className="space-y-2">
@@ -323,7 +344,7 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
         <div className="flex flex-wrap items-center gap-3">
           <Input
             type="file"
-            accept="image/*"
+            accept="image/*,.jpg,.jpeg,.png,.webp,.avif,.heic,.heif,.jfif"
             multiple
             onChange={handleUpload}
             disabled={isUploading}

@@ -100,6 +100,9 @@ export default function AdminHomepageEditor() {
       const uploadedUrl = Array.isArray(payload.imageUrls)
         ? payload.imageUrls.find((url: unknown): url is string => typeof url === 'string')
         : undefined;
+      const uploadErrors = Array.isArray(payload.errors)
+        ? payload.errors.filter((message: unknown): message is string => typeof message === 'string' && message.trim().length > 0)
+        : [];
 
       if (!uploadedUrl) {
         throw new Error('Sunucudan gecerli gorsel adresi donmedi.');
@@ -109,7 +112,10 @@ export default function AdminHomepageEditor() {
 
       toast({
         title: 'Gorsel yuklendi',
-        description: 'Yeni gorsel kaydetmeye hazir.',
+        description:
+          uploadErrors.length > 0
+            ? `Gorsel yuklendi, ${uploadErrors.length} dosya atlandi.`
+            : 'Yeni gorsel kaydetmeye hazir.',
       });
     } catch (uploadError) {
       toast({
@@ -270,7 +276,7 @@ export default function AdminHomepageEditor() {
                     <Input
                       id={`homepage-image-upload-${item.id}`}
                       type="file"
-                      accept="image/*"
+                      accept="image/*,.jpg,.jpeg,.png,.webp,.avif,.heic,.heif,.jfif"
                       onChange={(event) => handleUpload(item.id, event)}
                       disabled={isUploading}
                     />
