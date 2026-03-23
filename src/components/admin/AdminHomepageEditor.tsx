@@ -203,7 +203,7 @@ export default function AdminHomepageEditor() {
         <CardHeader>
           <CardTitle>Üç kategori kartı</CardTitle>
           <CardDescription>
-            Oturma Odası, Yemek Odası ve Yatak Odası görsellerini tek yerden güncelle. Kayıt sonrası ana sayfada
+            Koltuk Takımı, Yemek Odası ve Yatak Odası görsellerini tek yerden güncelle. Kayıt sonrası ana sayfada
             otomatik görünür.
           </CardDescription>
         </CardHeader>

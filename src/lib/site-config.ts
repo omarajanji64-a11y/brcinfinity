@@ -51,7 +51,7 @@ export const FALLBACK_LOGO_URL = '/brc-infinity-logo.png';
 export const CATEGORY_SHOWCASE_IMAGES: CategoryImage[] = [
   {
     id: 'cat-living-room',
-    name: { en: 'Living Room', fr: 'Salon', tr: 'Oturma Odası' },
+    name: { en: 'Living Room', fr: 'Salon', tr: 'Koltuk Takımı' },
     imageUrl: getPlaceholderImage('cat-living-room', 'https://picsum.photos/seed/cat-living/600/600'),
     imageHint: getPlaceholderHint('cat-living-room', 'living room'),
   },

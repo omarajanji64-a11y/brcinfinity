@@ -21,7 +21,7 @@ export type Product = {
 type TranslationFn = (key: string) => string;
 
 export const FIXED_CATEGORY_OPTIONS = [
-  { key: 'living-room', translationKey: 'categories.living_room', adminLabel: 'Oturma Odası' },
+  { key: 'living-room', translationKey: 'categories.living_room', adminLabel: 'Koltuk Takımı' },
   { key: 'dining-room', translationKey: 'categories.dining_room', adminLabel: 'Yemek Odası' },
   { key: 'bedroom', translationKey: 'categories.bedroom', adminLabel: 'Yatak Odası' },
 ] as const;
@@ -33,7 +33,7 @@ const KNOWN_CATEGORY_LABELS: Record<string, string> = {
 };
 
 const KNOWN_CATEGORY_TERMS: Record<string, string[]> = {
-  'living-room': ['living room', 'oturma odasi', 'salon'],
+  'living-room': ['living room', 'oturma odasi', 'salon', 'koltuk takimi', 'koltuk takimı', 'koltuk takımı'],
   bedroom: ['bedroom', 'yatak odasi'],
   'dining-room': ['dining room', 'yemek odasi', 'yemek'],
 };

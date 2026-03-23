@@ -27,7 +27,7 @@ const allProducts: Product[] = [
       fr: 'Fauteuil en acajou doré',
       tr: 'Yaldızlı Maun Koltuk',
     },
-    category: { en: 'Living Room', fr: 'Salon', tr: 'Oturma Odası' },
+    category: { en: 'Living Room', fr: 'Salon', tr: 'Koltuk Takımı' },
     style: 'Classic',
     shortDescription: {
       en: 'An opulent armchair with gold leaf accents.',
@@ -95,7 +95,7 @@ export const salesData = (lang: Language): SalesData[] => {
     }
     if (lang === 'tr') {
         return [
-          { category: 'Oturma Odası', sales: 40000 },
+          { category: 'Koltuk Takımı', sales: 40000 },
           { category: 'Yatak Odası', sales: 32000 },
           { category: 'Yemek Odası', sales: 51000 },
         ];

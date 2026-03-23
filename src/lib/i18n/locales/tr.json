@@ -15,7 +15,7 @@
     "rights_reserved": "Tüm hakları saklıdır."
   },
   "categories": {
-    "living_room": "Oturma Odası",
+    "living_room": "Koltuk Takımı",
     "dining_room": "Yemek Odası",
     "bedroom": "Yatak Odası",
     "sofa_set": "Koltuk Tak\u0131m\u0131"
@@ -128,7 +128,7 @@
     "add_new_image_button": "Yeni Görsel Ekle",
     "new_hero_image_desc": "Yeni Hero Görseli",
     "category_name_label": "Kategori Adı",
-    "category_name_placeholder": "örn: Oturma Odası",
+    "category_name_placeholder": "örn: Koltuk Takımı",
     "add_new_category_button": "Yeni Kategori Ekle",
     "new_category_name": "Yeni Kategori",
     "toast_error_title": "Kaydetme Hatası",
@@ -154,7 +154,7 @@
     "drive_import_name_label": "Ürün Başlığı",
     "drive_import_name_placeholder": "örn: İmparatorluk Koltuk Takımı",
     "drive_import_category_label": "Kategori",
-    "drive_import_category_placeholder": "örn: Oturma Odası",
+    "drive_import_category_placeholder": "örn: Koltuk Takımı",
     "drive_import_style_label": "Stil",
     "drive_import_style_modern": "Modern",
     "drive_import_style_classic": "Klasik",

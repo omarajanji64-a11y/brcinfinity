@@ -78,7 +78,7 @@ export const DEFAULT_PRODUCTS: Product[] = [
   createDefaultProduct({
     id: 'living-room-royal-sofa',
     name: 'Royal Koltuk Takımı',
-    category: 'Oturma Odası',
+    category: 'Koltuk Takımı',
     categoryKey: 'living-room',
     style: 'Classic',
     shortDescription: 'El işi detaylarla hazırlanmış gösteri seviye salon takımı.',
