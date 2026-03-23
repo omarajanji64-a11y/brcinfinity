@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
 import { Readable } from 'stream';
 
+import { sanitizeUploadFileName } from '@/lib/upload-utils';
+
 export const runtime = 'nodejs';
 
 const PDF_MIME_TYPE = 'application/pdf';
@@ -108,9 +110,13 @@ export async function POST(req: NextRequest) {
             files.map(async (file) => {
                 const isPdf = isPdfFile(file);
                 const isImage = isImageFile(file);
+                const safeFileName = sanitizeUploadFileName(
+                    file,
+                    isPdf ? 'katalog-dosyasi' : 'gorsel-dosyasi'
+                );
 
                 if (!isPdf && !isImage) {
-                    throw new Error(`'${file.name}' desteklenmeyen bir dosya turu. JPG, PNG, WEBP, HEIC veya PDF kullan.`);
+                    throw new Error(`'${file.name || safeFileName}' desteklenmeyen bir dosya turu. JPG, PNG, WEBP, HEIC veya PDF kullan.`);
                 }
 
                 const buffer = Buffer.from(await file.arrayBuffer());
@@ -120,13 +126,13 @@ export async function POST(req: NextRequest) {
 
                 const url = await uploadStreamToCloudinary({
                     stream: readableNodeStream,
-                    fileName: file.name,
+                    fileName: safeFileName,
                     resourceType: isPdf ? 'raw' : 'image',
                     folder: isPdf ? 'catalog-uploads' : 'direct-uploads',
                 });
 
                 return {
-                    name: file.name,
+                    name: safeFileName,
                     type: isPdf ? 'pdf' : 'image',
                     url,
                 };

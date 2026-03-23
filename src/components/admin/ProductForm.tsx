@@ -19,7 +19,7 @@ import {
   getProductCategoryKeys,
   type Product,
 } from '@/lib/products';
-import { sanitizeUploadFileName } from '@/lib/upload-utils';
+import { appendUploadFile } from '@/lib/upload-utils';
 
 type ProductFormProps = {
   product?: Product | null;
@@ -141,7 +141,7 @@ export default function ProductForm({ product, onSaved }: ProductFormProps) {
     try {
       const formData = new FormData();
       Array.from(files).forEach((file, index) => {
-        formData.append('files', file, sanitizeUploadFileName(file, `urun-gorsel-${index + 1}`));
+        appendUploadFile(formData, 'files', file, `urun-gorsel-${index + 1}`);
       });
 
       const response = await fetch('/api/upload', {
