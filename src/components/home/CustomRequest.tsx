@@ -4,17 +4,18 @@ import Link from 'next/link';
 import { ArrowRight, Check } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-
 import { useTranslation } from '@/lib/i18n';
 
 export default function CustomRequest() {
   const { t, language } = useTranslation();
+
   const supportPoints =
     language === 'tr'
       ? ['Ölçüye göre uyarlama', 'Malzeme seçimi', 'Proje yönlendirmesi']
       : language === 'fr'
-        ? ['Dimensions adaptees', 'Choix des materiaux', 'Orientation projet']
+        ? ['Dimensions adaptées', 'Choix des matériaux', 'Orientation projet']
         : ['Tailored sizing', 'Material selection', 'Project guidance'];
+
   const sideCopy =
     language === 'tr'
       ? {
@@ -25,17 +26,18 @@ export default function CustomRequest() {
         }
       : language === 'fr'
         ? {
-          kicker: 'Conseil classique',
-          title: 'Creons ensemble une ambiance plus sobre et plus forte.',
-          description:
-              'Notre equipe vous aide a definir les bonnes pieces, les proportions et l ambiance generale de votre espace.',
+            kicker: 'Conseil classique',
+            title: 'Créons ensemble une ambiance plus sobre et plus forte.',
+            description:
+              'Notre équipe vous aide à définir les bonnes pièces, les proportions et l’ambiance générale de votre espace.',
           }
         : {
-          kicker: 'Classical design guidance',
+            kicker: 'Classical design guidance',
             title: 'Let us build a calmer and stronger atmosphere together.',
             description:
               'Our team helps define the right products, proportions, and overall mood for your space.',
           };
+
   const consultationFacts =
     language === 'tr'
       ? [
@@ -44,13 +46,14 @@ export default function CustomRequest() {
         ]
       : language === 'fr'
         ? [
-            { label: 'Premier retour', value: '48 Heures', note: 'Evaluation rapide apres la demande' },
-            { label: 'Accompagnement', value: 'Direct', note: 'Echanges via showroom ou WhatsApp' },
+            { label: 'Premier retour', value: '48 Heures', note: 'Évaluation rapide après la demande' },
+            { label: 'Accompagnement', value: 'Direct', note: 'Échanges via showroom ou WhatsApp' },
           ]
         : [
-            { label: 'First reply', value: '48 Hours', note: 'Fast evaluation and direction after the inquiry' },
+            { label: 'First reply', value: '48 Hours', note: 'Fast review and guidance after the inquiry' },
             { label: 'Support model', value: 'Direct', note: 'One-to-one contact via showroom or WhatsApp' },
           ];
+
   const processSteps =
     language === 'tr'
       ? [
@@ -60,9 +63,9 @@ export default function CustomRequest() {
         ]
       : language === 'fr'
         ? [
-            'Evaluation rapide des dimensions et besoins du lieu',
-            'Selection des categories, ensembles et tonalites adaptées',
-            'Decision finale via showroom ou accompagnement a distance',
+            'Évaluation rapide des dimensions et besoins du lieu',
+            'Sélection des catégories, ensembles et tonalités adaptées',
+            'Décision finale via showroom ou accompagnement à distance',
           ]
         : [
             'A quick review of dimensions and spatial needs',

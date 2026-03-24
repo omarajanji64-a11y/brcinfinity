@@ -86,14 +86,14 @@ export default function AboutUsPage() {
       : language === 'fr'
         ? {
             kicker: 'Histoire de la marque',
-            title: 'Nous reinterpretions la grandeur classique avec une presence plus raffinee et plus sure.',
+            title: 'Nous réinterprétons la grandeur classique avec une présence plus raffinée et plus sûre.',
             lead:
-              'BRC Infinity traite le mobilier classique non comme une simple demonstration, mais comme un langage durable pour l espace.',
+              'BRC Infinity considère le mobilier classique non comme une simple démonstration, mais comme un langage durable pour l’espace.',
             body:
-              'Dans chaque collection, nous travaillons l equilibre des proportions, des materiaux et des details afin d apporter une atmosphere intemporelle et sereine.',
+              'Dans chaque collection, nous travaillons l’équilibre des proportions, des matériaux et des détails afin d’apporter une atmosphère intemporelle et sereine.',
             sideTitle: 'Notre base',
             sideDescription:
-              'Une ligne de marque plus maitrisee qui reunit collections choisies, execution solide et experience showroom.',
+              'Une ligne de marque plus maîtrisée qui réunit des collections choisies, une exécution solide et une expérience showroom affirmée.',
           }
         : {
             kicker: 'Brand story',
@@ -132,7 +132,7 @@ export default function AboutUsPage() {
         language === 'tr'
           ? 'Malzeme ve detay seçimi'
           : language === 'fr'
-            ? 'Selection des details'
+            ? 'Sélection des détails'
             : 'Material and detail curation',
     },
   ];
@@ -143,13 +143,13 @@ export default function AboutUsPage() {
         language === 'tr'
           ? 'Klasik zarafet'
           : language === 'fr'
-            ? 'Elegance classique'
+            ? 'Élégance classique'
             : 'Classical elegance',
       description:
         language === 'tr'
           ? 'Oyma, varak ve oran duygusunu daha sakin bir lüks anlayışıyla dengeliyoruz.'
           : language === 'fr'
-            ? 'Nous equilibrons sculpture, dorure et proportions avec une idee du luxe plus calme.'
+            ? 'Nous équilibrons sculpture, dorure et proportions avec une idée du luxe plus calme.'
             : 'We balance carving, gilding, and proportion with a calmer idea of luxury.',
       Icon: LuxuryIcon,
     },
@@ -158,13 +158,13 @@ export default function AboutUsPage() {
         language === 'tr'
           ? 'Güven veren dayanıklılık'
           : language === 'fr'
-            ? 'Durabilite rassurante'
+            ? 'Durabilité rassurante'
             : 'Assured durability',
       description:
         language === 'tr'
           ? 'Uzun ömürlü kullanım için malzeme seçimini ve işçilik disiplinini birlikte ele alıyoruz.'
           : language === 'fr'
-            ? 'Nous associons choix des materiaux et discipline d execution pour une utilisation durable.'
+            ? 'Nous associons choix des matériaux et discipline d’exécution pour une utilisation durable.'
             : 'We pair material selection with disciplined execution for long-term use.',
       Icon: SafetyIcon,
     },
@@ -179,7 +179,7 @@ export default function AboutUsPage() {
         language === 'tr'
           ? 'Mekanın değerini koruyan, gereksiz gösteriden uzak ama etkili bir ustalık anlayışı.'
           : language === 'fr'
-            ? 'Une maitrise efficace, eloignee de l exces, qui respecte la valeur de l espace.'
+            ? 'Une maîtrise efficace, éloignée de l’excès, qui respecte la valeur de l’espace.'
             : 'An effective craft language that respects the space without unnecessary excess.',
       Icon: SustainabilityIcon,
     },
@@ -192,31 +192,31 @@ export default function AboutUsPage() {
         {
           tr: 'Klasik çizgiyi modern konforla buluşturan, kullanıldıkça değer kazanan mekanlar kurmak.',
           en: 'To shape interiors where classical lines meet modern comfort and gain value over time.',
-          fr: 'Creer des interieurs ou les lignes classiques rencontrent le confort moderne et gagnent en valeur.',
+          fr: 'Créer des intérieurs où les lignes classiques rencontrent le confort moderne et gagnent en valeur.',
         },
         language
       ),
       Icon: LuxuryIcon,
     },
     {
-      title: getLocalizedValue({ tr: 'Güvenli kalite', en: 'Reliable quality', fr: 'Qualite fiable' }, language),
+      title: getLocalizedValue({ tr: 'Güvenli kalite', en: 'Reliable quality', fr: 'Qualité fiable' }, language),
       description: getLocalizedValue(
         {
           tr: 'Sağlam malzeme, kontrollü işçilik ve dengeli tasarımla uzun ömürlü kullanım sunmak.',
           en: 'To deliver longevity through solid materials, controlled execution, and balanced design.',
-          fr: 'Offrir une longue duree de vie grace a des materiaux solides, une execution maitrisee et un design equilibre.',
+          fr: 'Offrir une longue durée de vie grâce à des matériaux solides, une exécution maîtrisée et un design équilibré.',
         },
         language
       ),
       Icon: SafetyIcon,
     },
     {
-      title: getLocalizedValue({ tr: 'Mekan uyumu', en: 'Spatial harmony', fr: 'Harmonie de l espace' }, language),
+      title: getLocalizedValue({ tr: 'Mekan uyumu', en: 'Spatial harmony', fr: 'Harmonie de l’espace' }, language),
       description: getLocalizedValue(
         {
           tr: 'Ürünü tek başına değil, mekanın genel dili içinde değerlendiren bir seçim anlayışı kurmak.',
           en: 'To curate products not in isolation, but as part of a complete interior language.',
-          fr: 'Choisir les pieces non isolees, mais comme partie d un langage interieur complet.',
+          fr: 'Choisir les pièces non isolées, mais comme partie d’un langage intérieur complet.',
         },
         language
       ),
@@ -231,19 +231,19 @@ export default function AboutUsPage() {
         {
           tr: 'Klasik mobilyada daha rafine, daha seçici ve uzun ömürlü bir marka izi bırakmak.',
           en: 'To leave a more refined, selective, and lasting signature in classical furniture.',
-          fr: 'Laisser une signature plus raffinee, selective et durable dans le mobilier classique.',
+          fr: 'Laisser une signature plus raffinée, sélective et durable dans le mobilier classique.',
         },
         language
       ),
       Icon: TimelessIcon,
     },
     {
-      title: getLocalizedValue({ tr: 'Ustalık mirası', en: 'Craft legacy', fr: 'Heritage du savoir-faire' }, language),
+      title: getLocalizedValue({ tr: 'Ustalık mirası', en: 'Craft legacy', fr: 'Héritage du savoir-faire' }, language),
       description: getLocalizedValue(
         {
           tr: 'Nesiller boyunca güvenle anılacak bir kalite standardı inşa etmek.',
           en: 'To build a quality standard that can be trusted across generations.',
-          fr: 'Construire un niveau de qualite reconnu et fiable au fil des generations.',
+          fr: 'Construire un niveau de qualité reconnu et fiable au fil des générations.',
         },
         language
       ),
@@ -255,7 +255,7 @@ export default function AboutUsPage() {
         {
           tr: 'Her yeni adımda marka tonunu ve koleksiyon kalitesini koruyan kontrollü bir genişleme.',
           en: 'Measured expansion that protects the tone of the brand and the quality of each collection.',
-          fr: 'Une expansion maitrisee qui preserve le ton de la marque et la qualite de chaque collection.',
+          fr: 'Une expansion maîtrisée qui préserve le ton de la marque et la qualité de chaque collection.',
         },
         language
       ),
@@ -355,7 +355,7 @@ export default function AboutUsPage() {
                 {language === 'tr'
                   ? 'Tasarım dilimizi sadece ürün bazında değil, markanın uzun vadeli tutarlılığı için de kuruyoruz.'
                   : language === 'fr'
-                    ? 'Nous construisons notre langage design non seulement pour le produit, mais aussi pour la coherence durable de la marque.'
+                    ? 'Nous construisons notre langage design non seulement pour le produit, mais aussi pour la cohérence durable de la marque.'
                     : 'We shape our design language not only for individual products, but for the long-term consistency of the brand.'}
               </p>
             </div>
@@ -419,14 +419,14 @@ export default function AboutUsPage() {
                     {language === 'tr'
                       ? 'Mekana uygun klasik bir koleksiyon dili birlikte netleştirelim.'
                       : language === 'fr'
-                        ? 'Definissons ensemble une ligne classique adaptee a votre interieur.'
+                        ? 'Définissons ensemble une ligne classique adaptée à votre intérieur.'
                         : 'Let us define a classical collection language that fits your interior.'}
                   </h2>
                   <p className="animate-reveal animate-reveal-delay-2 mt-5 max-w-2xl text-base leading-8 text-primary/58">
                     {language === 'tr'
                       ? 'Yemek odası, yatak odası ve salon seçimlerini mekanınızın ölçüsü ve atmosferiyle uyumlu olacak şekilde yönlendiriyoruz.'
                       : language === 'fr'
-                        ? 'Nous guidons les selections de salon, salle a manger et chambre selon les dimensions et l atmosphere de votre espace.'
+                        ? 'Nous guidons les sélections de salon, salle à manger et chambre selon les dimensions et l’atmosphère de votre espace.'
                         : 'We guide living, dining, and bedroom selections according to the proportions and atmosphere of your space.'}
                   </p>
                   <div className="mt-8 flex flex-wrap gap-3">

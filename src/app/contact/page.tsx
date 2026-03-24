@@ -11,14 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -67,12 +60,12 @@ export default function ContactPage() {
         ? {
             kicker: 'Contact et accompagnement projet',
             intro:
-              'Pour une visite showroom, un choix de collection ou une orientation projet, vous pouvez contacter directement notre equipe.',
+              'Pour une visite showroom, un choix de collection ou une orientation projet, vous pouvez contacter directement notre équipe.',
             note:
-              'Vous pouvez remplir le formulaire ou nous appeler pour organiser un echange plus rapide.',
+              'Vous pouvez remplir le formulaire ou nous appeler pour organiser un échange plus rapide.',
             hours: 'Tous les jours 09:00 - 19:00',
             consultationTitle: 'Ce que nous clarifions ensemble',
-            consultationItems: ['Dimensions de l espace', 'Categories de produits', 'Materiaux et tonalites'],
+            consultationItems: ['Dimensions de l’espace', 'Catégories de produits', 'Matériaux et tonalités'],
           }
         : {
             kicker: 'Contact and project support',
@@ -85,10 +78,12 @@ export default function ContactPage() {
             consultationItems: ['Space dimensions', 'Product categories', 'Materials and tones'],
           };
 
+  const address = 'Masko Mobilyacılar Sitesi 18/B Blok No:35, İstanbul';
+
   const contactCards = [
     {
       title: t('contact_page.showroom.address'),
-      value: 'Masko Mobilyacılar Sitesi 18/B Blok No:35, İstanbul',
+      value: address,
       Icon: MapPin,
     },
     {
@@ -103,7 +98,7 @@ export default function ContactPage() {
     },
   ];
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(_: z.infer<typeof formSchema>) {
     toast({
       title: t('contact_page.toast.title'),
       description: t('contact_page.toast.description'),
@@ -193,7 +188,7 @@ export default function ContactPage() {
                   <div className="mt-10 space-y-5 text-sm text-primary/64">
                     <div className="flex items-start gap-3">
                       <MapPin className="mt-1 h-4 w-4 text-accent" />
-                      <span>Masko Mobilyacılar Sitesi 18/B Blok No:35, İstanbul</span>
+                      <span>{address}</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <Phone className="h-4 w-4 text-accent" />

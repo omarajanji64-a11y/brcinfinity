@@ -14,6 +14,7 @@ export default function FeaturedProducts() {
   const { t, language } = useTranslation();
   const { products, isLoading: isLoadingProducts } = useProducts({ realtime: false });
   const featuredProducts = products.slice(0, 3);
+
   const sectionCopy =
     language === 'tr'
       ? {
@@ -23,13 +24,14 @@ export default function FeaturedProducts() {
         }
       : language === 'fr'
         ? {
-            kicker: 'Pieces choisies',
-            description: 'Decouvrez des ensembles qui expriment pleinement notre vision du mobilier classique.',
+            kicker: 'Pièces choisies',
+            description: 'Découvrez des ensembles qui expriment pleinement notre vision du mobilier classique.',
           }
         : {
             kicker: 'Selected pieces',
             description: 'Explore pieces that best represent our interpretation of classical furniture.',
           };
+
   const featuredNotes =
     language === 'tr'
       ? [
@@ -39,8 +41,8 @@ export default function FeaturedProducts() {
         ]
       : language === 'fr'
         ? [
-            { label: 'Selection', value: 'Editoriale', note: 'Les pieces qui representent le mieux la marque' },
-            { label: 'Detail', value: 'Eleve', note: 'Sculpture, dorure et finitions plus soignées' },
+            { label: 'Sélection', value: 'Éditoriale', note: 'Les pièces qui représentent le mieux la marque' },
+            { label: 'Détail', value: 'Élevé', note: 'Sculpture, dorure et finitions plus soignées' },
             { label: 'Contact', value: 'Direct', note: 'Prise de contact rapide via WhatsApp et showroom' },
           ]
         : [
@@ -98,7 +100,11 @@ export default function FeaturedProducts() {
             ))
           ) : (
             featuredProducts.map((product, i) => (
-              <div key={product.id} className="animate-fade-in-up" style={{ animationDelay: `${i * 0.1}s`, animationFillMode: 'backwards' }}>
+              <div
+                key={product.id}
+                className="animate-fade-in-up"
+                style={{ animationDelay: `${i * 0.1}s`, animationFillMode: 'backwards' }}
+              >
                 <ProductCard product={product} />
               </div>
             ))

@@ -13,8 +13,10 @@ export default function Footer() {
     language === 'tr'
       ? 'Masko Mobilyacılar Sitesi 18/B Blok No:35, İstanbul'
       : language === 'fr'
-        ? 'Showroom principal a Masko, Istanbul'
+        ? 'Showroom principal à Masko, Istanbul'
         : 'Main showroom at Masko, Istanbul';
+  const aboutUsLabel =
+    language === 'tr' ? 'Hakkımızda' : language === 'fr' ? 'À propos' : 'About Us';
 
   return (
     <footer className="px-3 pb-3 md:px-4 md:pb-4">
@@ -61,7 +63,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <Link href="/about-us" className="text-sm text-primary/66 transition-colors hover:text-primary">
-                    Hakkımızda
+                    {aboutUsLabel}
                   </Link>
                 </li>
                 <li>

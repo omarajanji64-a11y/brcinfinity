@@ -23,7 +23,7 @@ const manrope = Manrope({
 
 export const metadata: Metadata = {
   title: 'BRC INFINITY',
-  description: 'Luks, royal ve klasik mobilyalar.',
+  description: 'Lüks, royal ve klasik mobilyalar.',
   icons: {
     icon: [{ url: '/favicon-rounded.png', type: 'image/png' }],
     shortcut: '/favicon-rounded.png',

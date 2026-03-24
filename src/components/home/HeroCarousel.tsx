@@ -22,7 +22,7 @@ const CONTACT_LABEL: LocalizedCopy = {
 };
 
 const SHOWROOM_LABEL: LocalizedCopy = {
-  tr: 'Masko, Istanbul',
+  tr: 'Masko, İstanbul',
   en: 'Masko, Istanbul',
   fr: 'Masko, Istanbul',
 };
@@ -31,17 +31,17 @@ const HERO_SLIDES: HeroSlide[] = [
   {
     src: '/hero-slider/royal-bedroom.jpg',
     title: {
-      tr: 'Daha guclu bir klasik atmosfer',
+      tr: 'Daha güçlü bir klasik atmosfer',
       en: 'A stronger classical atmosphere',
-      fr: 'Une atmosphere classique plus marquante',
+      fr: 'Une atmosphère classique plus marquante',
     },
   },
   {
     src: '/hero-slider/canopy-bedroom.jpg',
     title: {
-      tr: 'Daha yumusak ve zarif gecisler',
+      tr: 'Daha yumuşak ve zarif geçişler',
       en: 'Softer and more elegant transitions',
-      fr: 'Des transitions plus douces et plus elegantes',
+      fr: 'Des transitions plus douces et plus élégantes',
     },
   },
 ];

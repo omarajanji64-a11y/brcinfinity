@@ -1,11 +1,13 @@
 'use client';
 
-import { Gem, Crown, Sparkles } from 'lucide-react';
+import { Crown, Gem, Sparkles } from 'lucide-react';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTranslation } from '@/lib/i18n';
 
 export default function WhyUs() {
   const { t, language } = useTranslation();
+
   const features = [
     {
       icon: <Gem className="h-10 w-10 text-accent" />,
@@ -23,24 +25,26 @@ export default function WhyUs() {
       description: t('home.why_us_3_desc'),
     },
   ];
+
   const sectionCopy =
     language === 'tr'
       ? {
-          kicker: 'Klasik ustalik',
+          kicker: 'Klasik ustalık',
           description:
-            'Her takim, geleneksel ihtisami korurken uzun omurlu kullanim ve rafine detay anlayisiyla tamamlanir.',
+            'Her takım, geleneksel ihtişamı korurken uzun ömürlü kullanım ve rafine detay anlayışıyla tamamlanır.',
         }
       : language === 'fr'
         ? {
             kicker: 'Savoir-faire classique',
             description:
-              'Chaque ensemble preserve la grandeur classique tout en offrant une execution durable et raffinee.',
+              'Chaque ensemble préserve la grandeur classique tout en offrant une exécution durable et raffinée.',
           }
         : {
             kicker: 'Classical craftsmanship',
             description:
               'Each set preserves classical grandeur while delivering durable execution and refined detailing.',
           };
+
   const assurances =
     language === 'tr'
       ? [
@@ -50,9 +54,9 @@ export default function WhyUs() {
         ]
       : language === 'fr'
         ? [
-            { label: 'Materiaux', value: 'Raffines', note: 'Des tissus et finitions choisis selon le projet' },
-            { label: 'Production', value: 'Selective', note: 'Une execution attentive aux proportions et details' },
-            { label: 'Conseil', value: 'Personnalise', note: 'Un accompagnement direct depuis le showroom' },
+            { label: 'Matériaux', value: 'Raffinés', note: 'Des tissus et finitions choisis selon le projet' },
+            { label: 'Production', value: 'Sélective', note: 'Une exécution attentive aux proportions et aux détails' },
+            { label: 'Conseil', value: 'Personnalisé', note: 'Un accompagnement direct depuis le showroom' },
           ]
         : [
             { label: 'Materials', value: 'Refined', note: 'Fabrics and finishes shaped around the project mood' },

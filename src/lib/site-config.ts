@@ -57,7 +57,7 @@ export const CATEGORY_SHOWCASE_IMAGES: CategoryImage[] = [
   },
   {
     id: 'cat-dining-room',
-    name: { en: 'Dining Room', fr: 'Salle a manger', tr: 'Yemek Odası' },
+    name: { en: 'Dining Room', fr: 'Salle à manger', tr: 'Yemek Odası' },
     imageUrl: getPlaceholderImage('cat-dining-room', 'https://picsum.photos/seed/cat-dining/600/600'),
     imageHint: getPlaceholderHint('cat-dining-room', 'dining room'),
   },

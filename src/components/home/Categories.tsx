@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
+
 import { Card } from '@/components/ui/card';
 import { useHomepageCategoryShowcase } from '@/hooks/use-homepage-category-showcase';
 import { buildCloudinaryImageUrl, canUseNextImage } from '@/lib/image-utils';
@@ -11,10 +12,12 @@ import { useTranslation } from '@/lib/i18n';
 export default function Categories() {
   const { language, t } = useTranslation();
   const { categoryShowcaseImages } = useHomepageCategoryShowcase({ realtime: false });
+
   const categoriesToRender = categoryShowcaseImages.map((category) => ({
     ...category,
     displayName: category.name[language] || category.name.tr || category.name.en || 'Category',
   }));
+
   const sectionCopy =
     language === 'tr'
       ? {
@@ -25,10 +28,10 @@ export default function Categories() {
         }
       : language === 'fr'
         ? {
-            kicker: 'Categories classiques',
-            title: 'Des collections raffinees pour des interieurs classiques',
+            kicker: 'Catégories classiques',
+            title: 'Des collections raffinées pour des intérieurs classiques',
             description:
-              'Salon, salle a manger et chambre trouvent une harmonie classique a travers la sculpture, la dorure et des proportions intemporelles.',
+              'Salon, salle à manger et chambre trouvent une harmonie classique à travers la sculpture, la dorure et des proportions intemporelles.',
           }
         : {
             kicker: 'Classic categories',
@@ -36,6 +39,7 @@ export default function Categories() {
             description:
               'Living, dining, and bedroom pieces come together through carving, gilding, and timeless proportions.',
           };
+
   const categoryDescriptions =
     language === 'tr'
       ? {
@@ -45,8 +49,8 @@ export default function Categories() {
         }
       : language === 'fr'
         ? {
-            'living-room': 'Des assises genereuses, des details sculptes et une presence plus majestueuse.',
-            'dining-room': 'Des proportions fortes et des surfaces riches pour des mises en scene raffinées.',
+            'living-room': 'Des assises généreuses, des détails sculptés et une présence plus majestueuse.',
+            'dining-room': 'Des proportions fortes et des surfaces riches pour des mises en scène raffinées.',
             bedroom: 'Une ambiance plus calme mais toujours imposante pour la chambre classique.',
           }
         : {
@@ -54,6 +58,7 @@ export default function Categories() {
             'dining-room': 'Bold proportions and richer surfaces for memorable hosting settings.',
             bedroom: 'A calmer yet still striking interpretation of the classical bedroom.',
           };
+
   const sectionMetrics =
     language === 'tr'
       ? [
@@ -64,7 +69,7 @@ export default function Categories() {
       : language === 'fr'
         ? [
             { label: 'Langage', value: 'Classique', note: 'Une direction visuelle cohérente' },
-            { label: 'Production', value: 'Sur mesure', note: 'Des solutions adaptees au projet' },
+            { label: 'Production', value: 'Sur mesure', note: 'Des solutions adaptées au projet' },
             { label: 'Showroom', value: 'Masko', note: 'Visite et accompagnement sur place' },
           ]
         : [
@@ -72,8 +77,9 @@ export default function Categories() {
             { label: 'Production', value: 'Tailored', note: 'More selective solutions for each project' },
             { label: 'Showroom', value: 'Masko', note: 'On-site review and guidance' },
           ];
+
   const collectionBadge =
-    language === 'tr' ? 'Seçili seri' : language === 'fr' ? 'Serie choisie' : 'Selected series';
+    language === 'tr' ? 'Seçili seri' : language === 'fr' ? 'Série choisie' : 'Selected series';
 
   return (
     <section className="theme-surface-soft relative overflow-hidden bg-background">
@@ -115,7 +121,12 @@ export default function Categories() {
               categoryDescriptions['living-room'];
 
             return (
-              <Link key={category.id} href="/products" className="group animate-reveal block" style={{ animationDelay: `${0.12 + index * 0.1}s` }}>
+              <Link
+                key={category.id}
+                href="/products"
+                className="group animate-reveal block"
+                style={{ animationDelay: `${0.12 + index * 0.1}s` }}
+              >
                 <Card className="theme-panel-lift card-sheen group overflow-hidden rounded-[1.55rem] p-0">
                   <div className="relative overflow-hidden rounded-[0.95rem] border border-[rgba(193,148,79,0.18)]">
                     {canUseNextImage(imageUrl) ? (
