@@ -453,6 +453,14 @@
     animation: hero-shimmer-sweep 8s linear infinite;
   }
 
+  .hero-copy-line {
+    will-change: transform, opacity, filter;
+  }
+
+  .hero-copy-line-active {
+    animation: hero-copy-glow 4s ease-in-out infinite;
+  }
+
   .classic-shell {
     position: relative;
   }
@@ -608,12 +616,23 @@
   }
 }
 
+@keyframes hero-copy-glow {
+  0%,
+  100% {
+    text-shadow: 0 0 0 rgba(214, 175, 104, 0);
+  }
+  50% {
+    text-shadow: 0 0 26px rgba(214, 175, 104, 0.3);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   body::before,
   body::after,
   .site-background::before,
   .hero-ribbon,
   .hero-shimmer,
+  .hero-copy-line-active,
   .animate-reveal,
   .animate-fade-in,
   .animate-fade-in-up,
